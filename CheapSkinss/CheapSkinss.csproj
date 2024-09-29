@@ -1,0 +1,99 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\BepInEx\plugins&quot;" />
+	</Target>
+	
+	
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\BepInEx\core\0Harmony.dll</HintPath>
+    </Reference>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Assembly-CSharp-publicized.dll</HintPath>
+    </Reference>
+    <Reference Include="BepInEx">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\BepInEx\core\BepInEx.dll</HintPath>
+    </Reference>
+    <Reference Include="Cinemachine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Cinemachine.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Photon3Unity3D.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonDeterministic">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\PhotonDeterministic.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonRealtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\PhotonRealtime.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonWebSocket">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\PhotonWebSocket.dll</HintPath>
+    </Reference>
+    <Reference Include="quantum.code">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\quantum.code.dll</HintPath>
+    </Reference>
+    <Reference Include="quantum.core">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\quantum.core.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.Localization">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.Localization.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipeline.Universal.ShaderLibrary">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.RenderPipeline.Universal.ShaderLibrary.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Core.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.RenderPipelines.Core.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.RenderPipelines.Universal.Runtime">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.RenderPipelines.Universal.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\unstripped_corlib\UnityEngine.AssetBundleModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\unstripped_corlib\UnityEngine.ImageConversionModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.IMGUIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.IMGUIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.InputModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\Nickelodeon All-Star Brawl 2_Data\Managed\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
