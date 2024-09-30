@@ -83,53 +83,53 @@ namespace CheapSkinss
 };
 
         public static Dictionary<string, List<string>> Garfield0Parts = new Dictionary<string, List<string>>
-{
-    { "Garfield_Costume00_Body_Mat", Garfield0Body },
-    { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
-    { "Garfield_Costume00_Props_Mat", Garfield0Props },
-    { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
-    { "lambert14", Garfield1Costume },
-    { "Garfield_Costume00_Costumes_Mat", Garfield2Costume }
-};
+        {
+            { "Garfield_Costume00_Body_Mat", Garfield0Body },
+            { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
+            { "Garfield_Costume00_Props_Mat", Garfield0Props },
+            { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
+            { "lambert14", Garfield1Costume },
+            { "Garfield_Costume00_Costumes_Mat", Garfield2Costume }
+        };
 
         public static Dictionary<string, List<string>> Garfield1Parts = new Dictionary<string, List<string>>
-{
-    { "Garfield_Costume00_BodyMask_Mat", Garfield0Body },
-    { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
-    { "Garfield_Costume00_Props_Mat", Garfield0Props },
-    { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
-    { "Garfield_Costume_02_Mat", Garfield1Costume }
-};
+        {
+            { "Garfield_Costume00_BodyMask_Mat", Garfield0Body },
+            { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
+            { "Garfield_Costume00_Props_Mat", Garfield0Props },
+            { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
+            { "Garfield_Costume_02_Mat", Garfield1Costume }
+        };
 
         public static Dictionary<string, List<string>> Garfield2Parts = new Dictionary<string, List<string>>
-{
-    { "Garfield_Costume00_Body_Mat", Garfield0Body },
-    { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
-    { "Garfield_Costume00_Props_Mat", Garfield0Props },
-    { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
-    { "lambert14", Garfield1Costume },
-    { "Garfield_Costume00_Costumes_Mat", Garfield2Costume }
-};
+        {
+            { "Garfield_Costume00_Body_Mat", Garfield0Body },
+            { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
+            { "Garfield_Costume00_Props_Mat", Garfield0Props },
+            { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
+            { "lambert14", Garfield1Costume },
+            { "Garfield_Costume00_Costumes_Mat", Garfield2Costume }
+        };
 
         public static Dictionary<string, List<string>> Garfield3Parts = new Dictionary<string, List<string>>
-{
-    { "Garfield_Costume00_Body_Mat", Garfield0Body },
-    { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
-    { "Garfield_Costume00_Props_Mat", Garfield0Props },
-    { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
-    { "Garfield_Costume00_Costumes_Mat", Garfield3Costume }
-};
+        {
+            { "Garfield_Costume00_Body_Mat", Garfield0Body },
+            { "Garfield_Costume00_Expressions_Mat", Garfield0Expressions },
+            { "Garfield_Costume00_Props_Mat", Garfield0Props },
+            { "Garfield_Costume00_Props_Oldschool_Mat", GarfieldOld },
+            { "Garfield_Costume00_Costumes_Mat", Garfield3Costume }
+        };
 
         public static Dictionary<int, Dictionary<string, List<string>>> GarfieldAltParts = new Dictionary<int, Dictionary<string, List<string>>>
-{
-    { 0, Garfield0Parts },
-    { 1, Garfield1Parts },
-    { 2, Garfield2Parts },
-    { 3, Garfield3Parts }
-};
+        {
+            { 0, Garfield0Parts },
+            { 1, Garfield1Parts },
+            { 2, Garfield2Parts },
+            { 3, Garfield3Parts }
+        };
         public static Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>> characterCodenames = new Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>>
-{
-    { "Garfield", GarfieldAltParts }
-};
+        {
+            { "Garfield", GarfieldAltParts }
+        };
     }
 }

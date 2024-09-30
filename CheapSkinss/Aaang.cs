@@ -93,38 +93,38 @@ namespace CheapSkinss
 };
 
         public static List<string> Aang3Costume = new List<string>
-{
-    "costume02_C_mesh",
-    "costume02_frontstrips_inv_C_mesh",
-    "costume02_inv_C_mesh",
-    "costume02_sidestrips_C_mesh",
-    "costume02_sidestrips_inv_C_mesh"
-};
+        {
+            "costume02_C_mesh",
+            "costume02_frontstrips_inv_C_mesh",
+            "costume02_inv_C_mesh",
+            "costume02_sidestrips_C_mesh",
+            "costume02_sidestrips_inv_C_mesh"
+        };
 
         public static List<string> Aang3Costume2 = new List<string>
-{
-    "costume02_frontstrips_C_mesh"
-};
+        {
+            "costume02_frontstrips_C_mesh"
+        };
 
         public static Dictionary<string, List<string>> Aang0Parts = new Dictionary<string, List<string>>
-{
-    { "Aang_Body_02_Mat", Aang0Body },
-    { "Aang_Costume_01B_Mat", Aang0Costume },
-    { "Aang_Expressions_Mat", Aang0Expressions },
-    { "Aang_Props_Mat", Aang0Props },
-    { "lambert1", Aang0Lambert },
-    { "Aang_Rocks_Mat", Aang0Rocks }
-};
+        {
+            { "Aang_Body_02_Mat", Aang0Body },
+            { "Aang_Costume_01B_Mat", Aang0Costume },
+            { "Aang_Expressions_Mat", Aang0Expressions },
+            { "Aang_Props_Mat", Aang0Props },
+            { "lambert1", Aang0Lambert },
+            { "Aang_Rocks_Mat", Aang0Rocks }
+        };
 
         public static Dictionary<string, List<string>> Aang1Parts = new Dictionary<string, List<string>>
-{
-    { "Aang_Body_02_Mat", Aang1Body },
-    { "Aang_Costume_02B_Mat", Aang1Costume },
-    { "Aang_Expressions_Mat", Aang0Expressions },
-    { "Aang_Props_Mat", Aang0Props },
-    { "lambert1", Aang0Lambert },
-    { "Aang_Rocks_Mat", Aang0Rocks }
-};
+        {
+            { "Aang_Body_02_Mat", Aang1Body },
+            { "Aang_Costume_02B_Mat", Aang1Costume },
+            { "Aang_Expressions_Mat", Aang0Expressions },
+            { "Aang_Props_Mat", Aang0Props },
+            { "lambert1", Aang0Lambert },
+            { "Aang_Rocks_Mat", Aang0Rocks }
+        };
 
         public static Dictionary<string, List<string>> Aang2Parts = new Dictionary<string, List<string>>
         {

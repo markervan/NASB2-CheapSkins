@@ -92,15 +92,7 @@ namespace CheapSkinss
     "fireblade_L_mesh"
 };
 
-        public static Dictionary<string, List<string>> Korra0Parts = new Dictionary<string, List<string>>()
-        {
-            { "Korra_Body_Mat", Korra_Body_Mat },
-            { "Korra_Costume00_Mat", Korra_Costume00_Mat },
-            { "Korra_Expressions_Mat", Korra_Expressions_Mat },
-            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat },
-            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat },
-            { "KorraPropsSpawned", KorraPropsSpawned }
-        };
+        
 
         //1
 
@@ -193,17 +185,7 @@ namespace CheapSkinss
     "fireblade_L_mesh"
 };
 
-        public static Dictionary<string, List<string>> Korra1Parts = new Dictionary<string, List<string>>()
-        {
-            { "Korra_Body_Mat", Korra_Body_Mat1 },
-            { "Korra_Costume00_Mat", Korra_Costume00_Mat1 },
-            { "Korra_Costume01", Korra_Costume011 },
-            { "Korra_Expressions_Costume02_Mat", Korra_Expressions_Costume02_Mat1 },
-            { "Korra_Body_Mat_Costume02_Mat", Korra_Body_Mat_Costume02_Mat1 },
-            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat1 },
-            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat1 },
-            { "KorraPropsSpawned", KorraPropsSpawned1 }
-        };
+        
 
         //2
 
@@ -285,14 +267,7 @@ namespace CheapSkinss
     "waterwhips_R_mesh"
 };
 
-        public static Dictionary<string, List<string>> Korra2Parts = new Dictionary<string, List<string>>()
-        {
-            { "Korra_Body_Mat", Korra_Body_Mat2 },
-            { "Korra_Preview_03_Costume_02_Mat", Korra_Preview_03_Costume_02_Mat2 },
-            { "Korra_Expressions_Mat", Korra_Expressions_Mat2 },
-            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat2 },
-            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat2 }
-        };
+        
 
         //3
         public static List<string> Korra_Body_Mat3 = new List<string>
@@ -355,24 +330,51 @@ namespace CheapSkinss
 };
 
         public static List<string> Korra_Props_Rigged_Mat3 = new List<string>
-{
-    "cable_C_mesh",
-    "handshooter_L_mesh",
-    "handshooter_R_mesh"
-};
+        {
+            "cable_C_mesh",
+            "handshooter_L_mesh",
+            "handshooter_R_mesh"
+        };
 
         public static List<string> Korra_Props_WaterHand_Mat3 = new List<string>
-{
-    "icehand_L_mesh",
-    "icehand_R_mesh",
-    "spiral_L_mesh",
-    "spiral_R_mesh",
-    "waterHand_L_mesh",
-    "waterHand_R_mesh",
-    "waterwhips_L_mesh",
-    "waterwhips_R_mesh"
-};
-
+        {
+            "icehand_L_mesh",
+            "icehand_R_mesh",
+            "spiral_L_mesh",
+            "spiral_R_mesh",
+            "waterHand_L_mesh",
+            "waterHand_R_mesh",
+            "waterwhips_L_mesh",
+            "waterwhips_R_mesh"
+        };
+        public static Dictionary<string, List<string>> Korra0Parts = new Dictionary<string, List<string>>()
+        {
+            { "Korra_Body_Mat", Korra_Body_Mat },
+            { "Korra_Costume00_Mat", Korra_Costume00_Mat },
+            { "Korra_Expressions_Mat", Korra_Expressions_Mat },
+            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat },
+            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat },
+            { "KorraPropsSpawned", KorraPropsSpawned }
+        };
+        public static Dictionary<string, List<string>> Korra1Parts = new Dictionary<string, List<string>>()
+        {
+            { "Korra_Body_Mat", Korra_Body_Mat1 },
+            { "Korra_Costume00_Mat", Korra_Costume00_Mat1 },
+            { "Korra_Costume01", Korra_Costume011 },
+            { "Korra_Expressions_Costume02_Mat", Korra_Expressions_Costume02_Mat1 },
+            { "Korra_Body_Mat_Costume02_Mat", Korra_Body_Mat_Costume02_Mat1 },
+            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat1 },
+            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat1 },
+            { "KorraPropsSpawned", KorraPropsSpawned1 }
+        };
+        public static Dictionary<string, List<string>> Korra2Parts = new Dictionary<string, List<string>>()
+        {
+            { "Korra_Body_Mat", Korra_Body_Mat2 },
+            { "Korra_Preview_03_Costume_02_Mat", Korra_Preview_03_Costume_02_Mat2 },
+            { "Korra_Expressions_Mat", Korra_Expressions_Mat2 },
+            { "Korra_Props_Rigged_Mat", Korra_Props_Rigged_Mat2 },
+            { "Korra_Props_WaterHand_Mat", Korra_Props_WaterHand_Mat2 }
+        };
         public static Dictionary<string, List<string>> Korra3Parts = new Dictionary<string, List<string>>()
         {
             { "Korra_Body_Mat", Korra_Body_Mat3 },

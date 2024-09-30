@@ -63,14 +63,7 @@ namespace CheapSkinss
     "propulsiondeviceL_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Headbanger0Parts = new Dictionary<string, List<string>>()
-{
-    { "Headbanger_Body_Mat", Headbanger_Body_Mat },
-    { "Headbanger_Costume00_Mat", Headbanger_Costume00_Mat },
-    { "Headbanger_Sword_Mat", Headbanger_Sword_Mat },
-    { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat },
-    { "Headbanger_SpawnedProps_Mat", Headbanger_SpawnedProps_Mat }
-};
+
         //11
 
         public static List<string> Headbanger_Body_Mat1 = new List<string>
@@ -124,16 +117,7 @@ namespace CheapSkinss
     "transportmodule_door_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Headbanger1Parts = new Dictionary<string, List<string>>()
-{
-    { "Headbanger_Body_Mat", Headbanger_Body_Mat1 },
-    { "Headbanger_Costume01B_Mat", Headbanger_Costume01B_Mat1 },
-    { "Headbanger_Costume01PantsB_Mat", Headbanger_Costume01PantsB_Mat1 },
-    { "Headbanger_Sword_Mat", Headbanger_Sword_Mat1 },
-    { "Headbanger_Body_Costume01_Mat", Headbanger_Body_Costume01_Mat1 },
-    { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat1 },
-};
-        //222
+     //222
 
         public static List<string> Headbanger_Body_Mat2 = new List<string>
 {
@@ -173,13 +157,7 @@ namespace CheapSkinss
     "transportmodule_door_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Headbanger2Parts = new Dictionary<string, List<string>>()
-{
-    { "Headbanger_Body_Mat", Headbanger_Body_Mat2 },
-    { "Headbanger_Costume02_Mat", Headbanger_Costume02_Mat2 },
-    { "Headbanger_Sword_Mat", Headbanger_Sword_Mat2 },
-    { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat2 }
-};
+
         //33
 
         public static List<string> Headbanger_Body_Mat3 = new List<string>
@@ -201,32 +179,56 @@ namespace CheapSkinss
 };
 
         public static List<string> Headbanger_Costume03_Mat3 = new List<string>
-{
-    "costume03_C_mesh",
-    "costume03case_C_mesh",
-    "costume03case_inv_C_mesh",
-    "costume03gun_C_mesh",
-    "costume03gun_inv_C_mesh"
-};
+        {
+            "costume03_C_mesh",
+            "costume03case_C_mesh",
+            "costume03case_inv_C_mesh",
+            "costume03gun_C_mesh",
+            "costume03gun_inv_C_mesh"
+        };
 
         public static List<string> Headbanger_Sword_Mat3 = new List<string>
-{
-    "costume03mechasword_C_mesh"
-};
+        {
+            "costume03mechasword_C_mesh"
+        };
 
         public static List<string> Headbanger_TransportModule_Mat3 = new List<string>
-{
-    "transportmodule_C_mesh",
-    "transportmodule_door_C_mesh"
-};
+        {
+            "transportmodule_C_mesh",
+            "transportmodule_door_C_mesh"
+        };
+        public static Dictionary<string, List<string>> Headbanger0Parts = new Dictionary<string, List<string>>()
+        {
+            { "Headbanger_Body_Mat", Headbanger_Body_Mat },
+            { "Headbanger_Costume00_Mat", Headbanger_Costume00_Mat },
+            { "Headbanger_Sword_Mat", Headbanger_Sword_Mat },
+            { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat },
+            { "Headbanger_SpawnedProps_Mat", Headbanger_SpawnedProps_Mat }
+        };
+        public static Dictionary<string, List<string>> Headbanger1Parts = new Dictionary<string, List<string>>()
+        {
+            { "Headbanger_Body_Mat", Headbanger_Body_Mat1 },
+            { "Headbanger_Costume01B_Mat", Headbanger_Costume01B_Mat1 },
+            { "Headbanger_Costume01PantsB_Mat", Headbanger_Costume01PantsB_Mat1 },
+            { "Headbanger_Sword_Mat", Headbanger_Sword_Mat1 },
+            { "Headbanger_Body_Costume01_Mat", Headbanger_Body_Costume01_Mat1 },
+            { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat1 },
+        };
 
+        public static Dictionary<string, List<string>> Headbanger2Parts = new Dictionary<string, List<string>>()
+        {
+            { "Headbanger_Body_Mat", Headbanger_Body_Mat2 },
+            { "Headbanger_Costume02_Mat", Headbanger_Costume02_Mat2 },
+            { "Headbanger_Sword_Mat", Headbanger_Sword_Mat2 },
+            { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat2 }
+        };
         public static Dictionary<string, List<string>> Headbanger3Parts = new Dictionary<string, List<string>>()
-{
-    { "Headbanger_Body_Mat", Headbanger_Body_Mat3 },
-    { "Headbanger_Costume03_Mat", Headbanger_Costume03_Mat3 },
-    { "Headbanger_Sword_Mat", Headbanger_Sword_Mat3 },
-    { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat3 }
-};
+        {
+            { "Headbanger_Body_Mat", Headbanger_Body_Mat3 },
+            { "Headbanger_Costume03_Mat", Headbanger_Costume03_Mat3 },
+            { "Headbanger_Sword_Mat", Headbanger_Sword_Mat3 },
+            { "Headbanger_TransportModule_Mat", Headbanger_TransportModule_Mat3 }
+        };
 
         public static Dictionary<int, Dictionary<string, List<string>>> HeadbangerAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {

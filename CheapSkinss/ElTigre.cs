@@ -69,29 +69,29 @@ namespace CheapSkinss
 };
 
         public static Dictionary<string, List<string>> ElTigre0Parts = new Dictionary<string, List<string>>
-{
-    { "ElTigre_Body_Mat", ElTigre0Body },
-    { "ElTigre_Expressions_Mat", ElTigre0Expressions }
-};
+        {
+            { "ElTigre_Body_Mat", ElTigre0Body },
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions }
+        };
 
         public static Dictionary<string, List<string>> ElTigre1Parts = new Dictionary<string, List<string>>
-{
-    { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
-    { "ElTigre_Expressions_Mat", ElTigre0Expressions }
-};
+        {
+            { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions }
+        };
 
         public static Dictionary<string, List<string>> ElTigre2Parts = new Dictionary<string, List<string>>
-{
-    { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
-    { "ElTigre_Expressions_Mat", ElTigre0Expressions }
-};
+        {
+            { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions }
+        };
 
         public static Dictionary<string, List<string>> ElTigre3Parts = new Dictionary<string, List<string>>
-{
-    { "ElTigre_Body_Costume_02_Mat", ElTigre3Body },
-    { "ElTigre_Expressions_Mat", ElTigre0Expressions },
-    { "ElTigre_Body_Mat", ElTigre3Props }
-};
+        {
+            { "ElTigre_Body_Costume_02_Mat", ElTigre3Body },
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions },
+            { "ElTigre_Body_Mat", ElTigre3Props }
+        };
 
         public static Dictionary<int, Dictionary<string, List<string>>> ElTigreAltParts = new Dictionary<int, Dictionary<string, List<string>>>
 {

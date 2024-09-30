@@ -69,16 +69,7 @@ namespace CheapSkinss
             "shuriken_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Rapahel0Parts = new Dictionary<string, List<string>>()
-        {
-            { "Raphael_Expressions_01_Mat", Raphael_Expressions_01_Mat },
-            { "Raphael_Mat", Raphael_Mat },
-            { "Raphael_Expressions_02_Mat", Raphael_Expressions_02_Mat },
-            { "Donatello_Shell", Donatello_Shell },
-            { "Raphael_Sai_Mat", Raphael_Sai_Mat },
-            { "Raphael_Props_Bike_Mat", Raphael_Props_Bike_Mat },
-            { "Raphael_Props_Mat_02", Raphael_Props_Mat_02 }
-        };
+        
         //1111
         public static List<string> Raphael_Expressions_01_Costume02_Mat1 = new List<string>
         {
@@ -150,17 +141,7 @@ namespace CheapSkinss
             "sai_02_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Rapahel1Parts = new Dictionary<string, List<string>>()
-        {
-            { "Raphael_Expressions_01_Costume02_Mat", Raphael_Expressions_01_Costume02_Mat1 },
-            { "Raphael_AlphaMask_Mat", Raphael_AlphaMask_Mat1 },
-            { "Raphael_Costume_03_Mat", Raphael_Costume_03_Mat1 },
-            { "Raphael_Expressions_02_Mat", Raphael_Expressions_02_Mat1 },
-            { "Raphael_Expressions_01_Mat", Raphael_Expressions_01_Mat1 },
-            { "Raphael_Mat", Raphael_Mat1 },
-            { "Donatello_Shell", Donatello_Shell1 },
-            { "Raphael_Sai_Mat", Raphael_Sai_Mat1 }
-        };
+        
 
         //22
         public static List<string> Raphael_Expressions_01_Costume01_Mat2 = new List<string>
@@ -228,17 +209,7 @@ namespace CheapSkinss
             "pizzaslice_C_mesh",
             "shuriken_C_mesh"
         };
-        public static Dictionary<string, List<string>> Rapahel2Parts = new Dictionary<string, List<string>>()
-        {
-            { "Raphael_Expressions_01_Costume01_Mat", Raphael_Expressions_01_Costume01_Mat2 },
-            { "Raphael_Costume_01_Mat", Raphael_Costume_01_Mat2 },
-            { "Raphael_Expressions_02_Costume01_Mat", Raphael_Expressions_02_Costume01_Mat2 },
-            { "Donatello_Shell_Ink_Mat", Donatello_Shell_Ink_Mat2 },
-            { "Donatello_Shell", Donatello_Shell2 },
-            { "Raphael_SaiInk_Mat", Raphael_SaiInk_Mat2 },
-            { "Raphael_Props_Bike_Mat", Raphael_Props_Bike_Mat2 },
-            { "Raphael_Props_Mat_02", Raphael_Props_Mat_022 }
-        };
+        
         //3333
         public static List<string> Raphael_Expressions_01_Costume02_Mat3 = new List<string>
 {
@@ -294,14 +265,45 @@ namespace CheapSkinss
     "bike_C_mesh"
 };
 
-    public static List<string> Raphael_Props_Mat_023 = new List<string>
+        public static List<string> Raphael_Props_Mat_023 = new List<string>
 {
     "manholecover_C_mesh",
     "pizza_C_mesh",
     "pizzaslice_C_mesh",
     "shuriken_C_mesh"
 };
-
+        public static Dictionary<string, List<string>> Rapahel0Parts = new Dictionary<string, List<string>>()
+        {
+            { "Raphael_Expressions_01_Mat", Raphael_Expressions_01_Mat },
+            { "Raphael_Mat", Raphael_Mat },
+            { "Raphael_Expressions_02_Mat", Raphael_Expressions_02_Mat },
+            { "Donatello_Shell", Donatello_Shell },
+            { "Raphael_Sai_Mat", Raphael_Sai_Mat },
+            { "Raphael_Props_Bike_Mat", Raphael_Props_Bike_Mat },
+            { "Raphael_Props_Mat_02", Raphael_Props_Mat_02 }
+        };
+        public static Dictionary<string, List<string>> Rapahel1Parts = new Dictionary<string, List<string>>()
+        {
+            { "Raphael_Expressions_01_Costume02_Mat", Raphael_Expressions_01_Costume02_Mat1 },
+            { "Raphael_AlphaMask_Mat", Raphael_AlphaMask_Mat1 },
+            { "Raphael_Costume_03_Mat", Raphael_Costume_03_Mat1 },
+            { "Raphael_Expressions_02_Mat", Raphael_Expressions_02_Mat1 },
+            { "Raphael_Expressions_01_Mat", Raphael_Expressions_01_Mat1 },
+            { "Raphael_Mat", Raphael_Mat1 },
+            { "Donatello_Shell", Donatello_Shell1 },
+            { "Raphael_Sai_Mat", Raphael_Sai_Mat1 }
+        };
+        public static Dictionary<string, List<string>> Rapahel2Parts = new Dictionary<string, List<string>>()
+    {
+            { "Raphael_Expressions_01_Costume01_Mat", Raphael_Expressions_01_Costume01_Mat2 },
+            { "Raphael_Costume_01_Mat", Raphael_Costume_01_Mat2 },
+            { "Raphael_Expressions_02_Costume01_Mat", Raphael_Expressions_02_Costume01_Mat2 },
+            { "Donatello_Shell_Ink_Mat", Donatello_Shell_Ink_Mat2 },
+            { "Donatello_Shell", Donatello_Shell2 },
+            { "Raphael_SaiInk_Mat", Raphael_SaiInk_Mat2 },
+            { "Raphael_Props_Bike_Mat", Raphael_Props_Bike_Mat2 },
+            { "Raphael_Props_Mat_02", Raphael_Props_Mat_022 }
+    };
     public static Dictionary<string, List<string>> Rapahel3Parts = new Dictionary<string, List<string>>()
     {
         { "Raphael_Expressions_01_Costume02_Mat", Raphael_Expressions_01_Costume02_Mat3 },

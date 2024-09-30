@@ -120,20 +120,7 @@ namespace CheapSkinss
     "magnifyingglass_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Donatello0Parts = new Dictionary<string, List<string>>()
-        {
-            { "Donatello_Mat", Donatello_Mat },
-            { "Donatello_Expressions01_Mat", Donatello_Expressions01_Mat },
-            { "Donatello_Expressions02_Mat", Donatello_Expressions02_Mat },
-            { "Donatello_Props", Donatello_Props },
-            { "Donatello_Glider", Donatello_Glider },
-            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat },
-            { "Donatello_Shell", Donatello_Shell },
-            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat },
-            { "Props_mat", Props_mat },
-            { "Donatello_Spawned_Props_Mat", Donatello_Spawned_Props_Mat },
-            { "Donatello_Props02_Mat", Donatello_Props02_Mat }
-        };
+        
         //11
         public static List<string> Donatello_Costume03_Body_Mat1 = new List<string>
         {
@@ -267,21 +254,7 @@ namespace CheapSkinss
             "magnifyingglass_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Donatello1Parts = new Dictionary<string, List<string>>()
-        {
-            { "Donatello_Costume03_Body_Mat", Donatello_Costume03_Body_Mat1 },
-            { "Donatello_Costume_03_Mat", Donatello_Costume_03_Mat1 },
-            { "Donatello_Expressions01_Costume03_Mat", Donatello_Expressions01_Costume03_Mat1 },
-            { "Donatello_Expressions02_Costume03_Mat", Donatello_Expressions02_Costume03_Mat1 },
-            { "Donatello_Props", Donatello_Props1 },
-            { "Donatello_Glider", Donatello_Glider1 },
-            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat1 },
-            { "Donatello_Shell", Donatello_Shell1 },
-            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat1 },
-            { "Props_mat", Props_mat1 },
-            { "Donatello_Spawned_Props_Mat", Donatello_Spawned_Props_Mat1 },
-            { "Donatello_Props02_Mat", Donatello_Props02_Mat1 }
-        };
+        
         //2
         public static List<string> Donatello_Costume_01_Mat2 = new List<string>
 {
@@ -400,21 +373,7 @@ namespace CheapSkinss
             "vacuum_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Donatello2Parts = new Dictionary<string, List<string>>()
-        {
-            { "Donatello_Costume_01_Mat", Donatello_Costume_01_Mat2 },
-            { "Donatello_Expressions01_Costume02_Mat", Donatello_Expressions01_Costume02_Mat2 },
-            { "Donatello_Expressions02_Costume02_Mat", Donatello_Expressions02_Costume02_Mat2 },
-            { "Donatello_Props_Costume02_mat", Donatello_Props_Costume02_mat2 },
-            { "Donatello_Glider_Costume02_Mat", Donatello_Glider_Costume02_Mat2 },
-            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat2 },
-            { "Donatello_Shell_Ink_Mat", Donatello_Shell_Ink_Mat2 },
-            { "Donatello_Shell", Donatello_Shell2 },
-            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat2 },
-            { "Donatello_Props02_Mat", Donatello_Props02_Mat2 },
-            { "Donatello_SpawnedProps_Costume02_Mat", Donatello_SpawnedProps_Costume02_Mat2 },
-            { "Donatello_Props02_Costume02_Mat", Donatello_Props02_Costume02_Mat2 }
-        };
+        
         //3333
         public static List<string> Donatello_Costume04_Body_Mat3 = new List<string>
 {
@@ -540,6 +499,51 @@ namespace CheapSkinss
             "taser_C_mesh",
             "vacuum_C_mesh",
             "magnifyingglass_C_mesh"
+        };
+        public static Dictionary<string, List<string>> Donatello0Parts = new Dictionary<string, List<string>>()
+        {
+            { "Donatello_Mat", Donatello_Mat },
+            { "Donatello_Expressions01_Mat", Donatello_Expressions01_Mat },
+            { "Donatello_Expressions02_Mat", Donatello_Expressions02_Mat },
+            { "Donatello_Props", Donatello_Props },
+            { "Donatello_Glider", Donatello_Glider },
+            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat },
+            { "Donatello_Shell", Donatello_Shell },
+            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat },
+            { "Props_mat", Props_mat },
+            { "Donatello_Spawned_Props_Mat", Donatello_Spawned_Props_Mat },
+            { "Donatello_Props02_Mat", Donatello_Props02_Mat }
+        };
+        public static Dictionary<string, List<string>> Donatello1Parts = new Dictionary<string, List<string>>()
+        {
+            { "Donatello_Costume03_Body_Mat", Donatello_Costume03_Body_Mat1 },
+            { "Donatello_Costume_03_Mat", Donatello_Costume_03_Mat1 },
+            { "Donatello_Expressions01_Costume03_Mat", Donatello_Expressions01_Costume03_Mat1 },
+            { "Donatello_Expressions02_Costume03_Mat", Donatello_Expressions02_Costume03_Mat1 },
+            { "Donatello_Props", Donatello_Props1 },
+            { "Donatello_Glider", Donatello_Glider1 },
+            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat1 },
+            { "Donatello_Shell", Donatello_Shell1 },
+            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat1 },
+            { "Props_mat", Props_mat1 },
+            { "Donatello_Spawned_Props_Mat", Donatello_Spawned_Props_Mat1 },
+            { "Donatello_Props02_Mat", Donatello_Props02_Mat1 }
+        };
+
+        public static Dictionary<string, List<string>> Donatello2Parts = new Dictionary<string, List<string>>()
+        {
+            { "Donatello_Costume_01_Mat", Donatello_Costume_01_Mat2 },
+            { "Donatello_Expressions01_Costume02_Mat", Donatello_Expressions01_Costume02_Mat2 },
+            { "Donatello_Expressions02_Costume02_Mat", Donatello_Expressions02_Costume02_Mat2 },
+            { "Donatello_Props_Costume02_mat", Donatello_Props_Costume02_mat2 },
+            { "Donatello_Glider_Costume02_Mat", Donatello_Glider_Costume02_Mat2 },
+            { "Donatello_PartyWagon_Mat", Donatello_PartyWagon_Mat2 },
+            { "Donatello_Shell_Ink_Mat", Donatello_Shell_Ink_Mat2 },
+            { "Donatello_Shell", Donatello_Shell2 },
+            { "TMNT_SW_PizzaBox_Mat", TMNT_SW_PizzaBox_Mat2 },
+            { "Donatello_Props02_Mat", Donatello_Props02_Mat2 },
+            { "Donatello_SpawnedProps_Costume02_Mat", Donatello_SpawnedProps_Costume02_Mat2 },
+            { "Donatello_Props02_Costume02_Mat", Donatello_Props02_Costume02_Mat2 }
         };
 
         public static Dictionary<string, List<string>> Donatello3Parts = new Dictionary<string, List<string>>()

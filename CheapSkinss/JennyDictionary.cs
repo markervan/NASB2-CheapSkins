@@ -92,14 +92,7 @@ namespace CheapSkinss
             "monitorScreen_C_mesh",
 
         };
-        public static Dictionary<string, List<string>> Jenny0Parts = new Dictionary<string, List<string>>
-        {
-            { "Jenny_Expressions_Mat", Jenny0expressions},
-            { "Jenny_Body_Mat", Jenny0Body},
-            { "Jenny_Costume00_Props_01_Mat", Jenny0props1},
-            { "Jenny_Costume00_Props_02_Mat", Jenny0props2},
-            { "Jenny_Props_Screen_Mat", Jenny0screen}
-        };
+        
         //2
         public static List<string> Jenny_Costume02_Body_Mat2 = new List<string>
 {
@@ -203,16 +196,7 @@ namespace CheapSkinss
     "stopSign_inv_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Jenny2Parts = new Dictionary<string, List<string>>()
-        {
-            { "Jenny_Costume02_Body_Mat", Jenny_Costume02_Body_Mat2 },
-            { "Jenny_Expressions_Mat", Jenny_Expressions_Mat2 },
-            { "Jenny_Body_Mat", Jenny_Body_Mat2 },
-            { "Jenny_Costume00_Props_02_Mat", Jenny_Costume00_Props_02_Mat2 },
-            { "Jenny_Costume02_Props_Mat", Jenny_Costume02_Props_Mat2 },
-            { "Jenny_Props_Screen_Mat", Jenny_Props_Screen_Mat2 },
-            { "Jenny_Costume00_Props_01_Mat", Jenny_Costume00_Props_01_Mat2 }
-        };
+        
         //3
         public static List<string> Jenny_Costume03_Body_Mat3 = new List<string>
 {
@@ -307,14 +291,7 @@ namespace CheapSkinss
             "monitorScreen_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Jenny3Parts = new Dictionary<string, List<string>>()
-        {
-            { "Jenny_Costume03_Body_Mat", Jenny_Costume03_Body_Mat3 },
-            { "Jenny_Costume03_Expressions_Mat", Jenny_Costume03_Expressions_Mat3 },
-            { "Jenny_Costume03_Props_Mat", Jenny_Costume03_Props_Mat3 },
-            { "Jenny_Costume03_Props_02_Mat", Jenny_Costume03_Props_02_Mat3 },
-            { "Jenny_Props_Screen_Mat", Jenny_Props_Screen_Mat3 }
-        };
+        
         //1
         public static List<string> Jenny_Costume01_Body_Mat1 = new List<string>
 {
@@ -418,6 +395,14 @@ namespace CheapSkinss
         {
             "monitorScreen_C_mesh"
         };
+        public static Dictionary<string, List<string>> Jenny0Parts = new Dictionary<string, List<string>>
+        {
+            { "Jenny_Expressions_Mat", Jenny0expressions},
+            { "Jenny_Body_Mat", Jenny0Body},
+            { "Jenny_Costume00_Props_01_Mat", Jenny0props1},
+            { "Jenny_Costume00_Props_02_Mat", Jenny0props2},
+            { "Jenny_Props_Screen_Mat", Jenny0screen}
+        };
 
         public static Dictionary<string, List<string>> Jenny1Parts = new Dictionary<string, List<string>>()
         {
@@ -427,7 +412,24 @@ namespace CheapSkinss
             { "Jenny_Costume01_Props_Mat", Jenny_Costume01_Props_Mat1 },
             { "Jenny_Props_Screen_Mat", Jenny_Props_Screen_Mat1 }
         };
-
+        public static Dictionary<string, List<string>> Jenny2Parts = new Dictionary<string, List<string>>()
+        {
+            { "Jenny_Costume02_Body_Mat", Jenny_Costume02_Body_Mat2 },
+            { "Jenny_Expressions_Mat", Jenny_Expressions_Mat2 },
+            { "Jenny_Body_Mat", Jenny_Body_Mat2 },
+            { "Jenny_Costume00_Props_02_Mat", Jenny_Costume00_Props_02_Mat2 },
+            { "Jenny_Costume02_Props_Mat", Jenny_Costume02_Props_Mat2 },
+            { "Jenny_Props_Screen_Mat", Jenny_Props_Screen_Mat2 },
+            { "Jenny_Costume00_Props_01_Mat", Jenny_Costume00_Props_01_Mat2 }
+        };
+        public static Dictionary<string, List<string>> Jenny3Parts = new Dictionary<string, List<string>>()
+        {
+            { "Jenny_Costume03_Body_Mat", Jenny_Costume03_Body_Mat3 },
+            { "Jenny_Costume03_Expressions_Mat", Jenny_Costume03_Expressions_Mat3 },
+            { "Jenny_Costume03_Props_Mat", Jenny_Costume03_Props_Mat3 },
+            { "Jenny_Costume03_Props_02_Mat", Jenny_Costume03_Props_02_Mat3 },
+            { "Jenny_Props_Screen_Mat", Jenny_Props_Screen_Mat3 }
+        };
         public static Dictionary<int, Dictionary<string, List<string>>> JennyAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {
             { 0, Jenny0Parts},
