@@ -35,11 +35,7 @@ namespace CheapSkinss
             "hand_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Azula0Parts = new Dictionary<string, List<string>>()
-        {
-            { "Azula_Costume_01_Mat", Azula_Costume_01_Mat },
-            { "Azula_Expressions_Mat", Azula_Expressions_Mat }
-        };
+        
         //1
 
         public static List<string> Azula_Costume_02_Mat1 = new List<string>
@@ -77,12 +73,7 @@ namespace CheapSkinss
             "hand_C_mesh"
         };
 
-        public static Dictionary<string, List<string>> Azula1Parts = new Dictionary<string, List<string>>()
-        {
-            { "Azula_Costume_02_Mat", Azula_Costume_02_Mat1 },
-            { "Azula_Expressions_Mat", Azula_Expressions_Mat1 },
-            { "Azula_Expressions_HandMask_Mat", Azula_Expressions_HandMask_Mat1 }
-        };
+        
 
         //2
         public static List<string> Azula_Costume_03_Mat2 = new List<string>
@@ -117,18 +108,13 @@ namespace CheapSkinss
     "hand_C_mesh"
 };
 
-        public static Dictionary<string, List<string>> Azula2Parts = new Dictionary<string, List<string>>()
-        {
-            { "Azula_Costume_03_Mat", Azula_Costume_03_Mat2 },
-            { "Azula_Expressions_Mat", Azula_Expressions_Mat2 },
-            { "Azula_Expressions_HandMask_Mat", Azula_Expressions_HandMask_Mat2 }
-        };
+        
         //3
         public static List<string> Azula_Costume_04_Mat3 = new List<string>
-{
-    "costume03_cloth_C_mesh",
-    "costume03_hair_C_mesh"
-};
+        {
+            "costume03_cloth_C_mesh",
+            "costume03_hair_C_mesh"
+        };
 
         public static List<string> Azula_Expressions_Costume_04_Mat3 = new List<string>
 {
@@ -150,12 +136,28 @@ namespace CheapSkinss
     "upeyelid_L_mesh",
     "upeyelid_R_mesh"
 };
-
+        public static Dictionary<string, List<string>> Azula0Parts = new Dictionary<string, List<string>>()
+        {
+            { "Azula_Costume_01_Mat", Azula_Costume_01_Mat },
+            { "Azula_Expressions_Mat", Azula_Expressions_Mat }
+        };
+        public static Dictionary<string, List<string>> Azula1Parts = new Dictionary<string, List<string>>()
+        {
+            { "Azula_Costume_02_Mat", Azula_Costume_02_Mat1 },
+            { "Azula_Expressions_Mat", Azula_Expressions_Mat1 },
+            { "Azula_Expressions_HandMask_Mat", Azula_Expressions_HandMask_Mat1 }
+        };
+        public static Dictionary<string, List<string>> Azula2Parts = new Dictionary<string, List<string>>()
+        {
+            { "Azula_Costume_03_Mat", Azula_Costume_03_Mat2 },
+            { "Azula_Expressions_Mat", Azula_Expressions_Mat2 },
+            { "Azula_Expressions_HandMask_Mat", Azula_Expressions_HandMask_Mat2 }
+        };
         public static Dictionary<string, List<string>> Azula3Parts = new Dictionary<string, List<string>>()
-{
-    { "Azula_Costume_04_Mat", Azula_Costume_04_Mat3 },
-    { "Azula_Expressions_Costume_04_Mat", Azula_Expressions_Costume_04_Mat3 }
-};
+        {
+            { "Azula_Costume_04_Mat", Azula_Costume_04_Mat3 },
+            { "Azula_Expressions_Costume_04_Mat", Azula_Expressions_Costume_04_Mat3 }
+        };
 
         public static Dictionary<int, Dictionary<string, List<string>>> AzulaAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {

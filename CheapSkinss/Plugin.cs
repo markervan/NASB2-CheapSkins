@@ -1061,6 +1061,11 @@ namespace CheapSkinss
                                 {
                                     if (skinData.skinIntIndex == new1)
                                     {
+                                        if(skinData.skinIndex != __instance.Data.Character.skinIndex)
+                                        {
+                                            return;
+                                        }
+
                                         //Debug.Log("CustomSkin Found - PlayerRef: " + __instance.Data.CharacterIndex + " CustomSkinInt: " + new1);
 
                                         CharacterMaterialOverridesHandler characterMaterialOverridesHandler = GetCharacterMaterialOverridesHandler(__instance);
@@ -1202,6 +1207,11 @@ namespace CheapSkinss
                                 {
                                     if (skinData.skinIntIndex == MData.customSkinID)
                                     {
+                                        if (skinData.skinIndex != __instance.Data.Character.skinIndex)
+                                        {
+                                            return;
+                                        }
+
                                         //Debug.Log("CustomSkin Found - PlayerRef: " + __instance.Data.CharacterIndex + " CustomSkinInt: " + MData.customSkinID + " CustomPlayerRef: " + MData.playerRef);
 
                                         CharacterMaterialOverridesHandler characterMaterialOverridesHandler = GetCharacterMaterialOverridesHandler(__instance);
@@ -1860,7 +1870,7 @@ namespace CheapSkinss
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CharacterHUD), "CharacterHUDSpriteLoaded")]
-            public static bool CharacterHUDSpriteLoaded(CharacterHUD __instance, int skin, Sprite sprite)
+            public static bool CharacterHUDSpriteLoaded(CharacterHUD __instance, Sprite sprite)
             {
                 if (dataManager.Online)
                 {
@@ -1894,10 +1904,10 @@ namespace CheapSkinss
                                 {
                                     if (entry2.skinIntIndex == new1)
                                     {
-                                        if (entry2.skinIndex != skin)
+                                        /*if (entry2.skinIndex != __instance.initialData.character.skinIndex)
                                         {
                                             return true;
-                                        }
+                                        }*/
 
 
                                         Texture2D texture = entry2.VSRender;
