@@ -100,22 +100,26 @@ namespace CheapSkinss
 };
 
         public static List<string> Squidward2Costume = new List<string>
-{
-    "body_C_mesh",
-    "bodyVar_C_mesh",
-    "costume03_armor_C_mesh",
-    "costume03_attack01_C_mesh",
-    "costume03_attack03_C_mesh",
-    "costume03_attack04_C_mesh",
-    "costume03_attack05_C_mesh",
-    "costume03_attack006_C_mesh",
-    "costume03_happy_C_mesh",
-    "costume03_helmet_C_mesh",
-    "costume03_mouthclosed_C_mesh",
-    "costume03_mouthopen_C_mesh",
-    "costume03_mustache_C_mesh",
-    "costume03_smear_C_mesh"
-};
+        {
+            "body_C_mesh",
+            "bodyVar_C_mesh",
+            "costume03_armor_C_mesh",
+            "costume03_attack01_C_mesh",
+            "costume03_attack03_C_mesh",
+            "costume03_attack04_C_mesh",
+            "costume03_attack05_C_mesh",
+            "costume03_attack06_C_mesh",
+            "costume03_happy_C_mesh",
+            "costume03_helmet_C_mesh",
+            "costume03_mouthclosed_C_mesh",
+            "costume03_mouthopen_C_mesh",
+            "costume03_mustache_C_mesh",
+            "costume03_smear_C_mesh",
+            "default_helmet",
+            "attack05_helmet",
+            "HappyVariation_Mustache",
+            "bandages_helmet"
+        };
 
         public static List<string> Squidward3Costume = new List<string>
 {
@@ -126,53 +130,53 @@ namespace CheapSkinss
 };
 
         public static Dictionary<string, List<string>> Squidward0Parts = new Dictionary<string, List<string>>
-{
-    { "Squidward_Base_Material", Squidward0Base },
-    { "Squidward_Costume_03_Mat", Squidward0Costume },
-    { "Squidward_Expression_Material", Squidward0Expressions },
-    { "Squidward_Props_Material_01", Squidward0Props1 },
-    { "Squidward_Props_Material_02", Squidward0Props2 },
-    { "Squidward_Props_Material_03", Squidward0Props3 }
-};
+        {
+            { "Squidward_Base_Material", Squidward0Base },
+            { "Squidward_Costume_03_Mat", Squidward0Costume },
+            { "Squidward_Expression_Material", Squidward0Expressions },
+            { "Squidward_Props_Material_01", Squidward0Props1 },
+            { "Squidward_Props_Material_02", Squidward0Props2 },
+            { "Squidward_Props_Material_03", Squidward0Props3 }
+        };
 
         public static Dictionary<string, List<string>> Squidward1Parts = new Dictionary<string, List<string>>
-{
-    { "Squidward_Base_Material", Squidward1Base },
-    { "Squidward_Costume_03_Mat", Squidward1Body },
-    { "Squidward_Costume_02_Mat", Squidward1Costume },
-    { "Squidward_Expression_Material", Squidward0Expressions },
-    { "Squidward_Props_Material_01", Squidward0Props1 },
-    { "Squidward_Props_Material_02", Squidward0Props2 },
-    { "Squidward_Props_Material_03", Squidward0Props3 }
-};
+        {
+            { "Squidward_Base_Material", Squidward1Base },
+            { "Squidward_Costume_03_Mat", Squidward1Body },
+            { "Squidward_Costume_02_Mat", Squidward1Costume },
+            { "Squidward_Expression_Material", Squidward0Expressions },
+            { "Squidward_Props_Material_01", Squidward0Props1 },
+            { "Squidward_Props_Material_02", Squidward0Props2 },
+            { "Squidward_Props_Material_03", Squidward0Props3 }
+        };
 
         public static Dictionary<string, List<string>> Squidward2Parts = new Dictionary<string, List<string>>
-{
-    { "Squidward_Base_Material", Squidward1Base },
-    { "Squidward_Costume_03_Mat", Squidward2Costume },
-    { "Squidward_Expression_Material", Squidward0Expressions },
-    { "Squidward_Props_Material_01", Squidward0Props1 },
-    { "Squidward_Props_Material_02", Squidward0Props2 },
-    { "Squidward_Props_Material_03", Squidward0Props3 }
-};
+        {
+            { "Squidward_Base_Material", Squidward1Base },
+            { "Squidward_Costume_03_Mat", Squidward2Costume },
+            { "Squidward_Expression_Material", Squidward0Expressions },
+            { "Squidward_Props_Material_01", Squidward0Props1 },
+            { "Squidward_Props_Material_02", Squidward0Props2 },
+            { "Squidward_Props_Material_03", Squidward0Props3 }
+        };
 
         public static Dictionary<string, List<string>> Squidward3Parts = new Dictionary<string, List<string>>
-{
-    { "Squidward_Base_Material", Squidward1Base },
-    { "Squidward_Costume_03_Mat", Squidward1Body },
-    { "Squidward_Costume_04_Mat", Squidward3Costume },
-    { "Squidward_Expression_Material", Squidward0Expressions },
-    { "Squidward_Props_Material_01", Squidward0Props1 },
-    { "Squidward_Props_Material_02", Squidward0Props2 },
-    { "Squidward_Props_Material_03", Squidward0Props3 }
-};
+        {
+            { "Squidward_Base_Material", Squidward1Base },
+            { "Squidward_Costume_03_Mat", Squidward1Body },
+            { "Squidward_Costume_04_Mat", Squidward3Costume },
+            { "Squidward_Expression_Material", Squidward0Expressions },
+            { "Squidward_Props_Material_01", Squidward0Props1 },
+            { "Squidward_Props_Material_02", Squidward0Props2 },
+            { "Squidward_Props_Material_03", Squidward0Props3 }
+        };
 
         public static Dictionary<int, Dictionary<string, List<string>>> SquidwardAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {
             { 0, Squidward0Parts},
-            { 1, Squidward0Parts},
-            { 2, Squidward0Parts},
-            { 3, Squidward0Parts}
+            { 1, Squidward1Parts},
+            { 2, Squidward2Parts},
+            { 3, Squidward3Parts}
         };
 
     }

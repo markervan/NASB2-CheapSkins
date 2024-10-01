@@ -682,6 +682,16 @@ namespace CheapSkinss
                                         foreach (var MOGTargets in MOGVar.Targets)
                                         {
                                             Debug.Log($"Attempting to load GameObject from asset bundle for target: {MOGTargets.targetName}");
+
+                                            if (string.IsNullOrWhiteSpace(MOGTargets.targetName))
+                                            {
+                                                Debug.LogWarning("IS NULL OR WHITE SPACE");
+
+                                                Mesh nullMesh = new Mesh();
+                                                customSkinData.customMeshesToReplace.Add(MOGTargets.targetMesh, nullMesh);
+                                                continue;
+                                            }
+
                                             GameObject fbx = bundle.LoadAsset<GameObject>(MOGTargets.targetName);
 
                                             if (fbx == null)
@@ -1288,7 +1298,11 @@ namespace CheapSkinss
                                                     if (skinData.customMeshesToReplace.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh))
                                                     {
                                                         //Debug.Log($"SkinnedMeshRenderer name matched and replaced: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
+
+                                                        //if(replacementMesh)
+
                                                         skinnedMeshRenderer.sharedMesh = replacementMesh;
+
                                                     }
                                                     else
                                                     {
@@ -1448,6 +1462,11 @@ namespace CheapSkinss
             public static bool ApplyMaterialOverride(CharacterMaterialOverridesHandler __instance, string materialOverrideID, ref bool __result)
             {
                 //Plugin.Log.LogInfo("Apply");
+
+                if(materialOverrideID == "Shield_Default" || materialOverrideID == "Shield_PerfectBlock")
+                {
+                    return true;
+                }
 
                 if (__instance.TextureOverrides == null)
                 {

@@ -108,9 +108,7 @@ namespace CheapSkinss
             { "Gerald_Costumes_Mat",  Gerald_Costumes_Mat},
             { "Gerald_Hair_Mat", Gerald_Hair_Mat},
             { "Gerald_Expressions_02_Mat", Gerald_Expressions_02_Mat },
-
             { "Gerald_Expressions_01_Mat",  Gerald_Expressions_01_Mat},
-
             { "Gerald_Props_Bike_Mat",  Gerald_Props_Bike_Mat},
             { "Gerald_Props_Mat",  Gerald_Props_Mat}
         };
