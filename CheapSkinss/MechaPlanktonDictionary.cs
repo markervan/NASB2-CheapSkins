@@ -11,7 +11,7 @@ namespace CheapSkinss
             "antennabase_C_mesh",
             "antennaheli_C_mesh",
             "arms_C_mesh",
-            "bodybottom_C_mesh",
+            "bodyBottom_C_mesh",
             "costume01_legs_C_mesh",
             "costume01_middlebottom_C_mesh",
             "costume01_middletop_C_mesh",
@@ -88,10 +88,6 @@ namespace CheapSkinss
             { 1, MechaPlankton1Parts},
             { 2, MechaPlankton2Parts},
             { 3, MechaPlankton3Parts}
-        };
-        public static Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>> characterCodenames = new Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>>
-        {
-            { "MechaPlankton", MechaPlanktonAltParts }
         };
 
     }
