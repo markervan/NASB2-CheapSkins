@@ -10,6 +10,9 @@
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Program Files (x86)\Steam\steamapps\common\Nickelodeon All-Star Brawl 2\BepInEx\plugins&quot;" />
 	</Target>
+	<Target Name="PostBuild1" AfterTargets="PostBuildEvent">
+		<Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Arcis- Speed Boat Theme\BepInEx\plugins&quot;" />
+	</Target>
 	
 	
   <ItemGroup>

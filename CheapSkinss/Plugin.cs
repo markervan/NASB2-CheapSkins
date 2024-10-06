@@ -14,6 +14,7 @@ using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using TMPro;
 using UnityEngine;
@@ -74,317 +75,7 @@ namespace CheapSkinss
         public static string CUSTOM_SKIN_ID = "CUSTOM_SKIN_ID";
         public static string CUSTOM_SKIN_NAME = "CUSTOM_SKIN_NAME";
         public static Dictionary<string, List<string>> materialMeshGroups = new Dictionary<string, List<string>>();
-        public static bool profileSelected = false;
-
-        public class CharacterMetaData
-        {
-            public int playerRef;
-            public CharacterCodename characterCodename;
-            public int skinIndex;
-            public int customSkinID;
-        }
-
-        private class MetaData : MonoBehaviour
-        {
-            private CharacterPanel characterPanel;
-            private CharacterSelectReadyBanner banner;
-            public CharacterSelect characterSelect;
-            private int playerRef;
-            private CharacterCodename characterCodename;
-            private CharacterCodename previousCharacterCodename;
-            private int skinIndex1;
-            private int previousSkinIndex;
-            private int customSkinID;
-            public List<CustomSkinData> customSkinsID = new List<CustomSkinData>();
-            private int inputDeviceIndex;
-            private int currentCustomSkinID;
-            private TMPro.TextMeshProUGUI mainTitleSkin;
-            private TMPro.TextMeshProUGUI authorTitle;
-            private GameObject CustominfoSection;
-            private UnityEngine.UI.Image skinImage;
-            public bool profileisSelected;
-
-            private void Awake()
-            {
-                characterPanel = this.gameObject.GetComponent<CharacterPanel>();
-                Debug.Log(characterPanel.gameObject.name);
-
-                CharacterSelectReadyBanner[] banners = FindObjectsOfType<CharacterSelectReadyBanner>(true);
-                if (banners.Length > 0)
-                {
-                    banner = banners[0];
-                    Debug.Log("Found CharacterSelectReadyBanner: " + banner.gameObject.name);
-                }
-
-                inputDeviceIndex = inputManager.GetPlayerInputDeviceIndex(characterPanel.playerIndex);
-
-                // Initialize previous values
-                previousCharacterCodename = characterPanel.currentCharacter;
-                previousSkinIndex = characterPanel.currentSkin;
-                SetUpPanel();
-                if (dataManager.Online)
-                {
-                    Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
-                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, 0);
-                }
-            }
-            private void SetUpPanel()
-            {
-                Transform childTransform = characterPanel.gameObject.transform.Find("InfoSection");
-
-                CustominfoSection = GameObject.Instantiate(childTransform.gameObject);
-
-                CustominfoSection.transform.SetParent(characterPanel.gameObject.transform, true);
-                //CustominfoSection.SetActive(true);
-                CustominfoSection.name = "CustomSkinInfo";
-                CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0);
-                CustominfoSection.transform.localScale = new Vector3(1, 1, 1);
-
-                Transform mainTextTransform = CustominfoSection.transform.Find("MainTitleText");
-                mainTitleSkin = mainTextTransform.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
-                mainTitleSkin.alignment = TextAlignmentOptions.Center;
-                mainTitleSkin.gameObject.transform.localPosition = new Vector3(46.8699f, -24.9899f, 0);
-                mainTitleSkin.text = "TEST";
-                CustominfoSection.SetActive(false);
-
-
-                Transform mainTextTransform11 = CustominfoSection.transform.Find("SecondaryTitle");
-                authorTitle = mainTextTransform11.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                authorTitle.text = "test1";
-
-                Transform mainTextTransform12 = CustominfoSection.transform.Find("PlayerTag");
-                skinImage = mainTextTransform12.gameObject.GetComponentInChildren<UnityEngine.UI.Image>();
-                skinImage.preserveAspect = true;
-                skinImage.material = null;
-                skinImage.color = Color.white;
-
-                TMPro.TextMeshProUGUI textComponent = mainTextTransform12.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                GameObject textP1 = textComponent.gameObject;
-                textP1.SetActive(false);
-            }
-            public void UpdateData()
-            {
-                if (banner.isReady)
-                {
-                    return;
-                }
-
-                // Update only if the current character or skinIndex has changed
-                if (characterCodename == previousCharacterCodename && skinIndex1 == previousSkinIndex)
-                {
-                    return;
-                }
-
-                //Debug.Log("UpdateData from MetaData");
-
-
-
-                characterCodename = characterPanel.currentCharacter;
-                skinIndex1 = characterPanel.currentSkin;
-
-                // Store the current values as the previous ones for the next comparison
-                previousCharacterCodename = characterCodename;
-                previousSkinIndex = skinIndex1;
-
-                customSkinsID.Clear();
-                customSkinID = 0;
-                currentCustomSkinID = 0;
-                /*if (customSkinID == 0)
-                {
-                    CustominfoSection.SetActive(false);
-                }*/
-                // Add default skin
-                CustomSkinData defaultSkin = new CustomSkinData
-                {
-                    skinID = "",
-                    skinName = "Default",
-                    skinIndex = 0,
-                    characterCodename = characterPanel.currentCharacter,
-                    skinIntIndex = 0,
-                    stockImage = null,
-                    VSRender = null,
-                    authorName = "Fair Play Labs",
-                    //customMeshsesToReplace = null,
-                    CustomMOGList = null
-
-
-                };
-                customSkinsID.Add(defaultSkin);
-
-                // Add matching custom skins
-                foreach (CustomSkinData skinData in customSkinDatas)
-                {
-                    if (skinData.characterCodename == characterPanel.currentCharacter && skinData.skinIndex == characterPanel.currentSkin)
-                    {
-                        customSkinsID.Add(skinData);
-                    }
-                }
-            }
-
-            private void Update()
-            {
-                if (!profileisSelected)
-                {
-                    return;
-                }
-
-                if (profileisSelected)
-                {
-                    CustominfoSection.SetActive(true);
-                }
-
-
-                characterCodename = characterPanel.currentCharacter;
-                skinIndex1 = characterPanel.currentSkin;
-                inputDeviceIndex = inputManager.GetPlayerInputDeviceIndex(characterPanel.playerIndex);
-
-                if (characterPanel.playerIsReady)
-                {
-                    CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -236.8675f, 0);
-                    
-                }
-                else
-                {
-                    CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0);
-                }
-
-
-                if (banner.isReady)
-                {
-                    CustominfoSection.SetActive(false);
-                    //Debug.Log("Player Ref: " + characterPanel.currentSelector + " - Banner is READY");
-                    return;
-                }
-                else
-                {
-
-                    if (!CustominfoSection.activeSelf && currentCustomSkinID != 0) // activeSelf returns true if the GameObject is active
-                    {
-                        CustominfoSection.SetActive(true);
-                    }
-                }
-
-                if (inputDeviceIndex == -1 || characterPanel.characterSelect.StartCoundown ||
-                    !characterPanel.currentSelector.Active || !characterPanel.currentSelector.Enabled)
-                {
-                    return;
-                }
-
-                // Handle R trigger input for cycling skins forward
-                if (!characterPanel.randomMode && inputManager.GetUIInputDown(inputDeviceIndex, UIKey.Right, "", false))
-                {
-                    Debug.Log($"R trigger from {characterPanel.gameObject.name}");
-                    currentCustomSkinID = (currentCustomSkinID + 1) % customSkinsID.Count; // Cycle forward
-                    SetCharacterSkin();
-                }
-
-                // Handle L trigger input for cycling skins backward
-                if (!characterPanel.randomMode && inputManager.GetUIInputDown(inputDeviceIndex, UIKey.Left, "", false))
-                {
-                    Debug.Log($"L trigger from {characterPanel.gameObject.name}");
-                    currentCustomSkinID = (currentCustomSkinID - 1 + customSkinsID.Count) % customSkinsID.Count; // Cycle backward
-                    SetCharacterSkin();
-                }
-                if (!characterPanel.randomMode && inputManager.GetUIInputDown(inputDeviceIndex, UIKey.Confirm, "", false))
-                {
-                    characterPanel.characterSelect.MarkSelectorAsReady(characterPanel.selectorNumber);
-                    characterPanel.currentSelector.OnCustomizeMenu = false;
-                    profileisSelected = false;
-                }
-                // Check if character or skin has changed, and update accordingly
-                if (characterCodename != previousCharacterCodename || skinIndex1 != previousSkinIndex)
-                {
-                    UpdateData();
-                }
-            }
-
-            public void SetCharacterSkin()
-            {
-                if (customSkinsID.Count > 1)
-                {
-                    uiManager.PlaySound(characterSelect.ChangeSkinSFX);
-                }
-
-
-                characterCodename = customSkinsID[currentCustomSkinID].characterCodename;
-                customSkinID = customSkinsID[currentCustomSkinID].skinIntIndex;
-                Debug.Log(playerRef);
-                Debug.Log(currentCustomSkinID);
-                Debug.Log(customSkinsID[currentCustomSkinID].skinID);
-                Debug.Log(customSkinID);
-
-                if (customSkinsID[currentCustomSkinID].skinID == null || customSkinsID[currentCustomSkinID].authorName == null)
-                {
-                    CustominfoSection.SetActive(false);
-                    return;
-                }
-
-
-                mainTitleSkin.text = customSkinsID[currentCustomSkinID].skinName.ToString();
-                authorTitle.text = customSkinsID[currentCustomSkinID].authorName;
-                skinImage.sprite = customSkinsID[currentCustomSkinID].stockImageSprite;
-                if (dataManager.Online)
-                {
-                    Player currentPlayer = Plugin.onlineManager.CurrentPlayer;
-                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
-                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_NAME, uiManager.MainUserNickname);
-                }
-
-
-                /*if (customSkinID == 0)
-                {
-                    CustominfoSection.SetActive(false);
-                }
-                else
-                {
-                    CustominfoSection.SetActive(true);
-                }*/
-            }
-
-            public void AddMetaData()
-            {
-                Debug.Log($"AddMetaData from Player index: {characterPanel.selectorNumber} - Codename: {characterPanel.currentCharacter}" );
-                //Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
-                //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, 0);
-
-                bool flag = this.customSkinID == 0;
-                if (!flag)
-                {
-                    int new2 = 0;
-                    //Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
-                    //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, new2);
-
-                    foreach (Plugin.CharacterMetaData characterMetaData in Plugin.metaDataList)
-                    {
-                        bool flag2 = characterMetaData.playerRef == this.characterPanel.selectorNumber;
-                        if (flag2)
-                        {
-                            return;
-                        }
-                    }
-                    bool flag3 = !Plugin.dataManager.Online;
-                    if (flag3)
-                    {
-                        Debug.Log($"Adding MetaData of Player index: {characterPanel.selectorNumber} - Codename: {characterPanel.currentCharacter} - CustomSkinID: {customSkinID}");
-                        Plugin.CharacterMetaData characterMetaData2 = new Plugin.CharacterMetaData
-                        {
-                            skinIndex = this.characterPanel.currentSkin,
-                            characterCodename = this.characterPanel.currentCharacter,
-                            playerRef = this.characterPanel.selectorNumber,
-                            customSkinID = this.customSkinID
-                        };
-                        Plugin.metaDataList.Add(characterMetaData2);
-                    }
-                    else
-                    {
-                        //Player currentPlayer = Plugin.onlineManager.CurrentPlayer;
-                        //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
-                    }
-                }
-            }
-
-        }
-
+        //public static bool profileSelected = false;
 
 
         #region directories
@@ -401,7 +92,8 @@ namespace CheapSkinss
             { "Rocko", Rocko.RockoAltParts},
             { "Jimmy", JimmyDictionaries.JimmyAltParts},
             { "Lucy", Lucy.LucyAltParts},
-            //beavers
+            { "Dagget", Daggett.DaggettaltParts},
+            { "Norbert", Norbet.NorbertaltParts},
             { "Garfield", Garfield.GarfieldAltParts},
 
             { "Aang", Aaang.AangAltParts},
@@ -494,6 +186,15 @@ namespace CheapSkinss
             }
         }
         #endregion
+        public class CharacterMetaData
+        {
+            public int playerRef;
+            public CharacterCodename characterCodename;
+            public int skinIndex;
+            public int customSkinID;
+        }
+
+
         public class CustomSkinData
         {
             public string skinID;
@@ -506,70 +207,62 @@ namespace CheapSkinss
             public Texture2D stockImage;
             public Sprite stockImageSprite;
             public List<CharacterMaterialOverridesHandler.MaterialOverrideGroup> CustomMOGList;
-            //public List
-            public Dictionary<string, Mesh> customMeshesToReplace;
+            public Dictionary<string, Dictionary<string, Mesh>> materialBanksForMeshes;
 
         }
 
         public static List<CustomSkinData> customSkinDatas = new List<CustomSkinData>();
+        #region CheapSkinLoaders
 
-        public void Awake()
+        private void LogCustomSkinData()
         {
-            Plugin.Log = base.Logger;
-            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
-            base.Logger.LogInfo("Mod loaded!");
-            if (!Directory.Exists(Plugin.skinsPath))
+            foreach (var skinData in customSkinDatas)
             {
-                Debug.LogWarning("Skins folder not found: " + Plugin.skinsPath);
-                try
-                {
-                    Plugin.Log.LogWarning("Creating Skins folder in Main Path...");
-                    Directory.CreateDirectory(Plugin.skinsPath);
-                }
-                catch (Exception ex)
-                {
-                    Plugin.Log.LogError(ex);
-                }
-            }
-            LoadAllCheapskins();
+                Debug.Log($"Skin ID: {skinData.skinID}");
+                Debug.Log($"Character Codename: {skinData.characterCodename}");
+                Debug.Log($"Skin Index: {skinData.skinIndex}");
+                Debug.Log($"Skin Int Index: {skinData.skinIntIndex}");
+                Debug.Log($"Skin Name: {skinData.skinName}");
+                Debug.Log($"Author Name: {skinData.authorName}");
 
-        }
-        void Update()
-        {
-            if (Keyboard.current.pKey.wasPressedThisFrame)
-            {
-                foreach (var entry in metaDataList)
+                if (skinData.VSRender != null)
                 {
-                    Debug.Log("Found");
-                    Debug.Log("CustomSkinID: " + entry.customSkinID + " Skin index: " + entry.skinIndex + " Character Codename: " + entry.characterCodename + " PlayweRef: " + entry.playerRef);
+                    Debug.Log($"VS Render: {skinData.VSRender.name}");
                 }
-            }
-            if (Keyboard.current.sKey.wasPressedThisFrame)
-            {
-                if (dataManager.Online)
+                else
                 {
-                    foreach (var player in onlineManager.GetPlayersList())
+                    Debug.Log("VS Render: None");
+                }
+
+                if (skinData.stockImage != null)
+                {
+                    Debug.Log($"Stock Image: {skinData.stockImage.name}");
+                }
+                else
+                {
+                    Debug.Log("Stock Image: None");
+                }
+
+                if (skinData.stockImageSprite != null)
+                {
+                    Debug.Log($"Stock Image Sprite: {skinData.stockImageSprite.name}");
+                }
+                else
+                {
+                    Debug.Log("Stock Image Sprite: None");
+                }
+
+                // Log the material banks for meshes
+                Debug.Log($"Material Banks for Meshes for Skin ID: {skinData.skinID}");
+                foreach (var bankEntry in skinData.materialBanksForMeshes)
+                {
+                    Debug.Log($"  Key: {bankEntry.Key}");
+                    foreach (var meshEntry in bankEntry.Value)
                     {
-                        var propertyValue = onlineManager.Properties.GetPlayerRoomProperty(player, CUSTOM_SKIN_ID);
-                        if (propertyValue == null)
-                        {
-                            return;
-                        }
-
-                        int new1 = (int)propertyValue;
-
-
-                        Debug.Log($"Player Index is: {player.ActorNumber - 1} - Current CustomSkinID: {new1}");
+                        Debug.Log($"    Sub-Key: {meshEntry.Key}, Mesh Name: {meshEntry.Value.name}");
                     }
-                    
-                    //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
-
-
                 }
-
             }
-
-
         }
         void LoadAllCheapskins()
         {
@@ -677,7 +370,7 @@ namespace CheapSkinss
 
 
 
-                                    customSkinData.customMeshesToReplace = new Dictionary<string, Mesh>();
+                                    customSkinData.materialBanksForMeshes = new Dictionary<string, Dictionary<string, Mesh>>();
 
 
 
@@ -693,15 +386,20 @@ namespace CheapSkinss
                                             Identifier = $"{MOGVar.matIndex}:{MOGVar.identifier}",
                                             TextureOverrides = new List<CharacterMaterialOverridesHandler.TextureOverride>() // Initialize here
                                         };
-
+                                        Dictionary<string, Mesh> customMeshesToReplace = new Dictionary<string, Mesh>();
 
                                         // TARGETS OVERRIDES
-                                        
+
 
                                         // Loop through the targets
                                         Debug.Log("Processing Targets.");
                                         foreach (var MOGTargets in MOGVar.Targets)
                                         {
+                                            if (MOGTargets.materialIndex != 0)
+                                            {
+                                                continue;
+                                            }
+
                                             Debug.Log($"Attempting to load GameObject from asset bundle for target: {MOGTargets.targetName}");
 
                                             if (string.IsNullOrWhiteSpace(MOGTargets.targetName))
@@ -709,7 +407,14 @@ namespace CheapSkinss
                                                 Debug.LogWarning("IS NULL OR WHITE SPACE");
 
                                                 Mesh nullMesh = new Mesh();
-                                                customSkinData.customMeshesToReplace.Add(MOGTargets.targetMesh, nullMesh);
+                                                if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                {
+                                                    Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                }
+                                                else
+                                                {
+                                                    customMeshesToReplace.Add(MOGTargets.targetMesh, nullMesh);
+                                                }
                                                 continue;
                                             }
 
@@ -732,8 +437,15 @@ namespace CheapSkinss
 
                                                 if (mesh != null)
                                                 {
-                                                    Debug.Log($"Adding SkinnedMeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
-                                                    customSkinData.customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                    if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                    {
+                                                        Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                    }
+                                                    else
+                                                    {
+                                                        Debug.Log($"Adding SkinnedMeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
+                                                        customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                    }
                                                 }
                                                 else
                                                 {
@@ -753,8 +465,15 @@ namespace CheapSkinss
                                                     if (meshFilter != null && meshFilter.mesh != null)
                                                     {
                                                         Mesh mesh = meshFilter.mesh;
-                                                        Debug.Log($"Adding MeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
-                                                        customSkinData.customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                        if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                        {
+                                                            Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                        }
+                                                        else
+                                                        {
+                                                            Debug.Log($"Adding MeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
+                                                            customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                        }
                                                     }
                                                     else
                                                     {
@@ -762,17 +481,37 @@ namespace CheapSkinss
                                                     }
                                                 }
                                             }
+
+                                            // Log the dictionary contents after all meshes are loaded
+                                            Debug.Log("Logging customMeshesToReplace dictionary contents after population:");
+                                            foreach (var entry in customMeshesToReplace)
+                                            {
+                                                Debug.Log($"Key: {entry.Key}, Mesh name: {entry.Value.name}");
+                                            }
                                         }
 
-                                        // Log the dictionary contents after all meshes are loaded
-                                        Debug.Log("Logging customMeshesToReplace dictionary contents after population:");
-                                        foreach (var entry in customSkinData.customMeshesToReplace)
+                                        // Check if the identifier already exists in materialBanksForMeshes before adding
+                                        if (customSkinData.materialBanksForMeshes.ContainsKey(MOGVar.identifier))
                                         {
-                                            Debug.Log($"Key: {entry.Key}, Mesh name: {entry.Value.name}");
+                                            Debug.LogWarning($"Identifier {MOGVar.identifier} already exists in materialBanksForMeshes. Merging with existing data.");
+
+                                            // Merge dictionaries to avoid overwriting
+                                            foreach (var kvp in customMeshesToReplace)
+                                            {
+                                                if (!customSkinData.materialBanksForMeshes[MOGVar.identifier].ContainsKey(kvp.Key))
+                                                {
+                                                    customSkinData.materialBanksForMeshes[MOGVar.identifier].Add(kvp.Key, kvp.Value);
+                                                }
+                                                else
+                                                {
+                                                    Debug.LogWarning($"Key {kvp.Key} already exists in materialBanksForMeshes[{MOGVar.identifier}]. Skipping.");
+                                                }
+                                            }
                                         }
-
-
-
+                                        else
+                                        {
+                                            customSkinData.materialBanksForMeshes.Add(MOGVar.identifier, new Dictionary<string, Mesh>(customMeshesToReplace));
+                                        }
                                         // ATTRIBUTE OVERRIDES
                                         if (MOGVar.attributeOverrides != null)
                                         {
@@ -923,11 +662,11 @@ namespace CheapSkinss
 
                                     Debug.Log("trying to add customskinData to customSkinDatas");
 
-                                    if (customSkinData.customMeshesToReplace != null)
+                                    if (customSkinData.materialBanksForMeshes != null)
                                     {
-                                        foreach (var entry in customSkinData.customMeshesToReplace)
+                                        foreach (var entry in customSkinData.materialBanksForMeshes)
                                         {
-                                            Debug.LogWarning($"Mesh entry found: {entry.Key} -> {entry.Value.name}");
+                                            Debug.LogWarning($"Mesh entry found: {entry.Key} -> {entry.Value}");
                                         }
                                     }
                                     Plugin.customSkinDatas.Add(customSkinData);
@@ -941,7 +680,7 @@ namespace CheapSkinss
                             };
 
                             // Log the characterID and skinID for testing
-                            
+
                         }
 
 
@@ -1058,11 +797,465 @@ namespace CheapSkinss
             return new Vector4(array[0], array[1], array[2], array[3]);
         }
 
+        #endregion
+        public void Awake()
+        {
+            Plugin.Log = base.Logger;
+            Harmony.CreateAndPatchAll(Assembly.GetExecutingAssembly(), null);
+            base.Logger.LogInfo("Mod loaded!");
+            if (!Directory.Exists(Plugin.skinsPath))
+            {
+                Debug.LogWarning("Skins folder not found: " + Plugin.skinsPath);
+                try
+                {
+                    Plugin.Log.LogWarning("Creating Skins folder in Main Path...");
+                    Directory.CreateDirectory(Plugin.skinsPath);
+                }
+                catch (Exception ex)
+                {
+                    Plugin.Log.LogError(ex);
+                }
+            }
+            LoadAllCheapskins();
+
+        }
+        void Update()
+        {
+            if (Keyboard.current.pKey.wasPressedThisFrame)
+            {
+                /*foreach (var entry in metaDataList)
+                {
+                    Debug.Log("Found");
+                    Debug.Log("CustomSkinID: " + entry.customSkinID + " Skin index: " + entry.skinIndex + " Character Codename: " + entry.characterCodename + " PlayweRef: " + entry.playerRef);
+                }*/
+                LogCustomSkinData();
+            }
+            if (Keyboard.current.sKey.wasPressedThisFrame)
+            {
+                if (dataManager.Online)
+                {
+                    foreach (var player in onlineManager.GetPlayersList())
+                    {
+                        var propertyValue = onlineManager.Properties.GetPlayerRoomProperty(player, CUSTOM_SKIN_ID);
+                        if (propertyValue == null)
+                        {
+                            return;
+                        }
+
+                        int new1 = (int)propertyValue;
+
+
+                        Debug.Log($"Player Index is: {player.ActorNumber - 1} - Current CustomSkinID: {new1}");
+                    }
+
+                    //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
+
+
+                }
+
+            }
+
+
+        }
+        private class MetaData : MonoBehaviour
+        {
+            private CharacterPanel characterPanel;
+            private CharacterSelectReadyBanner banner;
+            public CharacterSelect characterSelect;
+            private int playerRef;
+            private CharacterCodename characterCodename;
+            private CharacterCodename previousCharacterCodename;
+            private int skinIndex1;
+            private int previousSkinIndex;
+            private int customSkinID;
+            public List<CustomSkinData> customSkinsID = new List<CustomSkinData>();
+            private int inputDeviceIndex;
+            private int currentCustomSkinID;
+            private TMPro.TextMeshProUGUI mainTitleSkin;
+            private TMPro.TextMeshProUGUI authorTitle;
+            public GameObject CustominfoSection;
+            private UnityEngine.UI.Image skinImage;
+            public bool customSkinSelected = false;
+            public bool profileisSelected = false;
+
+            private void Awake()
+            {
+                characterPanel = this.gameObject.GetComponent<CharacterPanel>();
+                Debug.Log(characterPanel.gameObject.name);
+
+                CharacterSelectReadyBanner[] banners = FindObjectsOfType<CharacterSelectReadyBanner>(true);
+                if (banners.Length > 0)
+                {
+                    banner = banners[0];
+                    Debug.Log("Found CharacterSelectReadyBanner: " + banner.gameObject.name);
+                }
+
+                inputDeviceIndex = inputManager.GetPlayerInputDeviceIndex(characterPanel.playerIndex);
+
+                // Initialize previous values
+                previousCharacterCodename = characterPanel.currentCharacter;
+                previousSkinIndex = characterPanel.currentSkin;
+                SetUpPanel();
+                if (dataManager.Online)
+                {
+                    Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
+                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, 0);
+                }
+            }
+            private void SetUpPanel()
+            {
+                Transform childTransform = characterPanel.gameObject.transform.Find("InfoSection");
+
+                CustominfoSection = GameObject.Instantiate(childTransform.gameObject);
+
+                CustominfoSection.transform.SetParent(characterPanel.gameObject.transform, true);
+                //CustominfoSection.SetActive(true);
+                CustominfoSection.name = "CustomSkinInfo";
+                CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0);
+                CustominfoSection.transform.localScale = new Vector3(1, 1, 1);
+
+                Transform mainTextTransform = CustominfoSection.transform.Find("MainTitleText");
+                mainTitleSkin = mainTextTransform.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+                mainTitleSkin.alignment = TextAlignmentOptions.Center;
+                mainTitleSkin.gameObject.transform.localPosition = new Vector3(46.8699f, -24.9899f, 0);
+                mainTitleSkin.text = "TEST";
+                CustominfoSection.SetActive(false);
+
+
+                Transform mainTextTransform11 = CustominfoSection.transform.Find("SecondaryTitle");
+                authorTitle = mainTextTransform11.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                authorTitle.text = "test1";
+
+                Transform mainTextTransform12 = CustominfoSection.transform.Find("PlayerTag");
+                skinImage = mainTextTransform12.gameObject.GetComponentInChildren<UnityEngine.UI.Image>();
+                skinImage.preserveAspect = true;
+                skinImage.material = null;
+                skinImage.color = Color.white;
+
+                TMPro.TextMeshProUGUI textComponent = mainTextTransform12.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+                GameObject textP1 = textComponent.gameObject;
+                textP1.SetActive(false);
+            }
+            public void UpdateData()
+            {
+                bool isReady = this.banner.isReady;
+                if (!isReady)
+                {
+                    bool flag = this.characterCodename == this.previousCharacterCodename && this.skinIndex1 == this.previousSkinIndex;
+                    if (!flag)
+                    {
+                        this.characterCodename = this.characterPanel.currentCharacter;
+                        this.skinIndex1 = this.characterPanel.currentSkin;
+                        this.previousCharacterCodename = this.characterCodename;
+                        this.previousSkinIndex = this.skinIndex1;
+                        this.customSkinsID.Clear();
+                        this.customSkinID = 0;
+                        this.currentCustomSkinID = 0;
+
+
+
+
+                        bool flag2 = this.customSkinID == 0;
+                        if (flag2)
+                        {
+                            this.CustominfoSection.SetActive(false);
+                        }
+
+                        Texture2D texture2D = null;
+                        Plugin.CustomSkinData customSkinData = new Plugin.CustomSkinData
+                        {
+                            skinID = "null",
+                            skinIndex = 0,
+                            characterCodename = this.characterPanel.currentCharacter,
+                            skinIntIndex = 0,
+                            stockImage = texture2D,
+                            VSRender = null,
+                            authorName = "FAIR PLAY LABS",
+                            skinName = "DEFAULT",
+                            CustomMOGList = null
+                        };
+                        this.customSkinsID.Add(customSkinData);
+                        foreach (Plugin.CustomSkinData customSkinData2 in Plugin.customSkinDatas)
+                        {
+                            bool flag3 = customSkinData2.characterCodename == this.characterPanel.currentCharacter && customSkinData2.skinIndex == this.characterPanel.currentSkin;
+                            if (flag3)
+                            {
+                                this.customSkinsID.Add(customSkinData2);
+                            }
+                        }
+                    }
+                }
+                
+            }
+            private void Update()
+            {
+                this.characterCodename = this.characterPanel.currentCharacter;
+                this.skinIndex1 = this.characterPanel.currentSkin;
+                bool flag7 = this.characterCodename != this.previousCharacterCodename || this.skinIndex1 != this.previousSkinIndex;
+                if (flag7)
+                {
+                    
+                    this.UpdateData();
+                }
+                bool playerIsReady = this.characterPanel.playerIsReady;
+                if (playerIsReady)
+                {
+                    this.CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -236.8675f, 0f);
+                }
+                else
+                {
+                    this.CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0f);
+                }
+                if (banner.isReady)
+                {
+                    this.CustominfoSection.SetActive(false);
+                }
+                if (!profileisSelected)
+                {
+                    return;
+                }
+
+                this.inputDeviceIndex = Plugin.inputManager.GetPlayerInputDeviceIndex(this.characterPanel.playerIndex);
+                
+                bool isReady = this.banner.isReady;
+                if (isReady)
+                {
+                    this.CustominfoSection.SetActive(false);
+                }
+                else
+                {
+                    bool flag = !this.CustominfoSection.activeSelf && this.currentCustomSkinID != 0;
+                    if (flag)
+                    {
+                        this.CustominfoSection.SetActive(true);
+                    }
+                    bool flag2 = this.inputDeviceIndex == -1 || this.characterPanel.characterSelect.StartCoundown || !this.characterPanel.currentSelector.Active || !this.characterPanel.currentSelector.Enabled;
+                    if (!flag2)
+                    {
+                        bool flag3 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Right, "", false);
+                        if (flag3)
+                        {
+                            Debug.Log("R trigger from " + this.characterPanel.gameObject.name);
+                            this.currentCustomSkinID = (this.currentCustomSkinID + 1) % this.customSkinsID.Count;
+                            this.SetCharacterSkin();
+                        }
+                        bool flag4 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Left, "", false);
+                        if (flag4)
+                        {
+                            Debug.Log("L trigger from " + this.characterPanel.gameObject.name);
+                            this.currentCustomSkinID = (this.currentCustomSkinID - 1 + this.customSkinsID.Count) % this.customSkinsID.Count;
+                            this.SetCharacterSkin();
+                        }
+                        bool flag9 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Cancel, "", false);
+                        if (flag9)
+                        {
+                            Debug.Log("Cancel from " + this.characterPanel.gameObject.name);
+                            
+                            characterPanel.currentSelector.OnCustomizeMenu = false;
+                            profileisSelected = false;
+                        }
+                        bool flag5 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Confirm, "", false);
+                        if (flag5)
+                        {
+                            Debug.Log("Confirm from " + this.characterPanel.gameObject.name);
+                            characterPanel.characterSelect.MarkSelectorAsReady(characterPanel.selectorNumber);
+                            if (dataManager.Online && customSkinID == 0)
+                            {
+                                Debug.Log("online is on and customskinID is 0");
+                                Player currentPlayer = onlineManager.CurrentPlayer;
+                                onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
+                                onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_NAME, uiManager.MainUserNickname);
+                            }
+                            characterPanel.currentSelector.OnCustomizeMenu = false;
+                            profileisSelected = false;
+                            
+                        }
+                        bool flag6 = this.characterCodename != this.previousCharacterCodename || this.skinIndex1 != this.previousSkinIndex;
+                        if (flag6)
+                        {
+                            this.UpdateData();
+                        }
+                    }
+                }
+            }
+            public void SetCharacterSkin()
+            {
+                if (customSkinsID.Count > 1)
+                {
+                    uiManager.PlaySound(characterSelect.ChangeSkinSFX);
+                }
+
+
+                characterCodename = customSkinsID[currentCustomSkinID].characterCodename;
+                customSkinID = customSkinsID[currentCustomSkinID].skinIntIndex;
+                Debug.Log(playerRef);
+                Debug.Log(currentCustomSkinID);
+                Debug.Log(customSkinsID[currentCustomSkinID].skinID);
+                Debug.Log(customSkinID);
+
+                if (customSkinsID[currentCustomSkinID].skinID == null || customSkinsID[currentCustomSkinID].authorName == null)
+                {
+                    CustominfoSection.SetActive(false);
+                    return;
+                }
+
+
+                mainTitleSkin.text = customSkinsID[currentCustomSkinID].skinName.ToString();
+                authorTitle.text = customSkinsID[currentCustomSkinID].authorName;
+                skinImage.sprite = customSkinsID[currentCustomSkinID].stockImageSprite;
+                if (dataManager.Online)
+                {
+                    Player currentPlayer = Plugin.onlineManager.CurrentPlayer;
+                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
+                    Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_NAME, uiManager.MainUserNickname);
+                }
+
+            }
+            public void AddMetaData()
+            {
+                Debug.Log($"AddMetaData from Player index: {characterPanel.selectorNumber} - Codename: {characterPanel.currentCharacter}");
+                //Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
+                //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, 0);
+
+                bool flag = this.customSkinID == 0;
+                if (!flag)
+                {
+                    int new2 = 0;
+                    //Player currentPlayer1 = Plugin.onlineManager.CurrentPlayer;
+                    //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer1, Plugin.CUSTOM_SKIN_ID, new2);
+
+                    foreach (Plugin.CharacterMetaData characterMetaData in Plugin.metaDataList)
+                    {
+                        bool flag2 = characterMetaData.playerRef == this.characterPanel.selectorNumber;
+                        if (flag2)
+                        {
+                            return;
+                        }
+                    }
+                    bool flag3 = !Plugin.dataManager.Online;
+                    if (flag3)
+                    {
+                        Debug.Log($"Adding MetaData of Player index: {characterPanel.selectorNumber} - Codename: {characterPanel.currentCharacter} - CustomSkinID: {customSkinID}");
+                        Plugin.CharacterMetaData characterMetaData2 = new Plugin.CharacterMetaData
+                        {
+                            skinIndex = this.characterPanel.currentSkin,
+                            characterCodename = this.characterPanel.currentCharacter,
+                            playerRef = this.characterPanel.selectorNumber,
+                            customSkinID = this.customSkinID
+                        };
+                        Plugin.metaDataList.Add(characterMetaData2);
+                    }
+                    else
+                    {
+                        //Player currentPlayer = Plugin.onlineManager.CurrentPlayer;
+                        //Plugin.onlineManager.Properties.SetPlayerRoomProperty(currentPlayer, Plugin.CUSTOM_SKIN_ID, this.customSkinID);
+                    }
+                }
+            }
+        }
+
         [HarmonyPatch(typeof(MainMenu), "LoadingFinished")]
         public class Patches
         {
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(CharacterSelectCustomizeMenu), "ToggleMenu")]
+            public static bool ToggleMenu(CharacterSelectCustomizeMenu __instance, bool active, bool fromClean)
+            {
+                //Debug.Log("On ToggleMenu");
+                MetaData MD = __instance.CharacterPanel.gameObject.GetComponent<MetaData>();
+                if(MD != null)
+                {
+                    if (MD.profileisSelected)
+                    {
+                        return false; 
+                    }
+                }
+                //Debug.Log("resuming");
+                if (__instance.visible == active)
+                {
+                    return false;
+                }
+                __instance.visible = active;
+                if (active)
+                {
+                    __instance.gameObject.SetActive(true);
+
+                    if (MD != null)
+                    {
+                        MD.CustominfoSection.SetActive(false);
+                    }
+                    if (__instance.cpuOnlyMode || __instance.playerOnlyMode)
+                    {
+                        __instance.CharacterTypeSelector.ToggleElement(false);
+                    }
+                    else
+                    {
+                        __instance.CharacterTypeSelector.ToggleElement(true);
+                    }
+                    if (__instance.cpuOnlyMode || __instance.currentSelector.IsCPU)
+                    {
+                        __instance.ChangeCharacterType(1);
+                    }
+                    else
+                    {
+                        __instance.ChangeCharacterType(0);
+                    }
+                    __instance.TeamSelector.ToggleElement(__instance.TeamActive);
+                    if (__instance.TeamActive)
+                    {
+                        CharacterTeam team = __instance.CharacterSelect.GetSelectors()[__instance.selectorNumber].Team;
+                        __instance.TeamSelector.SetCurrentOption(team - CharacterTeam.Team1);
+                    }
+                    __instance.CharacterTypeSelector.SetCurrentOption(__instance.currentSelector.IsCPU ? 1 : 0);
+                    __instance.CPULevelSelector.SetCurrentOption(__instance.currentSelector.CPULevel);
+                    __instance.Animator.ResetTrigger("Hide");
+                    __instance.Animator.SetTrigger("Show");
+                    __instance.UINavigator.TogglePlayerNavigator(__instance.playerIndex, true);
+                    __instance.UINavigator.HighlightFirstActiveElement();
+                    __instance.StartCoroutine(__instance.MoveCursorDelayed());
+                    __instance.currentSelector.OnCustomizeMenu = true;
+                    __instance.uiManager.PlaySound(__instance.CharacterSelect.OpenCustomizeMenuSFX);
+                    return false;
+                }
+                __instance.Animator.ResetTrigger("Show");
+                __instance.Animator.SetTrigger("Hide");
+                __instance.UINavigator.TogglePlayerNavigator(__instance.playerIndex, false);
+                if (!fromClean)
+                {
+                    //__instance.currentSelector.OnCustomizeMenu = false;
+                }
+                __instance.CharacterTypeSelector.Enabled = false;
+                __instance.InputProfileSelector.Enabled = false;
+                __instance.CPULevelSelector.Enabled = false;
+                __instance.TeamSelector.Enabled = false;
+                return false;
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(CharacterSelectCustomizeMenu), "ConfirmSelected")]
+            public static bool ConfirmSelected(CharacterSelectCustomizeMenu __instance)
+            {
+                CharacterSelectSelector characterSelectSelector = __instance.CharacterSelect.Selectors[__instance.selectorNumber];
+                if (__instance.CharacterSelect.SquadStrikeSelection && !__instance.CharacterSelect.SquadsSelect.SquadCompleteSet(__instance.selectorNumber) && characterSelectSelector.IsCPU)
+                {
+                    characterSelectSelector.OnCustomizeMenu = false;
+                    characterSelectSelector.OnSquadSelection = false;
+                    characterSelectSelector.OnCharacterSelector = true;
+                    __instance.CharacterSelect.SquadsSelect.NextCharacter(__instance.selectorNumber);
+                    __instance.CharacterSelect.RefreshUI();
+                    return false;
+                }
+                __instance.inputManager.CleanInputDevice(__instance.inputDeviceIndex);
+                __instance.ToggleMenu(false, false);
+                //__instance.CharacterSelect.MarkSelectorAsReady(__instance.selectorNumber);
+
+                MetaData MD = __instance.CharacterPanel.gameObject.GetComponent<MetaData>();
+                MD.profileisSelected = true;
+                return false;
+            }
             [HarmonyPostfix]
             [HarmonyPatch(typeof(CharacterManager), "OnInstantiated")]
+            
             public static void OnInstantiated(CharacterManager __instance, QuantumGame game)
             {
                 try
@@ -1163,65 +1356,61 @@ namespace CheapSkinss
                                         {
                                             foreach (var targetOverride in textureOverride.Targets)
                                             {
-                                                //Debug.Log($"Processing Target: {targetOverride.Target.name}");
-
                                                 if (targetOverride.MaterialIndex != 0)
                                                 {
-                                                    //Debug.Log("Skipping due to MaterialIndex being non-zero.");
                                                     continue;
                                                 }
 
+                                                string originalIdentifier = textureOverride.Identifier;
+
+                                                // Check if the identifier contains a colon and remove the prefix if it's there
+                                                int colonIndex = originalIdentifier.IndexOf(':');
+                                                if (colonIndex != -1)
+                                                {
+                                                    // Remove everything before and including the colon
+                                                    originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
+                                                }
+
+                                                // Try to get the inner dictionary from materialBanksForMeshes
+                                                if (!skinData.materialBanksForMeshes.TryGetValue(originalIdentifier, out Dictionary<string, Mesh> currentMeshDictionary))
+                                                {
+                                                    Debug.LogWarning($"No material bank found for Identifier: {textureOverride.Identifier}");
+                                                    continue;
+                                                }
+
+                                                // Handle SkinnedMeshRenderer
                                                 if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
                                                 {
-                                                    //Debug.Log($"Processing SkinnedMeshRenderer: {skinnedMeshRenderer.name}");
-                                                    if (skinData.customMeshesToReplace.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh))
+                                                    if (currentMeshDictionary.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh))
                                                     {
-                                                        //Debug.Log($"SkinnedMeshRenderer name matched and replaced: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
                                                         skinnedMeshRenderer.sharedMesh = replacementMesh;
+                                                        Debug.Log($"Replaced SkinnedMeshRenderer: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
                                                     }
                                                     else
                                                     {
-                                                        //Debug.LogWarning($"No replacement mesh found for SkinnedMeshRenderer: {skinnedMeshRenderer.name}. Available keys in customMeshesToReplace:");
-                                                        foreach (var key in skinData.customMeshesToReplace.Keys)
-                                                        {
-                                                            Debug.Log($"Available key: {key}");
-                                                        }
+                                                        Debug.LogWarning($"No replacement mesh found for SkinnedMeshRenderer: {skinnedMeshRenderer.name} in material bank.");
                                                     }
                                                 }
+                                                // Handle MeshRenderer
                                                 else if (targetOverride.Target is MeshRenderer meshRenderer)
                                                 {
-                                                    // Debug.Log($"Processing MeshRenderer: {meshRenderer.name}");
-
-                                                    // Log all entries in the customMeshesToReplace dictionary before the check
-                                                    Debug.Log("Iterating through customMeshesToReplace dictionary:");
-                                                    foreach (var entry in skinData.customMeshesToReplace)
+                                                    if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh))
                                                     {
-                                                        //Debug.Log($"Key (Target Mesh Name): {entry.Key}, Mesh Name: {entry.Value.name}");
-                                                    }
-
-                                                    // Try to find a matching mesh for the current MeshRenderer
-                                                    if (skinData.customMeshesToReplace.TryGetValue(meshRenderer.name, out Mesh replacementMesh))
-                                                    {
-                                                        //Debug.Log($"MeshRenderer name matched and replaced: {meshRenderer.name} with mesh: {replacementMesh.name}");
                                                         MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
 
                                                         if (meshFilter != null)
                                                         {
                                                             meshFilter.sharedMesh = replacementMesh;
-                                                            //Debug.Log("Replacement successful.");
+                                                            Debug.Log($"Replaced MeshRenderer: {meshRenderer.name} with mesh: {replacementMesh.name}");
                                                         }
                                                         else
                                                         {
-                                                            //Debug.LogError($"MeshFilter missing on MeshRenderer: {meshRenderer.name}. Cannot apply replacement.");
+                                                            Debug.LogError($"MeshFilter missing on MeshRenderer: {meshRenderer.name}. Cannot apply replacement.");
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        Debug.LogWarning($"No replacement mesh found for MeshRenderer: {meshRenderer.name}. Available keys in customMeshesToReplace:");
-                                                        foreach (var key in skinData.customMeshesToReplace.Keys)
-                                                        {
-                                                            //Debug.Log($"Available key: {key}");
-                                                        }
+                                                        Debug.LogWarning($"No replacement mesh found for MeshRenderer: {meshRenderer.name} in material bank.");
                                                     }
                                                 }
                                             }
@@ -1322,72 +1511,63 @@ namespace CheapSkinss
                                         {
                                             foreach (var targetOverride in textureOverride.Targets)
                                             {
-                                                //Debug.Log($"Processing Target: {targetOverride.Target.name}");
-
                                                 if (targetOverride.MaterialIndex != 0)
                                                 {
-                                                    //Debug.Log("Skipping due to MaterialIndex being non-zero.");
                                                     continue;
                                                 }
 
+                                                string originalIdentifier = textureOverride.Identifier;
+
+                                                // Check if the identifier contains a colon and remove the prefix if it's there
+                                                int colonIndex = originalIdentifier.IndexOf(':');
+                                                if (colonIndex != -1)
+                                                {
+                                                    // Remove everything before and including the colon
+                                                    originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
+                                                }
+
+                                                // Try to get the inner dictionary from materialBanksForMeshes
+                                                if (!skinData.materialBanksForMeshes.TryGetValue(originalIdentifier, out Dictionary<string, Mesh> currentMeshDictionary))
+                                                {
+                                                    Debug.LogWarning($"No material bank found for Identifier: {textureOverride.Identifier}");
+                                                    continue;
+                                                }
+
+                                                // Handle SkinnedMeshRenderer
                                                 if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
                                                 {
-                                                    //Debug.Log($"Processing SkinnedMeshRenderer: {skinnedMeshRenderer.name}");
-                                                    if (skinData.customMeshesToReplace.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh))
+                                                    if (currentMeshDictionary.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh))
                                                     {
-                                                        //Debug.Log($"SkinnedMeshRenderer name matched and replaced: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
-
-                                                        //if(replacementMesh)
-
                                                         skinnedMeshRenderer.sharedMesh = replacementMesh;
-
+                                                        Debug.Log($"Replaced SkinnedMeshRenderer: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
                                                     }
                                                     else
                                                     {
-                                                        //Debug.LogWarning($"No replacement mesh found for SkinnedMeshRenderer: {skinnedMeshRenderer.name}. Available keys in customMeshesToReplace:");
-                                                        foreach (var key in skinData.customMeshesToReplace.Keys)
-                                                        {
-                                                            Debug.Log($"Available key: {key}");
-                                                        }
+                                                        Debug.LogWarning($"No replacement mesh found for SkinnedMeshRenderer: {skinnedMeshRenderer.name} in material bank.");
                                                     }
                                                 }
+                                                // Handle MeshRenderer
                                                 else if (targetOverride.Target is MeshRenderer meshRenderer)
                                                 {
-                                                    // Debug.Log($"Processing MeshRenderer: {meshRenderer.name}");
-
-                                                    // Log all entries in the customMeshesToReplace dictionary before the check
-                                                    Debug.Log("Iterating through customMeshesToReplace dictionary:");
-                                                    foreach (var entry in skinData.customMeshesToReplace)
+                                                    if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh))
                                                     {
-                                                        //Debug.Log($"Key (Target Mesh Name): {entry.Key}, Mesh Name: {entry.Value.name}");
-                                                    }
-
-                                                    // Try to find a matching mesh for the current MeshRenderer
-                                                    if (skinData.customMeshesToReplace.TryGetValue(meshRenderer.name, out Mesh replacementMesh))
-                                                    {
-                                                        //Debug.Log($"MeshRenderer name matched and replaced: {meshRenderer.name} with mesh: {replacementMesh.name}");
                                                         MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
 
                                                         if (meshFilter != null)
                                                         {
                                                             meshFilter.sharedMesh = replacementMesh;
-                                                            //Debug.Log("Replacement successful.");
+                                                            Debug.Log($"Replaced MeshRenderer: {meshRenderer.name} with mesh: {replacementMesh.name}");
                                                         }
                                                         else
                                                         {
-                                                            //Debug.LogError($"MeshFilter missing on MeshRenderer: {meshRenderer.name}. Cannot apply replacement.");
+                                                            Debug.LogError($"MeshFilter missing on MeshRenderer: {meshRenderer.name}. Cannot apply replacement.");
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        Debug.LogWarning($"No replacement mesh found for MeshRenderer: {meshRenderer.name}. Available keys in customMeshesToReplace:");
-                                                        foreach (var key in skinData.customMeshesToReplace.Keys)
-                                                        {
-                                                            //Debug.Log($"Available key: {key}");
-                                                        }
+                                                        Debug.LogWarning($"No replacement mesh found for MeshRenderer: {meshRenderer.name} in material bank.");
                                                     }
                                                 }
-                                                
                                             }
                                         }
                                     }
@@ -2138,88 +2318,64 @@ namespace CheapSkinss
                     component.characterSelect = __instance.characterSelect;
                 }
             }
-
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(CharacterSelectCustomizeMenu), "ToggleMenu")]
-            public static bool ToggleMenu(CharacterSelectCustomizeMenu __instance, bool active, bool fromClean)
+            [HarmonyPatch(typeof(CharacterPanel), "Update")]
+            public static bool Update_Panel(CharacterPanel __instance)
             {
-                if (__instance.visible == active)
+                if (__instance.inputDeviceIndex == -1)
                 {
                     return false;
                 }
-                __instance.visible = active;
-                if (active)
+                if (__instance.characterSelect.StartCoundown)
                 {
-                    __instance.gameObject.SetActive(true);
-                    if (__instance.cpuOnlyMode || __instance.playerOnlyMode)
-                    {
-                        __instance.CharacterTypeSelector.ToggleElement(false);
-                    }
-                    else
-                    {
-                        __instance.CharacterTypeSelector.ToggleElement(true);
-                    }
-                    if (__instance.cpuOnlyMode || __instance.currentSelector.IsCPU)
-                    {
-                        __instance.ChangeCharacterType(1);
-                    }
-                    else
-                    {
-                        __instance.ChangeCharacterType(0);
-                    }
-                    __instance.TeamSelector.ToggleElement(__instance.TeamActive);
-                    if (__instance.TeamActive)
-                    {
-                        CharacterTeam team = __instance.CharacterSelect.GetSelectors()[__instance.selectorNumber].Team;
-                        __instance.TeamSelector.SetCurrentOption(team - CharacterTeam.Team1);
-                    }
-                    __instance.CharacterTypeSelector.SetCurrentOption(__instance.currentSelector.IsCPU ? 1 : 0);
-                    __instance.CPULevelSelector.SetCurrentOption(__instance.currentSelector.CPULevel);
-                    __instance.Animator.ResetTrigger("Hide");
-                    __instance.Animator.SetTrigger("Show");
-                    __instance.UINavigator.TogglePlayerNavigator(__instance.playerIndex, true);
-                    __instance.UINavigator.HighlightFirstActiveElement();
-                    __instance.StartCoroutine(__instance.MoveCursorDelayed());
-                    __instance.currentSelector.OnCustomizeMenu = true;
-                    __instance.uiManager.PlaySound(__instance.CharacterSelect.OpenCustomizeMenuSFX);
                     return false;
                 }
-                __instance.Animator.ResetTrigger("Show");
-                __instance.Animator.SetTrigger("Hide");
-                __instance.UINavigator.TogglePlayerNavigator(__instance.playerIndex, false);
-                if (!fromClean)
+                if (!__instance.currentSelector.Active)
                 {
-                    //__instance.currentSelector.OnCustomizeMenu = false;
-                }
-                __instance.CharacterTypeSelector.Enabled = false;
-                __instance.InputProfileSelector.Enabled = false;
-                __instance.CPULevelSelector.Enabled = false;
-                __instance.TeamSelector.Enabled = false;
-                return false;
-            }
-
-            [HarmonyPrefix]
-            [HarmonyPatch(typeof(CharacterSelectCustomizeMenu), "ConfirmSelected")]
-            public static bool ConfirmSelected(CharacterSelectCustomizeMenu __instance)
-            {
-                CharacterSelectSelector characterSelectSelector = __instance.CharacterSelect.Selectors[__instance.selectorNumber];
-                if (__instance.CharacterSelect.SquadStrikeSelection && !__instance.CharacterSelect.SquadsSelect.SquadCompleteSet(__instance.selectorNumber) && characterSelectSelector.IsCPU)
-                {
-                    characterSelectSelector.OnCustomizeMenu = false;
-                    characterSelectSelector.OnSquadSelection = false;
-                    characterSelectSelector.OnCharacterSelector = true;
-                    __instance.CharacterSelect.SquadsSelect.NextCharacter(__instance.selectorNumber);
-                    __instance.CharacterSelect.RefreshUI();
                     return false;
                 }
-                __instance.inputManager.CleanInputDevice(__instance.inputDeviceIndex);
-                __instance.ToggleMenu(false, false);
-                //__instance.CharacterSelect.MarkSelectorAsReady(__instance.selectorNumber);
-
-                MetaData MD = __instance.CharacterPanel.gameObject.GetComponent<MetaData>();
-                MD.profileisSelected = true;
-
-                //profileSelected = true;
+                if (!__instance.currentSelector.Enabled)
+                {
+                    return false;
+                }
+                if (__instance.currentSelector.Ready)
+                {
+                    return false;
+                }
+                if (!__instance.randomMode && __instance.inputManager.GetUIInputDown(__instance.inputDeviceIndex, UIKey.BumperR, "", false) && __instance.unlocked)
+                {
+                    __instance.currentSkin++;
+                    if (__instance.currentSkin > __instance.currentSkins[__instance.currentSkins.Count - 1])
+                    {
+                        __instance.currentSkin = 0;
+                    }
+                    while (!__instance.currentSkins.Contains(__instance.currentSkin))
+                    {
+                        __instance.currentSkin++;
+                        if (__instance.currentSkin > __instance.currentSkins[__instance.currentSkins.Count - 1])
+                        {
+                            __instance.currentSkin = 0;
+                        }
+                    }
+                    __instance.ChangeSkin();
+                }
+                if (!__instance.randomMode && __instance.inputManager.GetUIInputDown(__instance.inputDeviceIndex, UIKey.BumperL, "", false) && __instance.unlocked)
+                {
+                    __instance.currentSkin--;
+                    if (__instance.currentSkin < 0)
+                    {
+                        __instance.currentSkin = __instance.currentSkins[__instance.currentSkins.Count - 1];
+                    }
+                    while (!__instance.currentSkins.Contains(__instance.currentSkin))
+                    {
+                        __instance.currentSkin--;
+                        if (__instance.currentSkin < 0)
+                        {
+                            __instance.currentSkin = __instance.currentSkins[__instance.currentSkins.Count - 1];
+                        }
+                    }
+                    __instance.ChangeSkin();
+                }
                 return false;
             }
 
