@@ -918,19 +918,20 @@ namespace CheapSkinss
                 mainTitleSkin = mainTextTransform.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
                 mainTitleSkin.alignment = TextAlignmentOptions.Center;
                 mainTitleSkin.gameObject.transform.localPosition = new Vector3(46.8699f, -24.9899f, 0);
-                mainTitleSkin.text = "TEST";
+                mainTitleSkin.text = "DEFAULT";
                 CustominfoSection.SetActive(false);
 
 
                 Transform mainTextTransform11 = CustominfoSection.transform.Find("SecondaryTitle");
                 authorTitle = mainTextTransform11.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
-                authorTitle.text = "test1";
+                authorTitle.text = "FAIR PLAY LABS";
 
                 Transform mainTextTransform12 = CustominfoSection.transform.Find("PlayerTag");
                 skinImage = mainTextTransform12.gameObject.GetComponentInChildren<UnityEngine.UI.Image>();
                 skinImage.preserveAspect = true;
                 skinImage.material = null;
                 skinImage.color = Color.white;
+                //skinImage = null;
 
                 TMPro.TextMeshProUGUI textComponent = mainTextTransform12.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 GameObject textP1 = textComponent.gameObject;
@@ -1014,6 +1015,7 @@ namespace CheapSkinss
                 {
                     return;
                 }
+                //CustominfoSection.SetActive(true);
 
                 this.inputDeviceIndex = Plugin.inputManager.GetPlayerInputDeviceIndex(this.characterPanel.playerIndex);
                 
