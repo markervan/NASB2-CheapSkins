@@ -13,6 +13,12 @@
 	<Target Name="PostBuild1" AfterTargets="PostBuildEvent">
 		<Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;C:\Arcis- Speed Boat Theme\BepInEx\plugins&quot;" />
 	</Target>
+	<ItemGroup>
+	  <None Remove="Resources\fpl.png" />
+	</ItemGroup>
+	<ItemGroup>
+	  <EmbeddedResource Include="Resources\fpl.png" />
+	</ItemGroup>
 	
 	
   <ItemGroup>

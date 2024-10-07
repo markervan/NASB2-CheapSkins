@@ -75,12 +75,8 @@ namespace CheapSkinss
         public static string CUSTOM_SKIN_ID = "CUSTOM_SKIN_ID";
         public static string CUSTOM_SKIN_NAME = "CUSTOM_SKIN_NAME";
         public static Dictionary<string, List<string>> materialMeshGroups = new Dictionary<string, List<string>>();
-        //public static bool profileSelected = false;
-
-
         #region directories
         public List<CharacterMetaData> characterMetaDatas = new List<CharacterMetaData>();
-
         public static Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>> characterCodenames = new Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>>
         {
             { "SpongeBob", SpongeBob.SpongeBobAltParts},
@@ -193,8 +189,6 @@ namespace CheapSkinss
             public int skinIndex;
             public int customSkinID;
         }
-
-
         public class CustomSkinData
         {
             public string skinID;
@@ -210,7 +204,6 @@ namespace CheapSkinss
             public Dictionary<string, Dictionary<string, Mesh>> materialBanksForMeshes;
 
         }
-
         public static List<CustomSkinData> customSkinDatas = new List<CustomSkinData>();
         #region CheapSkinLoaders
 
@@ -714,7 +707,7 @@ namespace CheapSkinss
 
             return bundle;
         }
-        public Sprite ConvertTextureToSprite(Texture2D texture)
+        public static Sprite ConvertTextureToSprite(Texture2D texture)
         {
             // Define the sprite's rect and pivot point (center of the texture)
             Rect rect = new Rect(0, 0, texture.width, texture.height);
@@ -874,9 +867,11 @@ namespace CheapSkinss
             private TMPro.TextMeshProUGUI mainTitleSkin;
             private TMPro.TextMeshProUGUI authorTitle;
             public GameObject CustominfoSection;
+            public GameObject dummyInfo;
             private UnityEngine.UI.Image skinImage;
             public bool customSkinSelected = false;
             public bool profileisSelected = false;
+            public Sprite FPLImage;
 
             private void Awake()
             {
@@ -909,8 +904,8 @@ namespace CheapSkinss
                 CustominfoSection = GameObject.Instantiate(childTransform.gameObject);
 
                 CustominfoSection.transform.SetParent(characterPanel.gameObject.transform, true);
-                //CustominfoSection.SetActive(true);
                 CustominfoSection.name = "CustomSkinInfo";
+
                 CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0);
                 CustominfoSection.transform.localScale = new Vector3(1, 1, 1);
 
@@ -921,7 +916,6 @@ namespace CheapSkinss
                 mainTitleSkin.text = "DEFAULT";
                 CustominfoSection.SetActive(false);
 
-
                 Transform mainTextTransform11 = CustominfoSection.transform.Find("SecondaryTitle");
                 authorTitle = mainTextTransform11.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 authorTitle.text = "FAIR PLAY LABS";
@@ -931,11 +925,32 @@ namespace CheapSkinss
                 skinImage.preserveAspect = true;
                 skinImage.material = null;
                 skinImage.color = Color.white;
-                //skinImage = null;
+                Texture2D fplLogoTexture = Patches.getTexture2D();
+
+                Sprite fplLogo = ConvertTextureToSprite(fplLogoTexture);
+                skinImage.sprite = fplLogo;
+                FPLImage = fplLogo;
 
                 TMPro.TextMeshProUGUI textComponent = mainTextTransform12.gameObject.GetComponentInChildren<TMPro.TextMeshProUGUI>();
                 GameObject textP1 = textComponent.gameObject;
                 textP1.SetActive(false);
+
+                // Instantiate dummyInfo after setting up CustominfoSection
+                dummyInfo = GameObject.Instantiate(CustominfoSection);
+                dummyInfo.transform.SetParent(characterPanel.gameObject.transform, true);
+                dummyInfo.name = "DUMMYINFO";
+                dummyInfo.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0);
+                dummyInfo.transform.localScale = new Vector3(1, 1, 1);
+                Transform mainTextTransform1 = dummyInfo.transform.Find("MainTitleText");
+
+                TextMeshProUGUI mainTitleSkin1;
+                mainTitleSkin1 = mainTextTransform1.gameObject.GetComponent<TMPro.TextMeshProUGUI>();
+                mainTitleSkin1.alignment = TextAlignmentOptions.Center;
+                mainTitleSkin1.gameObject.transform.localPosition = new Vector3(46.8699f, -24.9899f, 0);
+                mainTitleSkin1.text = "DEFAULT";
+
+                // Ensure CustominfoSection is rendered in front of dummyInfo
+                dummyInfo.transform.SetSiblingIndex(CustominfoSection.transform.GetSiblingIndex() - 1);
             }
             public void UpdateData()
             {
@@ -962,17 +977,17 @@ namespace CheapSkinss
                             this.CustominfoSection.SetActive(false);
                         }
 
-                        Texture2D texture2D = null;
                         Plugin.CustomSkinData customSkinData = new Plugin.CustomSkinData
                         {
                             skinID = "null",
                             skinIndex = 0,
                             characterCodename = this.characterPanel.currentCharacter,
                             skinIntIndex = 0,
-                            stockImage = texture2D,
+                            //stockImage = FPLImage,
                             VSRender = null,
                             authorName = "FAIR PLAY LABS",
                             skinName = "DEFAULT",
+                            stockImageSprite = FPLImage,
                             CustomMOGList = null
                         };
                         this.customSkinsID.Add(customSkinData);
@@ -995,28 +1010,33 @@ namespace CheapSkinss
                 bool flag7 = this.characterCodename != this.previousCharacterCodename || this.skinIndex1 != this.previousSkinIndex;
                 if (flag7)
                 {
-                    
+                    dummyInfo.SetActive(false);
                     this.UpdateData();
                 }
+                
                 bool playerIsReady = this.characterPanel.playerIsReady;
                 if (playerIsReady)
                 {
                     this.CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -236.8675f, 0f);
+                    dummyInfo.SetActive(false);
                 }
                 else
                 {
                     this.CustominfoSection.transform.localPosition = new Vector3(-38.7277f, -411.6458f, 0f);
+                    dummyInfo.SetActive(true);
                 }
                 if (banner.isReady)
                 {
                     this.CustominfoSection.SetActive(false);
+                    dummyInfo.SetActive(false);
                 }
                 if (!profileisSelected)
                 {
+                    dummyInfo.SetActive(false);
                     return;
                 }
                 //CustominfoSection.SetActive(true);
-
+                dummyInfo.SetActive(true);
                 this.inputDeviceIndex = Plugin.inputManager.GetPlayerInputDeviceIndex(this.characterPanel.playerIndex);
                 
                 bool isReady = this.banner.isReady;
@@ -1040,6 +1060,7 @@ namespace CheapSkinss
                             Debug.Log("R trigger from " + this.characterPanel.gameObject.name);
                             this.currentCustomSkinID = (this.currentCustomSkinID + 1) % this.customSkinsID.Count;
                             this.SetCharacterSkin();
+                            dummyInfo.SetActive(false);
                         }
                         bool flag4 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Left, "", false);
                         if (flag4)
@@ -1047,6 +1068,7 @@ namespace CheapSkinss
                             Debug.Log("L trigger from " + this.characterPanel.gameObject.name);
                             this.currentCustomSkinID = (this.currentCustomSkinID - 1 + this.customSkinsID.Count) % this.customSkinsID.Count;
                             this.SetCharacterSkin();
+                            dummyInfo.SetActive(false);
                         }
                         bool flag9 = !this.characterPanel.randomMode && Plugin.inputManager.GetUIInputDown(this.inputDeviceIndex, UIKey.Cancel, "", false);
                         if (flag9)
@@ -1075,6 +1097,7 @@ namespace CheapSkinss
                         bool flag6 = this.characterCodename != this.previousCharacterCodename || this.skinIndex1 != this.previousSkinIndex;
                         if (flag6)
                         {
+                            dummyInfo.SetActive(false);
                             this.UpdateData();
                         }
                     }
@@ -1098,6 +1121,7 @@ namespace CheapSkinss
                 if (customSkinsID[currentCustomSkinID].skinID == null || customSkinsID[currentCustomSkinID].authorName == null)
                 {
                     CustominfoSection.SetActive(false);
+                    dummyInfo.SetActive(false);
                     return;
                 }
 
@@ -1257,7 +1281,6 @@ namespace CheapSkinss
             }
             [HarmonyPostfix]
             [HarmonyPatch(typeof(CharacterManager), "OnInstantiated")]
-            
             public static void OnInstantiated(CharacterManager __instance, QuantumGame game)
             {
                 try
@@ -1802,11 +1825,11 @@ namespace CheapSkinss
                 return null;
             }
 
-            public static Texture2D getTexture2D(string path)
+            public static Texture2D getTexture2D()
             {
                 Assembly executingAssembly = Assembly.GetExecutingAssembly();
                 Texture2D texture2D = new Texture2D(1, 1);
-                using (Stream manifestResourceStream = executingAssembly.GetManifestResourceStream("CheapSkinss.Resources.danny2.png"))
+                using (Stream manifestResourceStream = executingAssembly.GetManifestResourceStream("CheapSkinss.Resources.fpl.png"))
                 {
                     byte[] array = new byte[manifestResourceStream.Length];
                     manifestResourceStream.Read(array, 0, (int)manifestResourceStream.Length);
