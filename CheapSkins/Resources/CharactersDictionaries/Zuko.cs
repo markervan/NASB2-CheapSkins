@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class ZukoDictinoary
+    internal class Zuko
     {
         public static List<string> Stevia0Exp = new List<string>
         {

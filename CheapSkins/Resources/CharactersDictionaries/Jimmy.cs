@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class JimmyDictionaries
+    internal class Jimmy
     {
         public static List<string> Jimmy0Body = new List<string>
         {

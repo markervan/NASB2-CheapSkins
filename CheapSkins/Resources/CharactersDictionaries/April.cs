@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class AprilDictionaries
+    internal class April
     {
 
         public static List<string> April_Costume_01_Mat = new List<string>

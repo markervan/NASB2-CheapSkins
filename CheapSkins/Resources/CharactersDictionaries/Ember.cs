@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class EmberDictionary
+    internal class Ember
     {
         public static List<string> Ember1body = new List<string>
         {

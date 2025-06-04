@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class MechaPlanktonDictionary
+    internal class Plankton
     {
         public static List<string> MechaPlanktonBody = new List<string>
             {

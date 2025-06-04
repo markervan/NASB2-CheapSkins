@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class Headbanger
+    internal class Rocksteady
     {
 
         public static List<string> Headbanger_Body_Mat = new List<string>

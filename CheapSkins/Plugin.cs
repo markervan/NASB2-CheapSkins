@@ -90,40 +90,40 @@ namespace CheapSkinss
         public static Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>> characterCodenames = new Dictionary<string, Dictionary<int, Dictionary<string, List<string>>>>
         {
             { "SpongeBob", SpongeBob.SpongeBobAltParts},
-            { "Patrick", PatrickDictionaries.PatrickAltParts},
-            { "Squidward", SquidwarDictionaries.SquidwardAltParts},
-            { "MechaPlankton", MechaPlanktonDictionary.MechaPlanktonAltParts},
+            { "Patrick", Patrick.PatrickAltParts},
+            { "Squidward", Squidward.SquidwardAltParts},
+            { "MechaPlankton", Plankton.MechaPlanktonAltParts},
             { "ElTigre",ElTigre.ElTigreAltParts},
 
             { "Rocko", Rocko.RockoAltParts},
-            { "Jimmy", JimmyDictionaries.JimmyAltParts},
+            { "Jimmy", Jimmy.JimmyAltParts},
             { "Lucy", Lucy.LucyAltParts},
             { "Dagget", Daggett.DaggettaltParts},
             { "Norbert", Norbet.NorbertaltParts},
             { "Garfield", Garfield.GarfieldAltParts},
 
-            { "Aang", Aaang.AangAltParts},
+            { "Aang", Aang.AangAltParts},
             { "Korra", Korra.KorraAltParts},
             { "Azula" , Azula.AzulaAltParts},
             { "Raphael", Raphael.RaphaelAltParts},
             { "Donatello", Donatello.DonatelloAltParts},
 
-            { "April", AprilDictionaries.AprilAltParts},
-            { "Danny", DannyDictionaries.DannyAltParts},
-            { "Ember", EmberDictionary.EmberAltParts},
+            { "April", April.AprilAltParts},
+            { "Danny", Danny.DannyAltParts},
+            { "Ember", Ember.EmberAltParts},
             { "GrandmaGertie", Gertie.GrandmaGertieAltParts},
             { "Gerald", Gerald.GeraldAltParts},
 
             { "Nigel", NIgel.NigelAltParts},
             { "Zim" , Zim.ZimAltParts},
-            { "Jenny", JennyDictionary.JennyAltParts},
+            { "Jenny", Jenny.JennyAltParts},
             { "Reptar", Reptar.ReptarAltParts},
             { "RenStimpy", RenStimpy.RenStimpyParts},
 
-            { "Stevia", ZukoDictinoary.SteviaAltParts},
-            { "Sushi", Sushi.SushiAltParts},
-            { "Teacher", Teacher.TeacherAltParts},
-            { "Headbanger", Headbanger.HeadbangerAltParts},
+            { "Stevia", Zuko.SteviaAltParts},
+            { "Sushi", MrKrabs.SushiAltParts},
+            { "Teacher", Iroh.TeacherAltParts},
+            { "Headbanger", Rocksteady.HeadbangerAltParts},
         };
         #endregion
 

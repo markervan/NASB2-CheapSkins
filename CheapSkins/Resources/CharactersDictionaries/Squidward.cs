@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class SquidwarDictionaries
+    internal class Squidward
     {
         public static List<string> Squidward0Costume = new List<string>
         {

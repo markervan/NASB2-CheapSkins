@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CheapSkins.Resources.CharactersDictionaries
 {
-    internal class Sushi
+    internal class MrKrabs
     {
         public static List<string> Sushi_Costume00_Mat = new List<string>
         {
