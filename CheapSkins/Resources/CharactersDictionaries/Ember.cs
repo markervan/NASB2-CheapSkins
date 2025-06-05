@@ -21,10 +21,6 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "upeyelid_L_mesh",
             "upeyelid_R_mesh"
         };
-        public static List<string> Ember1madexpression = new List<string>
-        {
-            "mad_C_mesh",
-        };
         public static List<string> Ember0body = new List<string>
         {
             "costume00_body_C_mesh",
@@ -32,12 +28,12 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "costume00_hair_C_mesh",
             "costume00_hairTail_C_mesh",
             "costume00_hand_default_L_mesh",
-            "mad_C_mesh",
             "costume00_hand_default_R_mesh",
             "downeyelid_L_mesh",
             "downeyelid_R_mesh",
             "upeyelid_L_mesh",
-            "upeyelid_R_mesh"
+            "upeyelid_R_mesh",
+            "mad_C_mesh",
         };
         public static List<string> Ember0expressions = new List<string>
         {
@@ -48,7 +44,8 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "idle_C_mesh",
             "lose_C_mesh",
             "smile_C_mesh",
-            "taunt_C_mesh"
+            "taunt_C_mesh",
+            "mad_C_mesh",
         };
         public static List<string> Ember0guitar = new List<string>
         {
@@ -59,20 +56,43 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "pupil_L_mesh",
             "pupil_R_mesh"
         };
+        public static List<string> EmberProps = new List<string>
+        {
+            "stageplatform_C_mesh",
+            "stagetruckplatform_C_mesh",
+            "goose_C_mesh"
+        };
+        public static List<string> EmberStage = new List<string>
+        {
+            "stage_C_mesh",
+        };
+        
         public static Dictionary<string, List<string>> Ember0Parts = new Dictionary<string, List<string>>
         {
             { "Ember_Costume_01_Mat", Ember0body},
             { "Ember_Costume_03_Mat", Ember0expressions},
+            { "Ember_Expressions_Mat",  Ember0expressions},
             { "Ember_Guitar_Mat", Ember0guitar},
-            { "Ember_Eye_Mat", Ember0eyes}
+            { "Ember_Eye_Mat", Ember0eyes},
+            { "Ember_Props_Mat", EmberProps},
+            { "Ember_Stage_Mat", EmberStage},
+
+
+            //REGARDING EXPRESSIONS:
+            //For Ember's default alt, All her expressions but her default one are part of the material "Ember_Expressions_Mat". Default expression uses the material "Ember_Costume_03_Mat"
         };
         public static Dictionary<string, List<string>> Ember1Parts = new Dictionary<string, List<string>>
         {
+            { "Ember_Costume_01_Mat", Ember0body},
             { "Ember_Costume_02_Mat", Ember1body},
-            { "Ember_Costume_03_Mat", Ember0expressions},
-            { "Ember_Costume_01_Mat", Ember1madexpression},
+            { "Ember_Expressions_Mat",  Ember0expressions},
             { "Ember_Guitar_Mat", Ember0guitar},
-            { "Ember_Eye_Mat", Ember0eyes}
+            { "Ember_Eye_Mat", Ember0eyes},
+            { "Ember_Props_Mat", EmberProps},
+            { "Ember_Stage_Mat", EmberStage},
+
+            //REGARDING EXPRESSIONS:
+            //For Ember's pirate alt, All her expressions but her default one are part of the material "Ember_Expressions_Mat". Default expression uses the material "Ember_Costume_01_Mat"
         };
         public static Dictionary<int, Dictionary<string, List<string>>> EmberAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {
