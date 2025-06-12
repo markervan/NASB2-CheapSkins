@@ -7,75 +7,75 @@ namespace CheapSkins.Resources.CharactersDictionaries
     internal class Lucy
     {
         public static List<string> Lucy0Body = new List<string>
-{
-    "armDetails_C_mesh",
-    "ears_C_mesh",
-    "costume01Dress_C_mesh",
-    "default_mesh",
-    "hair_C_mesh",
-    "hair_inv_C_mesh",
-    "hands_C_mesh",
-    "legs_C_mesh",
-    "neck_C_mesh",
-    "shoes_C_mesh"
-};
+        {
+            "armDetails_C_mesh",
+            "ears_C_mesh",
+            "costume01Dress_mesh",
+            "default_mesh",
+            "hair_C_mesh",
+            "hair_inv_C_mesh",
+            "hands_C_mesh",
+            "legs_C_mesh",
+            "neck_C_mesh",
+            "shoes_C_mesh"
+        };
 
         public static List<string> Lucy0Expressions = new List<string>
-{
-    "attack_inv_mesh",
-    "attack_mesh",
-    "bite_mesh",
-    "biteClosed_mesh",
-    "hurt_inv_mesh",
-    "hurt_mesh",
-    "idle_mesh",
-    "smile_mesh",
-    "taunt2_inv_mesh",
-    "taunt2_mesh",
-    "vamp_mesh"
-};
+        {
+            "attack_inv_mesh",
+            "attack_mesh",
+            "bite_mesh",
+            "biteClosed_mesh",
+            "hurt_inv_mesh",
+            "hurt_mesh",
+            "idle_mesh",
+            "smile_mesh",
+            "taunt2_inv_mesh",
+            "taunt2_mesh",
+            "vamp_mesh"
+        };
 
         public static List<string> Lucy0Hair = new List<string>
-{
-    "hairBlockTeeter_C_mesh",
-    "hairBlockTeeter_inv_C_mesh",
-    "hairDown_C_mesh",
-    "hairDown_inv_C_mesh",
-    "hairEdgeGrab_C_mesh",
-    "hairEdgeGrab_inv_C_mesh"
-};
+        {
+            "hairBlockTeeter_C_mesh",
+            "hairBlockTeeter_inv_C_mesh",
+            "hairDown_C_mesh",
+            "hairDown_inv_C_mesh",
+            "hairEdgeGrab_C_mesh",
+            "hairEdgeGrab_inv_C_mesh"
+        };
 
         public static List<string> Lucy0Props1 = new List<string>
-{
-    "bat01Body_C_mesh",
-    "bat02Body_C_mesh",
-    "batEars_C_mesh",
-    "batFeets_C_mesh",
-    "batWings_C_mesh",
-    "hairStrand_C_mesh",
-    "cape_mesh",
-    "hood_mesh",
-    "shoedetail_mesh",
-    "spadesymbol_mesh",
-    "capeWings_C_mesh",
-    "coffinBase_C_mesh",
-    "door_C_mesh",
-    "handles_C_mesh",
-    "hingeBase_C_mesh",
-    "middlePiece_C_mesh",
-    "umbrella_C_mesh",
-    "umbrellaClosed_C_mesh",
-    "notebook_C_mesh",
-    "pencil_C_mesh",
-    "crystalBall_C_mesh",
-    "edwin_C_mesh",
-    "eigthOfSpadeShovel_C_mesh",
-    "morticianClubGavel_C_mesh",
-    "poetryBook_C_mesh",
-    "poetryBook_open_C_mesh",
-    "scythe_C_mesh",
-    "threeOfSwords_C_mesh"
-};
+        {
+            "bat01Body_C_mesh",
+            "bat02Body_C_mesh",
+            "batEars_C_mesh",
+            "batFeets_C_mesh",
+            "batWings_C_mesh",
+            "hairStrand_C_mesh",
+            "cape_mesh",
+            "hood_mesh",
+            "shoedetail_mesh",
+            "spadesymbol_mesh",
+            "capeWings_C_mesh",
+            "coffinBase_C_mesh",
+            "door_C_mesh",
+            "handles_C_mesh",
+            "hingeBase_C_mesh",
+            "middlePiece_C_mesh",
+            "umbrella_C_mesh",
+            "umbrellaClosed_C_mesh",
+            "notebook_C_mesh",
+            "pencil_C_mesh",
+            "crystalBall_C_mesh",
+            "edwin_C_mesh",
+            "eigthOfSpadeShovel_C_mesh",
+            "morticianClubGavel_C_mesh",
+            "poetryBook_C_mesh",
+            "poetryBook_open_C_mesh",
+            "scythe_C_mesh",
+            "threeOfSwords_C_mesh"
+        };
 
         public static List<string> Lucy1Costume = new List<string>
         {
@@ -140,7 +140,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
 
         public static List<string> Lucy3Dress = new List<string>
         {
-            "costume01Dress_C_mesh"
+            "costume01Dress_mesh"
         };
 
         public static Dictionary<string, List<string>> Lucy0Parts = new Dictionary<string, List<string>>

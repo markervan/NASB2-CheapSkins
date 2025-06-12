@@ -399,104 +399,104 @@ namespace CheapSkins.Resources.CharactersDictionaries
 };
 
         public static List<string> Sushi_Expressions_Mat3 = new List<string>
-{
-    "Attack06_costume03_C_mesh",
-    "attack_01_C_mesh",
-    "attack_02_C_mesh",
-    "attack_03_C_mesh",
-    "attack_04_C_mesh",
-    "attack_05_C_mesh",
-    "attack_06_C_mesh_name",
-    "attack_07_C_mesh",
-    "attack_08_C_mesh",
-    "lose_C_mesh",
-    "moneysign_C_mesh",
-    "mouthwideopen_C_mesh",
-    "sideSmile_C_mesh",
-    "slimeburst_C_mesh",
-    "taunt03_C_mesh",
-    "carcass_costume_C_mesh"
-};
+        {
+            "Attack06_costume03_C_mesh",
+            "attack_01_C_mesh",
+            "attack_02_C_mesh",
+            "attack_03_C_mesh",
+            "attack_04_C_mesh",
+            "attack_05_C_mesh",
+            "attack_06_C_mesh_name",
+            "attack_07_C_mesh",
+            "attack_08_C_mesh",
+            "lose_C_mesh",
+            "moneysign_C_mesh",
+            "mouthwideopen_C_mesh",
+            "sideSmile_C_mesh",
+            "slimeburst_C_mesh",
+            "taunt03_C_mesh",
+            "carcass_costume_C_mesh"
+        };
 
         public static List<string> Sushi_Costume00_Mat3 = new List<string>
-{
-    "attack_01_C_mesh",
-    "attack_02_C_mesh",
-    "attack_03_C_mesh",
-    "attack_04_C_mesh",
-    "attack_05_C_mesh",
-    "attack_09_C_mesh",
-    "default_C_mesh",
-    "idle_C_mesh",
-    "lose_C_mesh",
-    "mouthwideopen_C_mesh",
-    "sideSmile_C_mesh",
-    "smiley_C_mesh",
-    "taunt03_C_mesh",
-    "arm_C_mesh",
-    "feet_C_mesh",
-    "hand_close_C_mesh",
-    "hand_open_C_mesh",
-    "eyelid_close_down_L_mesh",
-    "eyelid_close_down_R_mesh",
-    "eyelid_close_up_L_mesh",
-    "eyelid_close_up_R_mesh",
-    "eyelid_base_down_L_mesh",
-    "eyelid_base_down_R_mesh",
-    "eyelid_base_up_L_mesh",
-    "eyelid_base_up_R_mesh",
-    "eyelid_medium_down_L_mesh",
-    "eyelid_medium_down_R_mesh",
-    "eyelid_medium_up_L_mesh",
-    "eyelid_medium_up_R_mesh"
-};
+        {
+            "attack_01_C_mesh",
+            "attack_02_C_mesh",
+            "attack_03_C_mesh",
+            "attack_04_C_mesh",
+            "attack_05_C_mesh",
+            "attack_09_C_mesh",
+            "default_C_mesh",
+            "idle_C_mesh",
+            "lose_C_mesh",
+            "mouthwideopen_C_mesh",
+            "sideSmile_C_mesh",
+            "smiley_C_mesh",
+            "taunt03_C_mesh",
+            "arm_C_mesh",
+            "feet_C_mesh",
+            "hand_close_C_mesh",
+            "hand_open_C_mesh",
+            "eyelid_close_down_L_mesh",
+            "eyelid_close_down_R_mesh",
+            "eyelid_close_up_L_mesh",
+            "eyelid_close_up_R_mesh",
+            "eyelid_base_down_L_mesh",
+            "eyelid_base_down_R_mesh",
+            "eyelid_base_up_L_mesh",
+            "eyelid_base_up_R_mesh",
+            "eyelid_medium_down_L_mesh",
+            "eyelid_medium_down_R_mesh",
+            "eyelid_medium_up_L_mesh",
+            "eyelid_medium_up_R_mesh"
+        };
 
         public static List<string> Sushi_ExpressionsExtra_Mat3 = new List<string>
-{
-    "attack_09_C_mesh"
-};
+        {
+            "attack_09_C_mesh"
+        };
 
         public static List<string> Sushi_Props_Rigged_Mat3 = new List<string>
-{
-    "clam_C_mesh",
-    "cowBell_C_mesh",
-    "extendedDollar_C_mesh",
-    "fishingRod_C_mesh",
-    "fishingRodLine_C_mesh",
-    "hammer_C_mesh",
-    "keytar_C_mesh",
-    "moneyBag_C_mesh",
-    "moneyPockets_C_mesh",
-    "musket_C_mesh",
-    "musketRope_C_mesh",
-    "oldDime_C_mesh",
-    "percussionRod_C_mesh",
-    "plunger_C_mesh",
-    "rope_C_mesh",
-    "shovel_C_mesh",
-    "smallViolin_C_mesh",
-    "smallViolinStick_C_mesh",
-    "swordfishRapier_C_mesh",
-    "vacuum_C_mesh"
-};
+        {
+            "clam_C_mesh",
+            "cowBell_C_mesh",
+            "extendedDollar_C_mesh",
+            "fishingRod_C_mesh",
+            "fishingRodLine_C_mesh",
+            "hammer_C_mesh",
+            "keytar_C_mesh",
+            "moneyBag_C_mesh",
+            "moneyPockets_C_mesh",
+            "musket_C_mesh",
+            "musketRope_C_mesh",
+            "oldDime_C_mesh",
+            "percussionRod_C_mesh",
+            "plunger_C_mesh",
+            "rope_C_mesh",
+            "shovel_C_mesh",
+            "smallViolin_C_mesh",
+            "smallViolinStick_C_mesh",
+            "swordfishRapier_C_mesh",
+            "vacuum_C_mesh"
+        };
 
         public static List<string> Sushi_Props_Spawned_Mat3 = new List<string>
-{
-    "bucket_C_mesh",
-    "clam_C_mesh",
-    "dollar_C_mesh",
-    "fiftycent_C_mesh",
-    "fivecent_C_mesh",
-    "ghostpaper_C_mesh",
-    "goldingot_C_mesh",
-    "Hat_C_mesh",
-    "onecent_C_mesh",
-    "quarter_C_mesh",
-    "rope_C_mesh",
-    "ropecircle_C_mesh",
-    "ropelong_C_mesh",
-    "stick_C_mesh"
-};
+        {
+            "bucket_C_mesh",
+            "clam_C_mesh",
+            "dollar_C_mesh",
+            "fiftycent_C_mesh",
+            "fivecent_C_mesh",
+            "ghostpaper_C_mesh",
+            "goldingot_C_mesh",
+            "Hat_C_mesh",
+            "onecent_C_mesh",
+            "quarter_C_mesh",
+            "rope_C_mesh",
+            "ropecircle_C_mesh",
+            "ropelong_C_mesh",
+            "stick_C_mesh"
+        };
 
         public static Dictionary<string, List<string>> Sushi0Parts = new Dictionary<string, List<string>>()
         {

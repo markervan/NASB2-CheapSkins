@@ -181,64 +181,11 @@ public class CharacterSelect_Patches
         return false;
     }
 
-    /*[HarmonyPostfix]
-    [HarmonyPatch(typeof(CharacterSelect), "SetSelectorCharacter")]
-    public static void SetSelectorCharacter(CharacterSelect __instance, CharacterCodename character, int selectorNumber, int skin = 0, bool unlocked = true)
-    {
-        Plugin.Log.LogWarning("MODDED SetSelectorCharacter");
-        if (selectorNumber == -1)
-        {
-            return;
-        }
-        if (__instance.StartCoundown && !unlocked)
-        {
-            return;
-        }
-        CharacterCodename character2 = __instance.Selectors[selectorNumber].Character;
-        bool isRandom = __instance.Selectors[selectorNumber].IsRandom;
-
-        if (__instance.dataManager.Online && !__instance.Selectors[selectorNumber].OnlineRemotePlayer && (character2 != character || isRandom))
-        {
-
-            Plugin.Patches.CustomSetPlayerCharacterSkin(skin, character);
-        }
-        if (!dataManager.Online)
-        {
-            if (Plugin.metaDataDict.TryGetValue(selectorNumber, out var metaData))
-            {
-                CharacterMetaData meta = new CharacterMetaData
-                {
-                    playerIndex = selectorNumber,
-                    skinIndex = skin,
-                    customSkinName = "none",
-
-                };
-
-                Plugin.metaDataDict[selectorNumber] = meta;
-            }
-            else
-            {
-                CharacterMetaData meta = new CharacterMetaData
-                {
-                    playerIndex = selectorNumber,
-                    skinIndex = skin,
-                    customSkinName = "none",
-
-                };
-
-                Plugin.metaDataDict.Add(selectorNumber, meta);
-            }
-        }
-
-        return;
-
-    }*/
-
     [HarmonyPrefix]
     [HarmonyPatch(typeof(CharacterSelect), "SetSelectorCharacter")]
     public static bool SetSelectorCharacter(CharacterSelect __instance, CharacterCodename character, int selectorNumber, int skin = 0, bool unlocked = true)
     {
-        Plugin.Log.LogWarning("MODDED SetSelectorCharacter");
+        Plugin.Log.LogWarning("CUSTOM SET SELECTOR CHARACTER");
         bool flag = selectorNumber == -1;
         bool result;
         if (flag)
@@ -260,8 +207,23 @@ public class CharacterSelect_Patches
                 __instance.Selectors[selectorNumber].RandomCharacters[__instance.Selectors[selectorNumber].BrawlerIndex] = false;
                 __instance.Selectors[selectorNumber].Skins[__instance.Selectors[selectorNumber].BrawlerIndex] = skin;
                 __instance.Selectors[selectorNumber].IsLocked = !unlocked;
-                string localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
+
+                string localizedString = string.Empty;
+
+                if (character != CharacterCodename.Sartana && character != CharacterCodename.VladPlasmius)
+                {
+                    localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
+                }
+                else
+                {
+                    localizedString = "Testing CharacterInfo";
+                }
+
+
                 RecordTracker records = GameManager.Instance.SettingsManager.GlobalData.Records;
+
+
+
                 SinglePlayerMenu.SinglePlayerSubMenu lastArcadeMode = __instance.uiManager.LastArcadeMode;
                 if (__instance.dataManager.MainMenuContext == MainMenuContext.Arcade)
                 {

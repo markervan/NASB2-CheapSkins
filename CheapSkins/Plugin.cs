@@ -33,7 +33,7 @@ using static UnityEngine.EventSystems.EventTrigger;
 namespace CheapSkinss
 {
     [BepInDependency("markervan.nasb2.cheapnasb2", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInPlugin("markaccino.nasb2.cheapskins", "CheapSkins", "2.0")]
+    [BepInPlugin("markaccino.nasb2.cheapskins", "CheapSkins", "2.8")]
     internal class Plugin : BaseUnityPlugin
     {
         
@@ -1110,77 +1110,6 @@ namespace CheapSkinss
             }
         }
 
-        
-
-        public class SsaoConfigurator
-        {
-            private readonly object _ssaoSettings;
-            private readonly FieldInfo _fRadius;
-            private readonly FieldInfo _fAfterOpaque;
-            private readonly FieldInfo _fIntensity;
-            private readonly FieldInfo _fFalloff;
-
-            public SsaoConfigurator()
-            {
-                // Method to find a specific render feature by type
-                static ScriptableRendererFeature findRenderFeature(Type type)
-                {
-                    FieldInfo field = reflectField(typeof(ScriptableRenderer), "m_RendererFeatures");
-                    ScriptableRenderer renderer = UniversalRenderPipeline.asset.scriptableRenderer;
-                    var list = (List<ScriptableRendererFeature>)field.GetValue(renderer);
-                    foreach (ScriptableRendererFeature feature in list)
-                        if (feature.GetType() == type)
-                            return feature;
-                    throw new Exception($"Could not find instance of {type.AssemblyQualifiedName} in the renderer features list");
-                }
-
-                // Method to reflect private fields
-                static FieldInfo reflectField(Type type, string name) =>
-                    type.GetField(name, BindingFlags.Instance | BindingFlags.NonPublic) ??
-                    throw new Exception($"Could not reflect field [{type.AssemblyQualifiedName}].{name}");
-
-                // Get the SSAO feature type and settings
-                Type tSsaoFeature = Type.GetType("UnityEngine.Rendering.Universal.ScreenSpaceAmbientOcclusion, Unity.RenderPipelines.Universal.Runtime", true);
-                FieldInfo fSettings = reflectField(tSsaoFeature, "m_Settings");
-                ScriptableRendererFeature ssaoFeature = findRenderFeature(tSsaoFeature);
-                _ssaoSettings = fSettings.GetValue(ssaoFeature) ?? throw new Exception("ssaoFeature.m_Settings was null");
-
-                // Reflect SSAO settings fields
-                _fRadius = reflectField(_ssaoSettings.GetType(), "Radius");
-                _fAfterOpaque = reflectField(_ssaoSettings.GetType(), "AfterOpaque");
-                _fIntensity = reflectField(_ssaoSettings.GetType(), "Intensity");
-                _fFalloff = reflectField(_ssaoSettings.GetType(), "Falloff");
-            }
-
-            // Property for Radius
-            public float Radius
-            {
-                get => (float)_fRadius.GetValue(_ssaoSettings);
-                set => _fRadius.SetValue(_ssaoSettings, value);
-            }
-
-            // Property for AfterOpaque
-            public bool AfterOpaque
-            {
-                get => (bool)_fAfterOpaque.GetValue(_ssaoSettings);
-                set => _fAfterOpaque.SetValue(_ssaoSettings, value);
-            }
-
-            // Property for Intensity
-            public float Intensity
-            {
-                get => (float)_fIntensity.GetValue(_ssaoSettings);
-                set => _fIntensity.SetValue(_ssaoSettings, value);
-            }
-
-            // Property for Falloff
-            public float Falloff
-            {
-                get => (float)_fFalloff.GetValue(_ssaoSettings);
-                set => _fFalloff.SetValue(_ssaoSettings, value);
-            }
-        }
-
         public class MetaData : MonoBehaviour
         {
             private CharacterPanel characterPanel;
@@ -1350,17 +1279,41 @@ namespace CheapSkinss
 
             public void SetSkin(int skinIndex)
             {
-                mainTitleSkin.text = previewSkinsList[skinIndex].skinName;
-                authorTitle.text = previewSkinsList[skinIndex].authorName;
-                skinImage.sprite = previewSkinsList[skinIndex].CSSimage;
-
-                if (previewSkinsList[skinIndex].skinFilename.Contains("base"))
+                // Check if previewSkinsList is null or index is out of range
+                if (previewSkinsList == null || skinIndex < 0 || skinIndex >= previewSkinsList.Count)
                 {
-                    CustominfoSection.SetActive(false);
+                    Debug.LogError("Invalid skin index or previewSkinsList is null");
+                    return;
                 }
-                else
+
+                var skin = previewSkinsList[skinIndex];
+                if (skin == null)
                 {
-                    CustominfoSection.SetActive(true);
+                    Debug.LogError("Skin at index " + skinIndex + " is null");
+                    return;
+                }
+
+                // Check UI elements before assigning values
+                if (mainTitleSkin != null)
+                {
+                    mainTitleSkin.text = skin.skinName ?? string.Empty;
+                }
+
+                if (authorTitle != null)
+                {
+                    authorTitle.text = skin.authorName ?? string.Empty;
+                }
+
+                if (skinImage != null && skin.CSSimage != null)
+                {
+                    skinImage.sprite = skin.CSSimage;
+                }
+
+                // Handle CustominfoSection
+                if (CustominfoSection != null)
+                {
+                    bool shouldActivate = !string.IsNullOrEmpty(skin.skinFilename) && !skin.skinFilename.Contains("base");
+                    CustominfoSection.SetActive(shouldActivate);
                 }
             }
         }
