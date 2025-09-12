@@ -342,219 +342,588 @@ namespace CheapSkinss
         {
             try
             {
-                using var zipStream = new FileStream(cheapskinFile, FileMode.Open);
-                using var archive = new ZipArchive(zipStream, ZipArchiveMode.Read);
-
-                var packageEntry = archive.GetEntry("package.json");
-                if (packageEntry == null)
+                using (FileStream zipStream = new FileStream(cheapskinFile, FileMode.Open))
+                using (ZipArchive archive = new ZipArchive(zipStream, ZipArchiveMode.Read))
                 {
-                    Debug.LogWarning($"No 'package.json' entry found in {cheapskinFile}");
-                    return;
-                }
+                    // Find the "package" entry in the zip (assuming it's the package.json file)
+                    var packageEntry = archive.GetEntry("package.json");
 
-                using var reader = new StreamReader(packageEntry.Open());
-                string json = reader.ReadToEnd();
-                PackageJSON package = JsonConvert.DeserializeObject<PackageJSON>(json, (JsonSerializerSettings?)null);
-
-                var assetbundleEntry = archive.GetEntry(package.assetBundlePath);
-                if (assetbundleEntry == null)
-                {
-                    Debug.LogError($"AssetBundle '{package.assetBundlePath}' not found in cheapskin.");
-                    return;
-                }
-
-                byte[] assetBundleData;
-                using (var entryStream = assetbundleEntry.Open())
-                using (var memoryStream = new MemoryStream())
-                {
-                    entryStream.CopyTo(memoryStream);
-                    assetBundleData = memoryStream.ToArray();
-                }
-
-                AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromMemoryAsync(assetBundleData);
-                bundleRequest.completed += (asyncOperation) =>
-                {
-                    AssetBundle bundle = bundleRequest.assetBundle;
-                    if (bundle == null)
-                        return;
-
-                    CustomSkinData customSkinData = new CustomSkinData();
-                    if (package.materialOverrideGroups != null)
+                    if (packageEntry != null)
                     {
-                        customSkinData.skinID = package.skinID;
-                        customSkinData.skinName = package.skinName;
-
-                        if (Enum.TryParse(package.characterID, out CharacterCodename parsedCodename))
-                            customSkinData.characterCodename = parsedCodename;
-
-                        customSkinData.skinIndex = package.characterSkinIndex;
-                        customSkinData.CustomMOGList = new List<CharacterMaterialOverridesHandler.MaterialOverrideGroup>();
-
-                        // Deterministic hash for skinIntIndex
-                        byte[] bytes = Sha256.ComputeHash(Encoding.UTF8.GetBytes(package.skinID.ToLowerInvariant()));
-                        customSkinData.skinIntIndex = BitConverter.ToInt32(bytes, 0);
-
-                        string vsPath = package.VSRenderPath.ToLowerInvariant();
-                        customSkinData.VSRender = Patches.getTexture2DFromBundle(bundle, vsPath);
-
-                        string stockPath = package.StockIconPath.ToLowerInvariant();
-                        Texture2D stockSprite = Patches.getTexture2DFromBundle(bundle, stockPath);
-                        customSkinData.stockImageSprite = ConvertTextureToSprite(stockSprite);
-                        customSkinData.stockImage = stockSprite;
-
-                        customSkinData.authorName = package.authorName;
-                        customSkinData.materialBanksForMeshes = new Dictionary<string, Dictionary<string, Mesh>>();
-                        customSkinData.shaderToUse = new Dictionary<string, Shader>();
-                        customSkinData.customMaterials = new Dictionary<string, Material>();
-
-                        // Process material override groups
-                        foreach (var MOGVar in package.materialOverrideGroups)
+                        using (StreamReader reader = new StreamReader(packageEntry.Open()))
                         {
-                            CharacterMaterialOverridesHandler.MaterialOverrideGroup MOG = new CharacterMaterialOverridesHandler.MaterialOverrideGroup
-                            {
-                                Identifier = $"{MOGVar.matIndex}:{MOGVar.identifier}",
-                                TextureOverrides = new List<CharacterMaterialOverridesHandler.TextureOverride>()
-                            };
+                            // Read the JSON content
+                            string json = reader.ReadToEnd();
 
-                            Dictionary<string, Mesh> customMeshesToReplace = new Dictionary<string, Mesh>();
+                            // Deserialize the JSON into the PackageJSON class
+                            PackageJSON package = JsonConvert.DeserializeObject<PackageJSON>(json, (JsonSerializerSettings?)null);
 
-                            if (!string.IsNullOrWhiteSpace(MOGVar.customShader))
+                            //Debug.Log($"Loaded package: {package.characterID}, asset bundle path: {package.assetBundlePath}");
+
+                            var assetbundleEntry = archive.GetEntry(package.assetBundlePath);
+                            if (assetbundleEntry == null)
                             {
-                                Shader shader = bundle.LoadAsset<Shader>(MOGVar.customShader);
-                                if (shader != null)
-                                    customSkinData.shaderToUse.TryAdd(MOGVar.matIndex + ":" + MOGVar.identifier, shader);
+                                Debug.LogError($"AssetBundle '{package.assetBundlePath}' not found in cheapskin.");
+                                return;
                             }
 
-                            if (!string.IsNullOrWhiteSpace(MOGVar.customMaterial))
+                            byte[] assetBundleData;
+                            using (var entryStream = assetbundleEntry.Open())
+                            using (var memoryStream = new MemoryStream())
                             {
-                                Material material = bundle.LoadAsset<Material>(MOGVar.customMaterial);
-                                if (material != null)
-                                    customSkinData.customMaterials.TryAdd(MOGVar.matIndex + ":" + MOGVar.identifier, material);
+                                entryStream.CopyTo(memoryStream);
+                                assetBundleData = memoryStream.ToArray();
                             }
 
-                            foreach (var MOGTargets in MOGVar.Targets)
-                            {
-                                if (MOGTargets.materialIndex != 0)
-                                    continue;
+                            //Debug.Log("Loading AssetBundle from memory...");
+                            AssetBundleCreateRequest bundleRequest = AssetBundle.LoadFromMemoryAsync(assetBundleData);
 
-                                if (string.IsNullOrWhiteSpace(MOGTargets.targetName))
+                            bundleRequest.completed += (asyncOperation) =>
+                            {
+                                AssetBundle bundle = bundleRequest.assetBundle;
+                                if (bundle == null)
                                 {
-                                    customMeshesToReplace.TryAdd(MOGTargets.targetMesh, EmptyMesh);
-                                    continue;
+                                    ////Debug.LogError("Failed to load AssetBundle from memory!");
+                                    return;
                                 }
 
-                                GameObject fbx = bundle.LoadAsset<GameObject>(MOGTargets.targetName);
-                                if (fbx == null) continue;
+                                //Debug.Log("AssetBundle loaded successfully from memory.");
 
-                                SkinnedMeshRenderer skinnedMesh = FindSkinnedMeshRendererInChildren(fbx);
-                                if (skinnedMesh?.sharedMesh != null)
+                                string[] assetNames = bundle.GetAllAssetNames();
+                                //Debug.Log("Assets in the AssetBundle:");
+                                foreach (string assetName in assetNames)
                                 {
-                                    customMeshesToReplace.TryAdd(MOGTargets.targetMesh, skinnedMesh.sharedMesh);
+                                    //Debug.Log(assetName);
+                                }
+
+                                //Debug.Log($"Loaded characterID: {package.characterID}, skinID: {package.skinID} from {Path.GetFileName(cheapskinFile)}");
+
+                                CustomSkinData customSkinData = new CustomSkinData();
+                                if (package.materialOverrideGroups != null)
+                                {
+                                    
+                                    customSkinData.skinID = package.skinID;
+                                    customSkinData.skinName = package.skinName;
+                                    // Try to parse the string into the CharacterCodename enum
+                                    if (Enum.TryParse(package.characterID, out CharacterCodename parsedCodename))
+                                    {
+                                        customSkinData.characterCodename = parsedCodename;
+                                    }
+                                    else
+                                    {
+                                        //Debug.LogError("Failed to parse characterID: " + package.characterID);
+                                    }
+                                    customSkinData.skinIndex = package.characterSkinIndex;
+                                    customSkinData.CustomMOGList = new List<CharacterMaterialOverridesHandler.MaterialOverrideGroup>();
+                                    using (SHA256 sha256Hash = SHA256.Create())
+                                    {
+                                        byte[] bytes = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(package.skinID.ToLower()));
+                                        int hashValue = BitConverter.ToInt32(bytes, 0);
+                                        customSkinData.skinIntIndex += hashValue;
+                                    }
+
+                                    customSkinData.VSRender = Patches.getTexture2DFromBundle(bundle, package.VSRenderPath.ToLower());
+
+                                    Texture2D stockSprite = Patches.getTexture2DFromBundle(bundle, package.StockIconPath.ToLower());
+                                    Sprite sprite = ConvertTextureToSprite(stockSprite);
+                                    customSkinData.stockImageSprite = sprite;
+
+                                    
+                                    customSkinData.stockImage = Patches.getTexture2DFromBundle(bundle, package.StockIconPath.ToLower());
+                                    customSkinData.authorName = package.authorName;
+
+
+
+                                    customSkinData.materialBanksForMeshes = new Dictionary<string, Dictionary<string, Mesh>>();
+                                    customSkinData.shaderToUse = new Dictionary<string, Shader>();
+                                    customSkinData.customMaterials = new Dictionary<string, Material>();
+
+
+
+                                    try
+                                    {
+                                        //.Log("Custom Skin Data Index: " + customSkinData.skinIntIndex);
+                                        //Debug.LogWarning("Processing SFXData...");
+
+                                        if (package.sfxData != null)
+                                        {
+                                            //Debug.Log("SFXData path: " + package.sfxData);
+
+                                            if (!string.IsNullOrEmpty(package.sfxData))
+                                            {
+                                                SFXData sFXData = bundle.LoadAsset<SFXData>(package.sfxData);
+                                                if (sFXData != null)
+                                                {
+                                                    //Debug.Log("Successfully loaded SFXData: " + package.sfxData);
+                                                    customSkinData.customSFXData = sFXData;
+                                                }
+                                                else
+                                                {
+                                                    //Debug.LogError("Failed to load SFXData for skin: " + package.skinName);
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //Debug.LogWarning("SFXData path is empty for skin: " + package.skinName);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Debug.LogWarning("No SFXData provided for skin: " + package.skinName);
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        //Debug.LogError("Error processing SFXData for skin: " + package.skinName + ". Exception: " + ex.Message);
+                                    }
+
+                                    //Debug.Log("Processing material override groups.");
+                                    foreach (var MOGVar in package.materialOverrideGroups)
+                                    {
+                                        //Debug.Log($"Processing material override group: {MOGVar.identifier}");
+
+                                        CharacterMaterialOverridesHandler.MaterialOverrideGroup MOG = new CharacterMaterialOverridesHandler.MaterialOverrideGroup
+                                        {
+                                            Identifier = $"{MOGVar.matIndex}:{MOGVar.identifier}",
+                                            TextureOverrides = new List<CharacterMaterialOverridesHandler.TextureOverride>() // Initialize here
+                                        };
+                                        Dictionary<string, Mesh> customMeshesToReplace = new Dictionary<string, Mesh>();
+
+
+                                        //SHADER GETTER
+
+                                        if (MOGVar.customShader != null)
+                                        {
+                                            //Debug.LogWarning("Custom Shader is used, trying to load Custom Shader...");
+
+                                            if (!string.IsNullOrWhiteSpace(MOGVar.customShader))
+                                            {
+                                                Shader shader = bundle.LoadAsset<Shader>(MOGVar.customShader);
+                                                if (shader != null)
+                                                {
+                                                    //Debug.LogWarning("Shader Found: " + shader.name);
+
+                                                    if (!customSkinData.shaderToUse.ContainsKey(MOGVar.identifier))
+                                                    {
+                                                        customSkinData.shaderToUse.Add(MOGVar.matIndex + ":" + MOGVar.identifier, shader);
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        if (MOGVar.customMaterial != null)
+                                        {
+                                            //Debug.LogWarning("Custom Material is used, trying to load Custom Material...");
+
+                                            if (!string.IsNullOrWhiteSpace(MOGVar.customMaterial))
+                                            {
+                                                Material material = bundle.LoadAsset<Material>(MOGVar.customMaterial);
+                                                if (material != null)
+                                                {
+                                                    //Debug.LogWarning("Shader Found: " + material.name);
+
+                                                    if (!customSkinData.customMaterials.ContainsKey(MOGVar.identifier))
+                                                    {
+                                                        customSkinData.customMaterials.Add(MOGVar.matIndex + ":" + MOGVar.identifier, material);
+                                                    }
+
+                                                }
+                                            }
+                                        }
+
+                                        // TARGETS OVERRIDES
+
+
+                                        // Loop through the targets
+                                        //Debug.Log("Processing Targets.");
+                                        foreach (var MOGTargets in MOGVar.Targets)
+                                        {
+                                            if (MOGTargets.materialIndex != 0)
+                                            {
+                                                continue;
+                                            }
+
+                                            //Debug.Log($"Attempting to load GameObject from asset bundle for target: {MOGTargets.targetName}");
+
+                                            if (string.IsNullOrWhiteSpace(MOGTargets.targetName))
+                                            {
+                                                //Debug.LogWarning("IS NULL OR WHITE SPACE");
+
+                                                Mesh nullMesh = new Mesh();
+                                                if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                {
+                                                    Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                }
+                                                else
+                                                {
+                                                    customMeshesToReplace.Add(MOGTargets.targetMesh, nullMesh);
+                                                }
+                                                continue;
+                                            }
+
+                                            GameObject fbx = bundle.LoadAsset<GameObject>(MOGTargets.targetName);
+
+                                            if (fbx == null)
+                                            {
+                                                //Debug.LogError($"Failed to load GameObject from path: {MOGTargets.targetName}");
+                                                continue; // Continue to the next target
+                                            }
+
+                                            //Debug.Log("GameObject found: " + fbx.name);
+
+                                            // Find the SkinnedMeshRenderer in the FBX
+                                            SkinnedMeshRenderer skinnedMesh = FindSkinnedMeshRendererInChildren(fbx);
+                                            if (skinnedMesh != null)
+                                            {
+                                                //Debug.Log("Found SkinnedMeshRenderer in FBX: " + skinnedMesh.name);
+                                                Mesh mesh = skinnedMesh.sharedMesh;
+
+                                                if (mesh != null)
+                                                {
+                                                    if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                    {
+                                                        //Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                    }
+                                                    else
+                                                    {
+                                                        //Debug.Log($"Adding SkinnedMeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
+                                                        customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                    }
+                                                }
+                                                else
+                                                {
+                                                    //Debug.LogWarning($"SkinnedMeshRenderer found, but no mesh assigned: {skinnedMesh.name}");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                //Debug.LogWarning("No SkinnedMeshRenderer found in FBX, trying to find MeshRenderer....");
+
+                                                MeshRenderer meshRenderer = FindMeshRendererInChildren(fbx);
+                                                if (meshRenderer != null)
+                                                {
+                                                    //Debug.Log("Found MeshRenderer in FBX " + meshRenderer.name);
+
+                                                    MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
+                                                    if (meshFilter != null && meshFilter.mesh != null)
+                                                    {
+                                                        Mesh mesh = meshFilter.mesh;
+                                                        if (customMeshesToReplace.ContainsKey(MOGTargets.targetMesh))
+                                                        {
+                                                            //Debug.LogWarning($"Key {MOGTargets.targetMesh} already exists in customMeshesToReplace. Skipping addition to avoid duplicates.");
+                                                        }
+                                                        else
+                                                        {
+                                                            //Debug.Log($"Adding MeshRenderer mesh to dictionary: Target Mesh = {MOGTargets.targetMesh}, Mesh = {mesh.name}");
+                                                            customMeshesToReplace.Add(MOGTargets.targetMesh, mesh);
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        //Debug.LogWarning($"MeshRenderer found, but no mesh or MeshFilter: {meshRenderer.name}");
+                                                    }
+                                                }
+                                            }
+
+                                            // Log the dictionary contents after all meshes are loaded
+                                            //Debug.Log("Logging customMeshesToReplace dictionary contents after population:");
+                                            foreach (var entry in customMeshesToReplace)
+                                            {
+                                                //Debug.Log($"Key: {entry.Key}, Mesh name: {entry.Value.name}");
+                                            }
+                                        }
+
+                                        // Check if the identifier already exists in materialBanksForMeshes before adding
+                                        if (customSkinData.materialBanksForMeshes.ContainsKey(MOGVar.identifier))
+                                        {
+                                            //Debug.LogWarning($"Identifier {MOGVar.identifier} already exists in materialBanksForMeshes. Merging with existing data.");
+
+                                            // Merge dictionaries to avoid overwriting
+                                            foreach (var kvp in customMeshesToReplace)
+                                            {
+                                                if (!customSkinData.materialBanksForMeshes[MOGVar.identifier].ContainsKey(kvp.Key))
+                                                {
+                                                    customSkinData.materialBanksForMeshes[MOGVar.identifier].Add(kvp.Key, kvp.Value);
+                                                }
+                                                else
+                                                {
+                                                    //Debug.LogWarning($"Key {kvp.Key} already exists in materialBanksForMeshes[{MOGVar.identifier}]. Skipping.");
+                                                }
+                                            }
+                                        }
+                                        else
+                                        {
+                                            customSkinData.materialBanksForMeshes.Add(MOGVar.identifier, new Dictionary<string, Mesh>(customMeshesToReplace));
+                                        }
+                                        // ATTRIBUTE OVERRIDES
+                                        if (MOGVar.attributeOverrides != null)
+                                        {
+                                            //Debug.Log("Processing attribute overrides.");
+
+                                            if (MOG.AttributeOverrides == null)
+                                            {
+                                                //Debug.LogError("MOG.AttributeOverrides is null! Initializing it.");
+                                                MOG.AttributeOverrides = new List<CharacterMaterialOverridesHandler.AttributeOverride>();
+                                            }
+
+                                            foreach (var MOGattributeOverrides in MOGVar.attributeOverrides)
+                                            {
+                                                if (MOGattributeOverrides == null)
+                                                {
+                                                    //Debug.LogError("MOGattributeOverrides is null! Skipping this entry.");
+                                                    continue;
+                                                }
+
+                                                //Debug.Log($"Processing attribute with ID: {MOGattributeOverrides.attributeID}");
+
+                                                CharacterMaterialOverridesHandler.AttributeOverride newAttribute = new CharacterMaterialOverridesHandler.AttributeOverride
+                                                {
+                                                    AttributeType = (CharacterMaterialOverridesHandler.AttributeOverride.AttributeNumberTypes)MOGattributeOverrides.attributeType, // Assuming Integer type for now
+                                                    AttributeID = MOGattributeOverrides.attributeID,
+                                                    AttributeValue = MOGattributeOverrides.attributeValue,
+                                                };
+
+                                                //Debug.Log("Adding new attribute override.");
+
+                                                MOG.AttributeOverrides.Add(newAttribute);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Debug.LogWarning("MOGVar.attributeOverrides is null.");
+                                        }
+
+                                        // TEXTURE OVERRIDES
+                                        if (MOGVar.textureOverrides != null)
+                                        {
+                                            //Debug.Log("Processing texture overrides.");
+                                            foreach (var MOGtextureOverrides in MOGVar.textureOverrides)
+                                            {
+
+                                                if (string.IsNullOrWhiteSpace(MOGtextureOverrides.textureRef))
+                                                {
+                                                    Debug.LogError($"Empty Texture2D");
+                                                    CharacterMaterialOverridesHandler.TextureOverride newTexture1 = new CharacterMaterialOverridesHandler.TextureOverride
+                                                    {
+                                                        TextureID = MOGtextureOverrides.textureID,
+                                                        TextureRef = null,
+                                                    };
+                                                    MOG.TextureOverrides.Add(newTexture1);
+                                                    continue;
+                                                }
+
+                                                Texture2D texture2D = bundle.LoadAsset<Texture2D>(MOGtextureOverrides.textureRef);
+                                                //Debug.Log("Texture2D found: " + texture2D.name);
+
+                                                CharacterMaterialOverridesHandler.TextureOverride newTexture = new CharacterMaterialOverridesHandler.TextureOverride
+                                                {
+                                                    TextureID = MOGtextureOverrides.textureID,
+                                                    TextureRef = texture2D
+                                                };
+
+                                                MOG.TextureOverrides.Add(newTexture);
+                                            }
+                                        }
+
+                                        // VECTOR ATTRIBUTE OVERRIDES
+                                        if (MOGVar.vectorAttributeOverrides != null)
+                                        {
+                                            //Debug.Log("Processing vector attribute overrides.");
+
+                                            // Ensure MOG.VectorAttributeOverrides is initialized
+                                            if (MOG.VectorAttributeOverrides == null)
+                                            {
+                                                //Debug.LogError("MOG.VectorAttributeOverrides is null! Initializing it.");
+                                                MOG.VectorAttributeOverrides = new List<CharacterMaterialOverridesHandler.Vector4AttributeOverride>();
+                                            }
+
+                                            foreach (var MOGattributeOverrides in MOGVar.vectorAttributeOverrides)
+                                            {
+                                                if (MOGattributeOverrides == null)
+                                                {
+                                                    //Debug.LogError("MOGattributeOverrides (vector) is null! Skipping this entry.");
+                                                    continue;
+                                                }
+
+                                                //Debug.Log($"Processing vector attribute with ID: {MOGattributeOverrides.attributeID}");
+
+                                                Vector4 vector = FloatArrayToVector4(MOGattributeOverrides.attributeValue);
+
+                                                CharacterMaterialOverridesHandler.Vector4AttributeOverride newVectorAttribute = new CharacterMaterialOverridesHandler.Vector4AttributeOverride
+                                                {
+                                                    AttributeID = MOGattributeOverrides.attributeID,
+                                                    AttributeValue = vector,
+                                                };
+
+                                                //Debug.Log("Adding new vector attribute override.");
+                                                MOG.VectorAttributeOverrides.Add(newVectorAttribute);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Debug.LogWarning("MOGVar.vectorAttributeOverrides is null.");
+                                        }
+
+                                        // COLOR OVERRIDES
+                                        if (MOGVar.colorOverrides != null)
+                                        {
+                                            //Debug.Log("Processing color overrides.");
+
+                                            // Ensure MOG.ColorOverrides is initialized
+                                            if (MOG.ColorOverrides == null)
+                                            {
+                                                //Debug.LogError("MOG.ColorOverrides is null! Initializing it.");
+                                                MOG.ColorOverrides = new List<CharacterMaterialOverridesHandler.ColorOverride>();
+                                            }
+
+                                            foreach (var MOGtextureOverrides in MOGVar.colorOverrides)
+                                            {
+                                                if (MOGtextureOverrides == null)
+                                                {
+                                                    //Debug.LogError("MOGtextureOverrides (color) is null! Skipping this entry.");
+                                                    continue;
+                                                }
+
+                                                //Debug.Log($"Processing color with ID: {MOGtextureOverrides.colorID}");
+
+                                                Color color = HexToUnityColor(MOGtextureOverrides.colorValue);
+
+                                                CharacterMaterialOverridesHandler.ColorOverride newColor = new CharacterMaterialOverridesHandler.ColorOverride
+                                                {
+                                                    ColorID = MOGtextureOverrides.colorID,
+                                                    ColorValue = color
+                                                };
+
+                                                //Debug.Log("Adding new color override.");
+                                                MOG.ColorOverrides.Add(newColor);
+                                            }
+                                        }
+                                        else
+                                        {
+                                            //Debug.LogWarning("MOGVar.colorOverrides is null.");
+                                        }
+
+                                        //Debug.Log("Material override group processed.");
+
+                                        customSkinData.CustomMOGList.Add(MOG);
+                                    }
+
+
+                                    //Debug.Log("trying to add customskinData to customSkinDatas");
+
+                                    if (customSkinData.materialBanksForMeshes != null)
+                                    {
+                                        foreach (var entry in customSkinData.materialBanksForMeshes)
+                                        {
+                                            //Debug.LogWarning($"Mesh entry found: {entry.Key} -> {entry.Value}");
+                                        }
+                                    }
+                                    if (!Plugin.customSkinDatas.Any(x => x.skinID == customSkinData.skinID))
+                                    {
+                                        Plugin.customSkinDatas.Add(customSkinData);
+
+                                        Plugin.dictCustomSkinDatas.Add(customSkinData.skinID, customSkinData);
+
+                                        customSkinDatas.Sort(new SkinNameComparer());
+                                        //Plugin.Log.LogWarning("dont sorting");
+
+                                        foreach (var cheapskinFile in customSkinDatas)
+                                        {
+                                            // Process each .cheapskin file
+                                            //Plugin.Log.LogWarning(cheapskinFile.skinName);
+                                        }
+                                    }
+
+                                    foreach (var entry in customSkinData.shaderToUse)
+                                    {
+                                        //Debug.LogWarning($"Custom Shader entry found: {entry.Key} -> {entry.Value}");
+                                    }
+                                    foreach (var entry in customSkinData.customMaterials)
+                                    {
+                                        //Debug.LogWarning($"Custom Material entry found: {entry.Key} -> {entry.Value}");
+                                    }
                                 }
                                 else
                                 {
-                                    MeshRenderer meshRenderer = FindMeshRendererInChildren(fbx);
-                                    if (meshRenderer?.GetComponent<MeshFilter>()?.mesh != null)
-                                        customMeshesToReplace.TryAdd(MOGTargets.targetMesh, meshRenderer.GetComponent<MeshFilter>().mesh);
+                                    //Debug.LogWarning("No material override groups found.");
                                 }
-                            }
 
-                            if (customSkinData.materialBanksForMeshes.TryGetValue(MOGVar.identifier, out var existing))
-                            {
-                                foreach (var kvp in customMeshesToReplace)
-                                    existing.TryAdd(kvp.Key, kvp.Value);
-                            }
-                            else
-                            {
-                                customSkinData.materialBanksForMeshes.Add(MOGVar.identifier, new Dictionary<string, Mesh>(customMeshesToReplace));
-                            }
-
-                            // Attribute overrides
-                            if (MOGVar.attributeOverrides != null)
-                            {
-                                MOG.AttributeOverrides ??= new List<CharacterMaterialOverridesHandler.AttributeOverride>();
-                                foreach (var attr in MOGVar.attributeOverrides)
+                                /*if (package.animationClips != null)
                                 {
-                                    if (attr == null) continue;
-                                    MOG.AttributeOverrides.Add(new CharacterMaterialOverridesHandler.AttributeOverride
-                                    {
-                                        AttributeType = (CharacterMaterialOverridesHandler.AttributeOverride.AttributeNumberTypes)attr.attributeType,
-                                        AttributeID = attr.attributeID,
-                                        AttributeValue = attr.attributeValue
-                                    });
-                                }
-                            }
+                                    Debug.Log($"Found {package.animationClips} animation clips in package.");
+                                    customSkinData.customAnimatorBehaviours = new Dictionary<string, CharacterAnimatorStateAsset>();
 
-                            // Texture overrides
-                            if (MOGVar.textureOverrides != null)
-                            {
-                                foreach (var tex in MOGVar.textureOverrides)
+                                    foreach (var entry in package.animationClips)
+                                    {
+                                        Debug.Log($"Processing AnimationClip ID: {entry.animationID}");
+
+                                        if (!string.IsNullOrEmpty(entry.animationVisibilty))
+                                        {
+                                            Debug.Log($"Attempting to load CharacterAnimatorBehaviourAsset: {entry.animationVisibilty}");
+
+                                            CharacterAnimatorStateAsset state = bundle.LoadAsset<CharacterAnimatorStateAsset>(entry.animationVisibilty);
+
+                                            if (state != null)
+                                            {
+                                                Debug.Log($"Successfully loaded CharacterAnimatorBehaviourAsset: {entry.animationVisibilty} for AnimationClip ID: {entry.animationID}");
+
+                                                if (!customSkinData.customAnimatorBehaviours.ContainsKey(entry.animationID))
+                                                {
+                                                    customSkinData.customAnimatorBehaviours.Add(entry.animationID.ToLower(), state);
+                                                    Debug.Log($"Added new entry - Key: {entry.animationID}, Value: {state.name}");
+                                                }
+                                                else
+                                                {
+                                                    Debug.LogWarning($"Duplicate AnimationClip ID detected: {entry.animationID}. Skipping addition.");
+                                                }
+                                            }
+                                            else
+                                            {
+                                                Debug.LogError($"Failed to load CharacterAnimatorBehaviourAsset: {entry.animationVisibilty}");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            Debug.LogWarning($"AnimationClip ID {entry.animationID} has no associated animationVisibilty path.");
+                                        }
+                                    }
+
+                                    // Log final contents of the dictionary
+                                    Debug.Log($"Final customAnimatorBehaviours count: {customSkinData.customAnimatorBehaviours.Count}");
+                                    foreach (var entry in customSkinData.customAnimatorBehaviours)
+                                    {
+                                        Debug.Log($"AnimationClip Entry - Key: {entry.Key}, Value: {entry.Value?.name ?? "NULL"}");
+                                    }
+                                }*/
+                                /*else
                                 {
-                                    Texture2D texture2D = string.IsNullOrWhiteSpace(tex.textureRef)
-                                        ? null
-                                        : bundle.LoadAsset<Texture2D>(tex.textureRef);
+                                    Debug.LogWarning("package.animationClips is null. No animations were processed.");
+                                }*/
 
-                                    MOG.TextureOverrides.Add(new CharacterMaterialOverridesHandler.TextureOverride
-                                    {
-                                        TextureID = tex.textureID,
-                                        TextureRef = texture2D
-                                    });
-                                }
-                            }
 
-                            // Vector4 overrides
-                            if (MOGVar.vectorAttributeOverrides != null)
-                            {
-                                MOG.VectorAttributeOverrides ??= new List<CharacterMaterialOverridesHandler.Vector4AttributeOverride>();
-                                foreach (var attr in MOGVar.vectorAttributeOverrides)
-                                {
-                                    if (attr == null) continue;
-                                    MOG.VectorAttributeOverrides.Add(new CharacterMaterialOverridesHandler.Vector4AttributeOverride
-                                    {
-                                        AttributeID = attr.attributeID,
-                                        AttributeValue = FloatArrayToVector4(attr.attributeValue)
-                                    });
-                                }
-                            }
 
-                            // Color overrides
-                            if (MOGVar.colorOverrides != null)
-                            {
-                                MOG.ColorOverrides ??= new List<CharacterMaterialOverridesHandler.ColorOverride>();
-                                foreach (var col in MOGVar.colorOverrides)
-                                {
-                                    if (col == null) continue;
-                                    MOG.ColorOverrides.Add(new CharacterMaterialOverridesHandler.ColorOverride
-                                    {
-                                        ColorID = col.colorID,
-                                        ColorValue = HexToUnityColor(col.colorValue)
-                                    });
-                                }
-                            }
 
-                            customSkinData.CustomMOGList.Add(MOG);
+                                bundle.Unload(false);
+                            };
+
+                            // Log the characterID and skinID for testing
+
                         }
 
-                        if (!Plugin.dictCustomSkinDatas.ContainsKey(customSkinData.skinID))
-                        {
-                            Plugin.customSkinDatas.Add(customSkinData);
-                            Plugin.dictCustomSkinDatas.Add(customSkinData.skinID, customSkinData);
-                            customSkinDatas.Sort(new SkinNameComparer());
-                        }
+
                     }
-
-                    bundle.Unload(false);
-                };
+                    else
+                    {
+                        Debug.LogWarning($"No 'package' entry found in {cheapskinFile}");
+                    }
+                }
             }
-            catch (Exception ex)
+            catch (System.Exception ex)
             {
                 Debug.LogError($"Failed to load {cheapskinFile}: {ex.Message}");
             }
         }
-
-        // Shared empty mesh
-        private static readonly Mesh EmptyMesh = new Mesh();
-        private static readonly SHA256 Sha256 = SHA256.Create();
         private async Task<AssetBundle> LoadAssetBundleFromStreamAsync(Stream assetBundleStream)
         {
             // Use LoadFromStreamAsync to load the AssetBundle
