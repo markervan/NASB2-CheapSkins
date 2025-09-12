@@ -14,7 +14,7 @@ public class CharacterSelect_Patches
     [HarmonyPatch(typeof(CharacterSelect), "ReadDataManager")]
     public static bool ReadDataManager(CharacterSelect __instance)
     {
-        Plugin.Log.LogWarning("READDATAMANAGER HAPPENING");
+        //Plugin.Log.LogWarning("READDATAMANAGER HAPPENING");
 
         __instance.Selectors.Clear();
         if (__instance.dataManager.PlayersData.LocalPlayers.Count == 1)
@@ -185,7 +185,7 @@ public class CharacterSelect_Patches
     [HarmonyPatch(typeof(CharacterSelect), "SetSelectorCharacter")]
     public static bool SetSelectorCharacter(CharacterSelect __instance, CharacterCodename character, int selectorNumber, int skin = 0, bool unlocked = true)
     {
-        Plugin.Log.LogWarning("CUSTOM SET SELECTOR CHARACTER");
+        //Plugin.Log.LogWarning("CUSTOM SET SELECTOR CHARACTER");
         bool flag = selectorNumber == -1;
         bool result;
         if (flag)
@@ -209,15 +209,16 @@ public class CharacterSelect_Patches
                 __instance.Selectors[selectorNumber].IsLocked = !unlocked;
 
                 string localizedString = string.Empty;
-
-                if (character != CharacterCodename.Sartana && character != CharacterCodename.VladPlasmius)
+                localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
+                /*if (character != CharacterCodename.Sartana && character != CharacterCodename.VladPlasmius)
                 {
                     localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
+                    localizedString = "Testing CharacterInfo";
                 }
                 else
                 {
                     localizedString = "Testing CharacterInfo";
-                }
+                }*/
 
 
                 RecordTracker records = GameManager.Instance.SettingsManager.GlobalData.Records;
@@ -487,7 +488,7 @@ public class CharacterSelect_Patches
     [HarmonyPatch(typeof(CharacterSelect), "SelectCharacter")]
     public static bool SelectCharacter(CharacterSelect __instance, CharacterCodename character, int selectorNumber, int playerIndex)
     {
-        Plugin.Log.LogWarning("SelectCharacter HAPPENING");
+        //Plugin.Log.LogWarning("SelectCharacter HAPPENING");
 
         if (selectorNumber < 0)
         {
@@ -650,14 +651,14 @@ public class CharacterSelect_Patches
 
                     CharacterUIData characterUIData = __instance.gameResourcesManager.GetCharacterUIData(characterSelectSelector.Character);
 
-                    
 
 
 
-                    Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin: {characterSelectSelector.Skin}");
+
+                    //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin: {characterSelectSelector.Skin}");
                     //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin Modified: {characterPanel1.currentSkin}");
                     //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin Modified: {characterPanel1.currentSkin}");
-                    
+
                     if (characterSelectSelector.Skin == 0)
                     {
                         characterPanel.UpdateData(characterUIData, characterSelectSelector.Skin);

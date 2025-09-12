@@ -24,11 +24,15 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static List<string> Ember0body = new List<string>
         {
             "costume00_body_C_mesh",
+            "costume00_body_C_inv_mesh",
             "costume00_earrings_C_mesh",
+            "costume00_earrings_C_inv_mesh",
             "costume00_hair_C_mesh",
             "costume00_hairTail_C_mesh",
             "costume00_hand_default_L_mesh",
+            "costume00_hand_default_L_inv_mesh",
             "costume00_hand_default_R_mesh",
+            "costume00_hand_default_R_inv_mesh",
             "downeyelid_L_mesh",
             "downeyelid_R_mesh",
             "upeyelid_L_mesh",

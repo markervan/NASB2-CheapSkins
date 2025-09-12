@@ -534,7 +534,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
         {
             { "Stimpy_Mat", Stimpy_Mat },
             { "Stimpy_Expressions_Mat", Stimpy_Expressions_Mat },
-            { "RenStimpy_Expressions_Extra_Mat ", RenStimpy_Expressions_Extra_Mat  },
+            { "RenStimpy_Expressions_Extra_Mat", RenStimpy_Expressions_Extra_Mat  },
             { "Stimpy_Eyelids_Mat", Stimpy_Eyelids_Mat },
             { "Ren_Mat", Ren_Mat },
             { "Ren_Expressions_Mat", Ren_Expressions_Mat },

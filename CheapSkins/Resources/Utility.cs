@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using UnityEngine;
-public class Utility
+public static class Utility
 {
     public static Sprite ConvertTextureToSprite(Texture2D texture)
     {
@@ -15,5 +15,10 @@ public class Utility
 
 
         return newSprite;
+    }
+    public static void TryAdd<TKey, TValue>(this Dictionary<TKey, TValue> dict, TKey key, TValue value)
+    {
+        if (!dict.ContainsKey(key))
+            dict.Add(key, value);
     }
 }

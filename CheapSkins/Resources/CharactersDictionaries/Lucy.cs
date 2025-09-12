@@ -55,6 +55,8 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "hairStrand_C_mesh",
             "cape_mesh",
             "hood_mesh",
+            "Hood_Fly",
+            "Hood_Down",
             "shoedetail_mesh",
             "spadesymbol_mesh",
             "capeWings_C_mesh",
@@ -98,23 +100,31 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "hairBlockTeeter_C_mesh",
             "hairBlockTeeter_inv_C_mesh",
             "hairDown_C_mesh",
-            "hairDown_inv_C_mesh"
+            "hairDown_inv_C_mesh",
+            "hairEdgeGrab_C_mesh",
+            "hairEdgeGrab_inv_C_mesh",
+            "Hair_Fall",
+            "Hair_Fly",
         };
 
         public static List<string> Lucy1Hair2 = new List<string>
         {
             "hairEdgeGrab_C_mesh",
-            "hairEdgeGrab_inv_C_mesh"
+            "hairEdgeGrab_inv_C_mesh",
+            "Hair_Fall",
+            "Hair_Fly",
         };
 
         public static List<string> Lucy2Body = new List<string>
         {
             "armDetails_C_mesh",
-            "costume01Dress_C_mesh",
+            "costume01Dress_mesh",
             "hair_C_mesh",
+            "hair_inv_C_mesh",
             "hands_C_mesh",
             "legs_C_mesh",
-            "shoes_C_mesh"
+            "shoes_C_mesh",
+            "hood_mesh"
         };
 
         public static List<string> Lucy2Body2 = new List<string>
@@ -168,7 +178,9 @@ namespace CheapSkins.Resources.CharactersDictionaries
         {
             { "Lucy_Costume_EightOfSpades_Mat", Lucy2Body },
             { "Lucy_Expressions_Material", Lucy0Expressions },
+
             { "Lucy_HairProp_Mat", Lucy1Hair },
+
             { "Lucy_Preview_02_Props_Mat", Lucy0Props1 },
             { "Lucy_Preview_Costumes_01_Mat", Lucy1Costume },
             { "Lucy_Lucille_Occulsion_Mat", Lucille},

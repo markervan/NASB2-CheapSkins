@@ -291,7 +291,9 @@ namespace CheapSkins.Resources.CharactersDictionaries
             { "Raphael_Expressions_01_Mat", Raphael_Expressions_01_Mat1 },
             { "Raphael_Mat", Raphael_Mat1 },
             { "Donatello_Shell", Donatello_Shell1 },
-            { "Raphael_Sai_Mat", Raphael_Sai_Mat1 }
+            { "Raphael_Sai_Mat", Raphael_Sai_Mat1 },
+            { "Raphael_Props_Bike_Mat", Raphael_Props_Bike_Mat },
+            { "Raphael_Props_Mat_02", Raphael_Props_Mat_02 }
         };
         public static Dictionary<string, List<string>> Rapahel2Parts = new Dictionary<string, List<string>>()
     {

@@ -382,13 +382,13 @@ namespace CheapSkins.Resources.CharactersDictionaries
         };
         public static Dictionary<string, List<string>> Daggett2Parts = new Dictionary<string, List<string>>()
         {
-            { "Dagget_Costume_01_Mat2", Dagget_Costume_01_Mat2 },
-            { "Dagget_Costume_03_Mat2", Dagget_Costume_03_Mat2 },
-            { "twister72", twister72 },
-            { "Norbet_Mat2", Norbet_Mat2 },
-            { "Norbert_Costume_03_Mat2", Norbert_Costume_03_Mat2 },
-            { "AngryBeavers_Props02_Mat2", AngryBeavers_Props02_Mat2 },
-            { "AngryBeavers_Props01_Mat2", AngryBeavers_Props01_Mat2 }
+            { "Dagget_Costume_01_Mat", Dagget_Costume_01_Mat2 },
+            { "Dagget_Costume_03_Mat", Dagget_Costume_03_Mat2 },
+            { "twister7", twister72 },
+            { "Norbet_Mat", Norbet_Mat2 },
+            { "Norbert_Costume_03_Mat", Norbert_Costume_03_Mat2 },
+            { "AngryBeavers_Props02_Mat", AngryBeavers_Props02_Mat2 },
+            { "AngryBeavers_Props01_Mat", AngryBeavers_Props01_Mat2 }
         };
         public static Dictionary<string, List<string>> Daggett3Parts = new Dictionary<string, List<string>>()
         {

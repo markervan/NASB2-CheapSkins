@@ -14,7 +14,7 @@ public class CharacterSelectOnlineManager_Patches
     [HarmonyPatch(typeof(CharacterSelectOnlineManager), "PhotomRoomInfoUpdate")]
     public static bool PhotomRoomInfoUpdate(CharacterSelectOnlineManager __instance)
     {
-        Plugin.Log.LogWarning("PhotomRoomInfoUpdate HAPPENING");
+        //Plugin.Log.LogWarning("PhotomRoomInfoUpdate HAPPENING");
 
         __instance.onlineManager.UpdatePlayersData();
         __instance.currentPlatformManager.ActivitiesSystem.RefreshPlayersData();
@@ -42,7 +42,7 @@ public class CharacterSelectOnlineManager_Patches
                 characterSelectSelector.IsCPU = false;
                 if (player == __instance.onlineManager.CurrentPlayer)
                 {
-                    Plugin.Log.LogMessage("player is current player");
+                    //Plugin.Log.LogMessage("player is current player");
                     if (!__instance.initLocalPlayer)
                     {
                         __instance.initLocalPlayer = true;
@@ -67,7 +67,7 @@ public class CharacterSelectOnlineManager_Patches
                         {
                             characterSelectSelector.Characters[characterSelectSelector.BrawlerIndex] = runtimePlayer.CharacterMatchData.Character;
 
-                            Plugin.Log.LogMessage("(current player) current Skin: " + characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] + "setting it to " + runtimePlayer.CharacterMatchData.Skin);
+                            //Plugin.Log.LogMessage("(current player) current Skin: " + characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] + "setting it to " + runtimePlayer.CharacterMatchData.Skin);
 
                             characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] = runtimePlayer.CharacterMatchData.Skin;
                             characterSelectSelector.RandomCharacters[characterSelectSelector.BrawlerIndex] = runtimePlayer.CharacterMatchData.RandomSelection;
@@ -91,7 +91,7 @@ public class CharacterSelectOnlineManager_Patches
                 }
                 else
                 {
-                    Plugin.Log.LogMessage("player is remote");
+                    //Plugin.Log.LogMessage("player is remote");
                     characterSelectSelector.OnlineRemotePlayer = true;
                     characterSelectSelector.PlayerIndex = -1;
                     if (playerLobbyLocation == PlayerLobbyLocation.CharacterSelect)
@@ -107,7 +107,7 @@ public class CharacterSelectOnlineManager_Patches
                         {
                             characterSelectSelector.Characters[characterSelectSelector.BrawlerIndex] = __instance.onlineManager.Properties.GetPlayerCharacter(player);
 
-                            Plugin.Log.LogMessage("(remote player) current skin: " + characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] + "setting it to : " + __instance.onlineManager.Properties.GetPlayerCharacterSkin(player));
+                            //Plugin.Log.LogMessage("(remote player) current skin: " + characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] + "setting it to : " + __instance.onlineManager.Properties.GetPlayerCharacterSkin(player));
                             characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] = __instance.onlineManager.Properties.GetPlayerCharacterSkin(player);
                             characterSelectSelector.RandomCharacters[characterSelectSelector.BrawlerIndex] = __instance.onlineManager.Properties.GetPlayerCharacterIsRandom(player);
                         }

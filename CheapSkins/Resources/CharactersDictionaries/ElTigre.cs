@@ -58,20 +58,24 @@ namespace CheapSkins.Resources.CharactersDictionaries
 
 
         public static List<string> ElTigre3Props = new List<string>
-{
-    "bronzeboots_C_mesh",
-    "gloves_C_mesh",
-    "rag_C_mesh",
-    "armbandage_C_mesh",
-    "cape_C_mesh",
-    "claws_C_mesh",
-    "goldensombrero_C_mesh",
-    "headbandage_C_mesh",
-    "mustache_C_mesh",
-    "sawhands_C_mesh",
-    "sawlikearms_C_mesh",
-    "wristchainhand_C_mesh"
-};
+        {
+            "bronzeboots_C_mesh",
+            "gloves_C_mesh",
+            "rag_C_mesh",
+            "armbandage_C_mesh",
+            "cape_C_mesh",
+            "claws_C_mesh",
+            "goldensombrero_C_mesh",
+            "headbandage_C_mesh",
+            "mustache_C_mesh",
+            "sawhands_C_mesh",
+            "sawlikearms_C_mesh",
+            "wristchainhand_C_mesh"
+        };
+        public static List<string> ElTigreStripsMat = new List<string>
+        {
+            "Eltigre_Strips",
+        };
 
         public static Dictionary<string, List<string>> ElTigre0Parts = new Dictionary<string, List<string>>
         {
@@ -82,13 +86,15 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static Dictionary<string, List<string>> ElTigre1Parts = new Dictionary<string, List<string>>
         {
             { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
-            { "ElTigre_Expressions_Mat", ElTigre0Expressions }
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions },
+            { "ElTigre_Strips_Mat", ElTigreStripsMat }
         };
 
         public static Dictionary<string, List<string>> ElTigre2Parts = new Dictionary<string, List<string>>
         {
             { "ElTigre_Body_Costume_02_Mat", ElTigre0Body },
-            { "ElTigre_Expressions_Mat", ElTigre0Expressions }
+            { "ElTigre_Expressions_Mat", ElTigre0Expressions },
+            
         };
 
         public static Dictionary<string, List<string>> ElTigre3Parts = new Dictionary<string, List<string>>

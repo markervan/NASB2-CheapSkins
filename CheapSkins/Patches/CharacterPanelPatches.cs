@@ -17,7 +17,6 @@ public class CharacterPanelPatches
     [HarmonyPatch(typeof(CharacterPanel), "UpdateData")]
     public static bool UpdateData(CharacterPanel __instance, CharacterUIData characterUIData, int skin)
     {
-        Plugin.Log.LogMessage("UpdateData Happening");
         if (!__instance.randomMode && __instance.currentCharacter == characterUIData.CharacterCodename && __instance.currentSkin == skin)
         {
             return false;
@@ -87,7 +86,7 @@ public class CharacterPanelPatches
     [HarmonyPatch(typeof(CharacterSelect), "GridOverflow")]
     public static bool GridOverflow(CharacterSelect __instance, int playerIndex)
     {
-        Plugin.Log.LogWarning("MODDED GridOverflow");
+        //Plugin.Log.LogWarning("MODDED GridOverflow");
 
         if (__instance.SquadStrikeSelection)
         {

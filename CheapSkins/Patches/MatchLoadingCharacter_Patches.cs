@@ -69,6 +69,9 @@ public class MatchLoadingCharacter_Patches
         {
             __instance.BackgroundDetail2.startColor = playerColor.ExtraColor2;
         }
+
+
+
         if (characterUIData.CharacterName != null && !characterUIData.CharacterName.IsEmpty)
         {
             __instance.CharacterName.transform.parent.gameObject.SetActive(true);
@@ -76,7 +79,8 @@ public class MatchLoadingCharacter_Patches
         }
         else
         {
-            __instance.CharacterName.transform.parent.gameObject.SetActive(false);
+            __instance.CharacterName.SetText(characterUIData.CharacterCodename.ToString(), true);
+            __instance.CharacterName.transform.parent.gameObject.SetActive(true);
         }
         if (!playerName.Equals(""))
         {
@@ -223,7 +227,8 @@ public class MatchLoadingCharacter_Patches
         }
         else
         {
-            __instance.CharacterName.transform.parent.gameObject.SetActive(false);
+            __instance.CharacterName.SetText(characterUIData.CharacterCodename.ToString(), true);
+            __instance.CharacterName.transform.parent.gameObject.SetActive(true);
         }
         if (!playerName.Equals(""))
         {
