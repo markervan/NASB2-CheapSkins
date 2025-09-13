@@ -233,13 +233,14 @@ namespace CheapSkins.Resources.CharactersDictionaries
 
         public static List<string> Dagget_Costume_03_Mat2 = new List<string>
 {
-    "costume02_C_mesh"
+        "costume02_C_mesh",
+        "body_C_mesh"
 };
 
         public static List<string> twister72 = new List<string>
-{
-    "dagnado_C_mesh"
-};
+        {
+            "dagnado_C_mesh"
+        };
 
         public static List<string> Norbet_Mat2 = new List<string>
 {
@@ -384,6 +385,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
         {
             { "Dagget_Costume_01_Mat", Dagget_Costume_01_Mat2 },
             { "Dagget_Costume_03_Mat", Dagget_Costume_03_Mat2 },
+            { "Dagget_Body_Costume03_Mat", Dagget_Costume_03_Mat2 },
             { "twister7", twister72 },
             { "Norbet_Mat", Norbet_Mat2 },
             { "Norbert_Costume_03_Mat", Norbert_Costume_03_Mat2 },
