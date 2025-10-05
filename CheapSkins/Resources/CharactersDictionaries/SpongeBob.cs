@@ -14,7 +14,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "default_hat",
             "inflatelarge_hat",
             "inflatemedium_hat",
-            "inflatesmall_hat"
+            "inflatesmall_hat",
         };
 
         public static List<string> SpongeBob0Expressions = new List<string>

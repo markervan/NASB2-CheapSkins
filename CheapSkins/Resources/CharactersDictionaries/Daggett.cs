@@ -234,7 +234,8 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static List<string> Dagget_Costume_03_Mat2 = new List<string>
 {
         "costume02_C_mesh",
-        "body_C_mesh"
+        "body_C_mesh",
+        "default_C_mesh"
 };
 
         public static List<string> twister72 = new List<string>
@@ -243,26 +244,26 @@ namespace CheapSkins.Resources.CharactersDictionaries
         };
 
         public static List<string> Norbet_Mat2 = new List<string>
-{
-    "costume02_body_C_mesh",
-    "costume02_feet_C_mesh",
-    "attack_C_mesh",
-    "charge_C_mesh",
-    "default_C_mesh",
-    "hurt_C_mesh",
-    "idle_C_mesh",
-    "specialneutral_C_mesh",
-    "attack_mirror_C_mesh",
-    "default_mirror_C_mesh",
-    "hurt_mirror_C_mesh",
-    "downeyelid_L_mesh",
-    "downeyelid_R_mesh",
-    "upeyelid_L_mesh",
-    "upeyelid_R_mesh",
-    "fist_C_mesh",
-    "hands_C_mesh",
-    "wings_C_mesh"
-};
+        {
+            "costume02_body_C_mesh",
+            "costume02_feet_C_mesh",
+            "attack_C_mesh",
+            "charge_C_mesh",
+            "default_C_mesh",
+            "hurt_C_mesh",
+            "idle_C_mesh",
+            "specialneutral_C_mesh",
+            "attack_mirror_C_mesh",
+            "default_mirror_C_mesh",
+            "hurt_mirror_C_mesh",
+            "downeyelid_L_mesh",
+            "downeyelid_R_mesh",
+            "upeyelid_L_mesh",
+            "upeyelid_R_mesh",
+            "fist_C_mesh",
+            "hands_C_mesh",
+            "wings_C_mesh"
+        };
 
         public static List<string> Norbert_Costume_03_Mat2 = new List<string>
 {

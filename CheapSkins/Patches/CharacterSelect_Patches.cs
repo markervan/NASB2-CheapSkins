@@ -5,6 +5,9 @@ using Quantum;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Xml.Linq;
+using UnityEngine;
+using UnityEngine.Localization.SmartFormat.Core.Parsing;
 using static CheapSkinss.Plugin;
 
 [HarmonyPatch]
@@ -185,137 +188,119 @@ public class CharacterSelect_Patches
     [HarmonyPatch(typeof(CharacterSelect), "SetSelectorCharacter")]
     public static bool SetSelectorCharacter(CharacterSelect __instance, CharacterCodename character, int selectorNumber, int skin = 0, bool unlocked = true)
     {
-        //Plugin.Log.LogWarning("CUSTOM SET SELECTOR CHARACTER");
-        bool flag = selectorNumber == -1;
-        bool result;
-        if (flag)
+        //Plugin.Log.LogWarning($"[SetSelectorCharacter ({selectorNumber})] Skin: " + skin);
+
+        if (selectorNumber == -1)
         {
-            result = false;
+            return false;
         }
-        else
+        if (__instance.StartCoundown && !unlocked)
         {
-            bool flag2 = __instance.StartCoundown && !unlocked;
-            if (flag2)
+            return false;
+        }
+
+        CharacterCodename character2 = __instance.Selectors[selectorNumber].Character;
+        bool isRandom = __instance.Selectors[selectorNumber].IsRandom;
+        __instance.Selectors[selectorNumber].Characters[__instance.Selectors[selectorNumber].BrawlerIndex] = character;
+        __instance.Selectors[selectorNumber].RandomCharacters[__instance.Selectors[selectorNumber].BrawlerIndex] = false;
+        __instance.Selectors[selectorNumber].Skins[__instance.Selectors[selectorNumber].BrawlerIndex] = skin;
+        __instance.Selectors[selectorNumber].IsLocked = !unlocked;
+
+        string localizedString = string.Empty;
+        localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
+        RecordTracker records = GameManager.Instance.SettingsManager.GlobalData.Records;
+
+
+
+        SinglePlayerMenu.SinglePlayerSubMenu lastArcadeMode = __instance.uiManager.LastArcadeMode;
+        if (__instance.dataManager.MainMenuContext == MainMenuContext.Arcade)
+        {
+            int characterBestScore;
+            double characterBestTime;
+            if (lastArcadeMode == SinglePlayerMenu.SinglePlayerSubMenu.BossRush)
             {
-                result = false;
+                characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.BossRush);
+                characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.BossRush);
+            }
+            else if (lastArcadeMode == SinglePlayerMenu.SinglePlayerSubMenu.AllStar)
+            {
+                characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.AllStar);
+                characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.AllStar);
             }
             else
             {
-                CharacterCodename character2 = __instance.Selectors[selectorNumber].Character;
-                bool isRandom = __instance.Selectors[selectorNumber].IsRandom;
-                __instance.Selectors[selectorNumber].Characters[__instance.Selectors[selectorNumber].BrawlerIndex] = character;
-                __instance.Selectors[selectorNumber].RandomCharacters[__instance.Selectors[selectorNumber].BrawlerIndex] = false;
-                __instance.Selectors[selectorNumber].Skins[__instance.Selectors[selectorNumber].BrawlerIndex] = skin;
-                __instance.Selectors[selectorNumber].IsLocked = !unlocked;
-
-                string localizedString = string.Empty;
-                localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
-                /*if (character != CharacterCodename.Sartana && character != CharacterCodename.VladPlasmius)
+                characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.Arcade);
+                characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.Arcade);
+            }
+            __instance.SetArcadeInfo(characterBestTime, characterBestScore, localizedString);
+        }
+        if (__instance.dataManager.MainMenuContext == MainMenuContext.AllStar)
+        {
+            int characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.AllStar);
+            double characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.AllStar);
+            __instance.SetArcadeInfo(characterBestTime, characterBestScore, localizedString);
+        }
+        if (__instance.dataManager.MainMenuContext == MainMenuContext.BotsMinigame)
+        {
+            int characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.BotsMiniGame);
+            __instance.SetWhackInfo(characterBestScore, localizedString);
+        }
+        if (__instance.dataManager.MainMenuContext == MainMenuContext.TargetsMinigame)
+        {
+            double characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.BallonsMinigame);
+            __instance.SetBlimpsInfo(characterBestTime, localizedString);
+        }
+        bool flag9 = __instance.dataManager.Online && !__instance.Selectors[selectorNumber].OnlineRemotePlayer && (character2 != character || isRandom);
+        if (flag9)
+        {
+            bool flag10 = !unlocked;
+            if (flag10)
+            {
+                __instance.onlineManager.Properties.SetPlayerCharacterIsRandom(true);
+                character = __instance.matchManager.GetRandomCharacter();
+                __instance.onlineManager.Properties.SetPlayerCharacter(character);
+                __instance.Selectors[selectorNumber].LockedCharacterReplacement = character;
+            }
+            else
+            {
+                __instance.onlineManager.Properties.SetPlayerCharacterIsRandom(false);
+            }
+            Plugin.Patches.CustomSetPlayerCharacterSkin(skin, character);
+            __instance.onlineManager.Properties.SetPlayerCharacterSkin(skin);
+            __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.RandomSelection = false;
+            __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.Character = character;
+            __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.Skin = skin;
+        }
+        if (!dataManager.Online)
+        {
+            if (Plugin.metaDataDict.TryGetValue(selectorNumber, out var metaData))
+            {
+                CharacterMetaData meta = new CharacterMetaData
                 {
-                    localizedString = GameManager.Instance.GameResourcesManager.GetCharacterUIData(character).CharacterDescription.GetLocalizedString();
-                    localizedString = "Testing CharacterInfo";
-                }
-                else
+                    playerIndex = selectorNumber,
+                    skinIndex = skin,
+                    customSkinName = "none",
+
+                };
+
+                Plugin.metaDataDict[selectorNumber] = meta;
+            }
+            else
+            {
+                CharacterMetaData meta = new CharacterMetaData
                 {
-                    localizedString = "Testing CharacterInfo";
-                }*/
+                    playerIndex = selectorNumber,
+                    skinIndex = skin,
+                    customSkinName = "none",
 
+                };
 
-                RecordTracker records = GameManager.Instance.SettingsManager.GlobalData.Records;
-
-
-
-                SinglePlayerMenu.SinglePlayerSubMenu lastArcadeMode = __instance.uiManager.LastArcadeMode;
-                if (__instance.dataManager.MainMenuContext == MainMenuContext.Arcade)
-                {
-                    int characterBestScore;
-                    double characterBestTime;
-                    if (lastArcadeMode == SinglePlayerMenu.SinglePlayerSubMenu.BossRush)
-                    {
-                        characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.BossRush);
-                        characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.BossRush);
-                    }
-                    else if (lastArcadeMode == SinglePlayerMenu.SinglePlayerSubMenu.AllStar)
-                    {
-                        characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.AllStar);
-                        characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.AllStar);
-                    }
-                    else
-                    {
-                        characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.Arcade);
-                        characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.Arcade);
-                    }
-                    __instance.SetArcadeInfo(characterBestTime, characterBestScore, localizedString);
-                }
-                if (__instance.dataManager.MainMenuContext == MainMenuContext.AllStar)
-                {
-                    int characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.AllStar);
-                    double characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.AllStar);
-                    __instance.SetArcadeInfo(characterBestTime, characterBestScore, localizedString);
-                }
-                if (__instance.dataManager.MainMenuContext == MainMenuContext.BotsMinigame)
-                {
-                    int characterBestScore = records.GetCharacterBestScore(character, RecordTracker.RecordTypes.BotsMiniGame);
-                    __instance.SetWhackInfo(characterBestScore, localizedString);
-                }
-                if (__instance.dataManager.MainMenuContext == MainMenuContext.TargetsMinigame)
-                {
-                    double characterBestTime = records.GetCharacterBestTime(character, RecordTracker.RecordTypes.BallonsMinigame);
-                    __instance.SetBlimpsInfo(characterBestTime, localizedString);
-                }
-                bool flag9 = __instance.dataManager.Online && !__instance.Selectors[selectorNumber].OnlineRemotePlayer && (character2 != character || isRandom);
-                if (flag9)
-                {
-                    bool flag10 = !unlocked;
-                    if (flag10)
-                    {
-                        __instance.onlineManager.Properties.SetPlayerCharacterIsRandom(true);
-                        character = __instance.matchManager.GetRandomCharacter();
-                        __instance.onlineManager.Properties.SetPlayerCharacter(character);
-                        __instance.Selectors[selectorNumber].LockedCharacterReplacement = character;
-                    }
-                    else
-                    {
-                        __instance.onlineManager.Properties.SetPlayerCharacterIsRandom(false);
-                    }
-                    Plugin.Patches.CustomSetPlayerCharacterSkin(skin, character);
-                    __instance.onlineManager.Properties.SetPlayerCharacterSkin(skin);
-                    __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.RandomSelection = false;
-                    __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.Character = character;
-                    __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.Skin = skin;
-                }
-                if (!dataManager.Online)
-                {
-                    if (Plugin.metaDataDict.TryGetValue(selectorNumber, out var metaData))
-                    {
-                        CharacterMetaData meta = new CharacterMetaData
-                        {
-                            playerIndex = selectorNumber,
-                            skinIndex = skin,
-                            customSkinName = "none",
-
-                        };
-
-                        Plugin.metaDataDict[selectorNumber] = meta;
-                    }
-                    else
-                    {
-                        CharacterMetaData meta = new CharacterMetaData
-                        {
-                            playerIndex = selectorNumber,
-                            skinIndex = skin,
-                            customSkinName = "none",
-
-                        };
-
-                        Plugin.metaDataDict.Add(selectorNumber, meta);
-                    }
-                }
-                __instance.RefreshUI();
-                result = false;
+                Plugin.metaDataDict.Add(selectorNumber, meta);
             }
         }
-        return result;
+        __instance.RefreshUI();
+
+        return false;
     }
 
     [HarmonyPrefix]
@@ -382,7 +367,7 @@ public class CharacterSelect_Patches
                     {
                         npcdata.CharacterMatchData.Skin = characterSelectSelector.Skin;
                     }
-
+                    Plugin.Log.LogWarning($"[WriteDataManager ({characterSelectSelector.PlayerNumber})] NPC Skin: " + npcdata.CharacterMatchData.Skin);
                     //npcdata.CharacterMatchData.Skin = characterSelectSelector.Skin;
                     npcdata.CharacterMatchData.Team = characterSelectSelector.Team;
                     npcdata.CharacterMatchData.TeamStocksMode = __instance.dataManager.MatchData.MatchRules.TeamStocksMode;
@@ -457,8 +442,8 @@ public class CharacterSelect_Patches
                     {
                         runtimePlayer.CharacterMatchData.Skin = characterSelectSelector.Skin;
                     }
+                    Plugin.Log.LogWarning($"[WriteDataManager ({characterSelectSelector.PlayerNumber})] Runtime Skin: " + runtimePlayer.CharacterMatchData.Skin);
 
-                    
                     runtimePlayer.CharacterMatchData.RandomSelection = characterSelectSelector.IsRandom;
                     runtimePlayer.CharacterMatchData.Team = characterSelectSelector.Team;
                     runtimePlayer.CharacterMatchData.TeamStocksMode = __instance.dataManager.MatchData.MatchRules.TeamStocksMode;
@@ -649,32 +634,28 @@ public class CharacterSelect_Patches
 
                     CharacterPanel characterPanel1 = __instance.GetCharacterPanel(k);
 
-                    CharacterUIData characterUIData = __instance.gameResourcesManager.GetCharacterUIData(characterSelectSelector.Character);
-
-
-
-
+                    //CharacterUIData characterUIData = __instance.gameResourcesManager.GetCharacterUIData(characterSelectSelector.Character);
 
                     //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin: {characterSelectSelector.Skin}");
                     //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin Modified: {characterPanel1.currentSkin}");
-                    //Plugin.Log.LogWarning($"Updating CharacterPanel ({k + 1}) with Skin Modified: {characterPanel1.currentSkin}");
 
-                    if (characterSelectSelector.Skin == 0)
+
+                    CharacterUIData characterUIData = __instance.gameResourcesManager.GetCharacterUIData(characterSelectSelector.Character);
+                    characterPanel.UpdateData(characterUIData, characterSelectSelector.Skin);
+
+                    /*if (characterSelectSelector.Skin == 0)
                     {
                         characterPanel.UpdateData(characterUIData, characterSelectSelector.Skin);
                     }
                     else
                     {
                         characterPanel.UpdateData(characterUIData, characterPanel1.currentSkin);
-                    }
+                    }*/
                     Plugin.MetaData component = characterPanel1.gameObject.GetComponent<Plugin.MetaData>();
                     if (component != null)
                     {
                         component.UpdateData(characterUIData, characterSelectSelector.Skin);
                     }
-
-
-
                 }
                 if (__instance.SquadStrikeSelection)
                 {
@@ -837,4 +818,69 @@ public class CharacterSelect_Patches
         __instance.CheckMatchReady();
         return false;
     }
+
+    /*[HarmonyPostfix]
+    [HarmonyPatch(typeof(CharacterSelect), "Show")]
+    public static void Show(CharacterSelect __instance)
+    {
+
+
+        Utils.AddLabel(__instance.NavigationButtons, "Toggle Custom Skin Display", UIKey.Start);
+
+        return;
+    }*/
+    /*[HarmonyPostfix]
+    [HarmonyPatch(typeof(CharacterSelect), "Update")]
+    public static void Update(CharacterSelect __instance)
+    {
+        if (!__instance.ScreenActive)
+        {
+            return;
+        }
+        if (__instance.MatchStarted)
+        {
+            return;
+        }
+        if (__instance.onlineManager.StartingMatch)
+        {
+            return;
+        }
+        if (__instance.LockInput)
+        {
+            return;
+        }
+        if (__instance.SquadStrikeSelection)
+        {
+            return;
+
+        }
+
+        if (dataManager.Online)
+        {
+            for (int i = 0; i < __instance.Selectors.Count; i++)
+            {
+                if (__instance.Selectors[i].Enabled && !__instance.Selectors[i].IsRandom && __instance.Selectors[i].Character != CharacterCodename.Undefined)
+                {
+                    Plugin.onlineSkinSets[i].character = __instance.Selectors[i].Character;
+                    Plugin.onlineSkinSets[i].skinCustomID = __instance.Selectors[i].Skin;
+
+                    CharacterPanel characterPanel = __instance.GetCharacterPanel(i);
+
+                    foreach (var player in onlineManager.GetPlayersList())
+                    {
+                        if (player.NickName == characterPanel.SubTitleText.text)
+                        {
+                            string newSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
+                            Plugin.onlineSkinSets[i].skinName = newSkin;
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        
+
+        return;
+    }*/
 }

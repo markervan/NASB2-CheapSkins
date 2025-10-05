@@ -14,7 +14,7 @@ public class CharacterSelectOnlineManager_Patches
     [HarmonyPatch(typeof(CharacterSelectOnlineManager), "PhotomRoomInfoUpdate")]
     public static bool PhotomRoomInfoUpdate(CharacterSelectOnlineManager __instance)
     {
-        //Plugin.Log.LogWarning("PhotomRoomInfoUpdate HAPPENING");
+        //Plugin.Log.LogWarning("PhotomRoomInfoUpdate HAPPENING-");
 
         __instance.onlineManager.UpdatePlayersData();
         __instance.currentPlatformManager.ActivitiesSystem.RefreshPlayersData();
@@ -126,6 +126,7 @@ public class CharacterSelectOnlineManager_Patches
         }
         if (__instance.currentBrawlersAmount != -1 && __instance.currentBrawlersAmount != num)
         {
+            //Plugin.Log.LogWarning("CLEAN SELECTORS");
             __instance.currentBrawlersAmount = num;
             __instance.CleanSelectors();
             __instance.PhotomRoomInfoUpdate();
@@ -136,6 +137,7 @@ public class CharacterSelectOnlineManager_Patches
         {
             if (__instance.onlineManager.Properties.GetLobbyType() == OnlineLobbyType.Default)
             {
+                //Plugin.Log.LogWarning("CLEAN AND CHANGE SCREEN TO LOBBY");
                 __instance.Clean();
                 __instance.CharacterSelect.MainMenu.ChangeScreen(GameScreenID.LobbyMenu);
             }

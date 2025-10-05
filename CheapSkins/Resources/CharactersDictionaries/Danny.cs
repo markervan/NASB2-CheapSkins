@@ -108,7 +108,10 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "attack04_glasses",
             "default_glasses_inv",
             "attack03_front_glasses_inv",
-            "attack04_glasses_inv"
+            "attack04_glasses_inv",
+            "costume01_glassesdefault_C_mesh",
+            "costume01_glassesfront_C_mesh",
+            "costume01_glassesdefault_C_inv_mesh",
         };
         public static List<string> Danny1neck = new List<string>
         {

@@ -19,7 +19,15 @@ public class CharacterPanelPatches
     {
         if (!__instance.randomMode && __instance.currentCharacter == characterUIData.CharacterCodename && __instance.currentSkin == skin)
         {
+            /*Plugin.Log.LogWarning("[ApplyMaterialOverride] Returning early because all conditions matched:");
+            Plugin.Log.LogWarning($"   • randomMode = {__instance.randomMode} (expected false)");
+            Plugin.Log.LogWarning($"   • currentCharacter = {__instance.currentCharacter}, CharacterCodename = {characterUIData.CharacterCodename}");
+            Plugin.Log.LogWarning($"   • currentSkin = {__instance.currentSkin}, skin = {skin}");*/
             return false;
+        }
+        else
+        {
+            //Plugin.Log.LogWarning($"PROCEEDINGGGGGGGGGGGGGGGGGGGGGG");
         }
 
         CharacterUIData newCUID = characterUIData;
@@ -74,9 +82,10 @@ public class CharacterPanelPatches
         __instance.ToggleAddPlayerMode(false);
         __instance.SetUI();
         __instance.currentSkins = customSkinlist;
-
+        //Plugin.Log.LogWarning("about to call loadcharacter");
         if (!__instance.loadingMesh)
         {
+            //Plugin.Log.LogWarning("calling loadcharacter");
             __instance.LoadCharacterGameObject(characterUIData.CharacterCodename, __instance.currentSkins[__instance.currentSkin]);
         }
         return false;

@@ -20,14 +20,23 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "tongue_C_geo",
             "upperTeeth_C_geo",
             "costume01_arms_C_mesh_1",
+            "costume01_arms_C_mesh",
             "costume01_shoes_C_mesh_1",
+            "costume01_shoes_C_mesh",
             "shirt_C_mesh_1",
+            "shirt_C_mesh",
             "trousers_C_mesh_1",
+            "trousers_C_mesh",
             "costume02_arms_C_mesh_1",
+            "costume02_arms_C_mesh",
             "costume03_arms_C_mesh_1",
+            "costume03_arms_C_mesh",
             "costume03_shirt_C_mesh_1",
+            "costume03_shirt_C_mesh",
             "costume03_shoes_C_mesh_1",
-            "costume03_trousers_C_mesh_1"
+            "costume03_shoes_C_mesh",
+            "costume03_trousers_C_mesh_1",
+            "costume03_trousers_C_mesh",
         };
 
         public static List<string> Jimmy0Jetpack = new List<string>
@@ -54,15 +63,21 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static List<string> JimmyCostume = new List<string>
         {
             "pants_C_mesh_1",
+            "pants_C_mesh",
             "goggles_C_mesh_1",
+            "goggles_C_mesh",
             "costume02_shirt_C_mesh_1",
+            "costume02_shirt_C_mesh",
             "costume02_shoes_C_mesh_1",
+            "costume02_shoes_C_mesh",
             "belt_C",
             "costume04_trousers_C",
             "torso_C",
             "mask_C",
             "gloves_C",
             "headband_C_mesh_1",
+            "headband_C_mesh",
+            "karategi_C_mesh",
             "karategi_C_mesh_1",
             "boots_C"
         };

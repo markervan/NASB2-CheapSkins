@@ -26,14 +26,16 @@ using UnityEngine;
 using UnityEngine.Animations;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering.Universal;
+using static CharacterUIData;
 using static CheapSkinss.Plugin;
 using static Quantum.Core.FrameContext;
 using static UnityEngine.EventSystems.EventTrigger;
+using static UnityEngine.Rendering.DebugUI;
 
 namespace CheapSkinss
 {
     [BepInDependency("markervan.nasb2.cheapnasb2", BepInDependency.DependencyFlags.SoftDependency)]
-    [BepInPlugin("markaccino.nasb2.cheapskins", "CheapSkins", "2.8")]
+    [BepInPlugin("markaccino.nasb2.cheapskins", "CheapSkins", "3.0")]
     internal class Plugin : BaseUnityPlugin
     {
         
@@ -140,8 +142,11 @@ namespace CheapSkinss
             public string VSRenderPath;
             public string StockIconPath;
             public List<MaterialOverrideGroup> materialOverrideGroups;
+            public List<VfxOverrideGroup> vfxOverrideGroups;
+
             public List<AnimationsOverride> animationClips;
             public string sfxData;
+            public string vfxpath;
 
             [System.Serializable]
             public class MaterialOverrideGroup
@@ -156,7 +161,16 @@ namespace CheapSkinss
                 public List<Vector4AttributeOverride> vectorAttributeOverrides;
                 public List<ColorOverride> colorOverrides;
             }
-
+            [System.Serializable]
+            public class VfxOverrideGroup
+            {
+                public string identifier;
+                public string customMaterial;
+                public List<TextureOverride> textureOverrides;
+                public List<AttributeOverride> attributeOverrides;
+                public List<Vector4AttributeOverride> vectorAttributeOverrides;
+                public List<ColorOverride> colorOverrides;
+            }
             [System.Serializable]
             public class TextureOverrideTarget
             {
@@ -192,7 +206,10 @@ namespace CheapSkinss
             public class ColorOverride
             {
                 public string colorID;
-                public string colorValue; // In hex format
+                public float colorR;
+                public float colorG;
+                public float colorB;
+                public float colorA;
             }
 
             [System.Serializable]
@@ -212,14 +229,16 @@ namespace CheapSkinss
         public static string skinsPath = Path.Combine(Paths.PluginPath, "Skins");
         public static List<CharacterMetaData> metaDataList = new List<CharacterMetaData>();
         public static string CUSTOM_SKIN_ID = "CUSTOM_SKIN_ID";
+
+        public static string CUSTOM_SKIN_ID_UPDATE = "CUSTOM_SKIN_ID_UPDATE";
         public static string CUSTOM_SKIN_NAME = "CUSTOM_SKIN_NAME";
         private List<string> cm = new List<string>();
         public static Dictionary<string, List<string>> materialMeshGroups = new Dictionary<string, List<string>>();
-
+        public static CoroutineRunner Runner;
 
         private const string OtherModGuid = "markervan.nasb2.cheapnasb2";
-        
 
+        public static bool menuToggle = false;
         public static Dictionary<int, CharacterMetaData> metaDataDict = new Dictionary<int, CharacterMetaData>();
 
         public class CharacterMetaData
@@ -228,27 +247,7 @@ namespace CheapSkinss
             public int skinIndex;
             public string customSkinName;
         }
-        public class CustomSkinData
-        {
-            public string skinID;
-            public CharacterCodename characterCodename;
-            public int skinIndex;
-            public int skinIntIndex;
-            public string skinName;
-            public string authorName;
-            public Texture2D VSRender;
-            public Texture2D stockImage;
-            public Sprite stockImageSprite;
-            public List<CharacterMaterialOverridesHandler.MaterialOverrideGroup> CustomMOGList;
-            public Dictionary<string, Dictionary<string, Mesh>> materialBanksForMeshes;
-            public Dictionary<string, Shader> shaderToUse;
-            public Dictionary<string, Material> customMaterials;
-            public Dictionary<string, AnimationClip> customAnimations;
-            public SFXData customSFXData;
-            public Dictionary<string, CharacterAnimatorStateAsset> customAnimatorBehaviours = new Dictionary<string, CharacterAnimatorStateAsset>();
-
-
-        }
+        
         public class PreviewCustomSkin
         {
             public CharacterCodename character;
@@ -262,6 +261,10 @@ namespace CheapSkinss
 
         public static Dictionary<CharacterCodename, List<PreviewCustomSkin>> previewSkinsDict = new Dictionary<CharacterCodename, List<PreviewCustomSkin>>();
 
+        
+
+        public static List<OnlineSkinSet> onlineSkinSets = new List<OnlineSkinSet>();
+
         public class SkinNameComparer : IComparer<CustomSkinData>
         {
             public int Compare(CustomSkinData x, CustomSkinData y)
@@ -274,6 +277,9 @@ namespace CheapSkinss
 
         public static Dictionary<string, CustomSkinData> dictCustomSkinDatas = new Dictionary<string, CustomSkinData>();
         #region CheapSkinLoaders
+
+
+        
 
         private void LogCustomSkinData()
         {
@@ -440,41 +446,17 @@ namespace CheapSkinss
 
 
 
-                                    try
+                                    if (package.sfxData != null)
                                     {
-                                        //.Log("Custom Skin Data Index: " + customSkinData.skinIntIndex);
-                                        //Debug.LogWarning("Processing SFXData...");
-
-                                        if (package.sfxData != null)
+                                        if (!string.IsNullOrEmpty(package.sfxData))
                                         {
-                                            //Debug.Log("SFXData path: " + package.sfxData);
-
-                                            if (!string.IsNullOrEmpty(package.sfxData))
+                                            SFXData sFXData = bundle.LoadAsset<SFXData>(package.sfxData);
+                                            if (sFXData != null)
                                             {
-                                                SFXData sFXData = bundle.LoadAsset<SFXData>(package.sfxData);
-                                                if (sFXData != null)
-                                                {
-                                                    //Debug.Log("Successfully loaded SFXData: " + package.sfxData);
-                                                    customSkinData.customSFXData = sFXData;
-                                                }
-                                                else
-                                                {
-                                                    //Debug.LogError("Failed to load SFXData for skin: " + package.skinName);
-                                                }
-                                            }
-                                            else
-                                            {
-                                                //Debug.LogWarning("SFXData path is empty for skin: " + package.skinName);
+                                                //Debug.Log("Successfully loaded SFXData: " + package.sfxData);
+                                                customSkinData.customSFXData = sFXData;
                                             }
                                         }
-                                        else
-                                        {
-                                            //Debug.LogWarning("No SFXData provided for skin: " + package.skinName);
-                                        }
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        //Debug.LogError("Error processing SFXData for skin: " + package.skinName + ". Exception: " + ex.Message);
                                     }
 
                                     //Debug.Log("Processing material override groups.");
@@ -787,7 +769,7 @@ namespace CheapSkinss
 
                                                 //Debug.Log($"Processing color with ID: {MOGtextureOverrides.colorID}");
 
-                                                Color color = HexToUnityColor(MOGtextureOverrides.colorValue);
+                                                Color color = new Color { r = MOGtextureOverrides.colorR, g = MOGtextureOverrides.colorG, b = MOGtextureOverrides.colorB, a = MOGtextureOverrides.colorA};
 
                                                 CharacterMaterialOverridesHandler.ColorOverride newColor = new CharacterMaterialOverridesHandler.ColorOverride
                                                 {
@@ -807,6 +789,104 @@ namespace CheapSkinss
                                         //Debug.Log("Material override group processed.");
 
                                         customSkinData.CustomMOGList.Add(MOG);
+                                    }
+
+                                    if(package.vfxOverrideGroups != null)
+                                    {
+                                        customSkinData.customVFXData = new VFXSwapper();
+
+                                        foreach (var MOGVar in package.vfxOverrideGroups)
+                                        {
+
+
+                                            if (MOGVar == null)
+                                            {
+                                                Debug.LogWarning("Null VFX group in JSON package.");
+                                                continue;
+                                            }
+
+                                            var VOG = new VFXSwapper.VfxOverrideGroup
+                                            {
+                                                identifier = MOGVar.identifier,
+                                                attributeOverrides = new List<VFXSwapper.AttributeOverride>(),
+                                                vectorAttributeOverrides = new List<VFXSwapper.Vector4AttributeOverride>(),
+                                                colorOverrides = new List<VFXSwapper.ColorOverride>(),
+                                                textureOverrides = new List<VFXSwapper.TextureOverride>(),
+                                            };
+
+                                            if (!string.IsNullOrEmpty(MOGVar.customMaterial))
+                                            {
+                                                Material material = bundle.LoadAsset<Material>(MOGVar.customMaterial);
+                                                if (material != null)
+                                                    VOG.customMaterial = material;
+                                            }
+
+                                            // ATTRIBUTE OVERRIDES
+                                            if (MOGVar.attributeOverrides != null)
+                                            {
+                                                foreach (var attr in MOGVar.attributeOverrides)
+                                                {
+                                                    if (attr == null) continue;
+                                                    VOG.attributeOverrides.Add(new VFXSwapper.AttributeOverride
+                                                    {
+                                                        AttributeType = (VFXSwapper.AttributeOverride.AttributeNumberTypes)attr.attributeType,
+                                                        AttributeID = attr.attributeID,
+                                                        AttributeValue = attr.attributeValue
+                                                    });
+                                                }
+                                            }
+
+                                            // TEXTURE OVERRIDES
+                                            if (MOGVar.textureOverrides != null)
+                                            {
+                                                foreach (var tex in MOGVar.textureOverrides)
+                                                {
+                                                    Texture2D tex2D = string.IsNullOrWhiteSpace(tex.textureRef)
+                                                        ? null
+                                                        : bundle.LoadAsset<Texture2D>(tex.textureRef);
+
+                                                    VOG.textureOverrides.Add(new VFXSwapper.TextureOverride
+                                                    {
+                                                        TextureID = tex.textureID,
+                                                        TextureRef = tex2D
+                                                    });
+                                                }
+                                            }
+
+                                            // VECTOR ATTRIBUTES
+                                            if (MOGVar.vectorAttributeOverrides != null)
+                                            {
+                                                foreach (var attr in MOGVar.vectorAttributeOverrides)
+                                                {
+                                                    Vector4 vec = FloatArrayToVector4(attr.attributeValue);
+                                                    VOG.vectorAttributeOverrides.Add(new VFXSwapper.Vector4AttributeOverride
+                                                    {
+                                                        AttributeID = attr.attributeID,
+                                                        AttributeValue = vec
+                                                    });
+                                                }
+                                            }
+
+                                            // COLOR OVERRIDES
+                                            if (MOGVar.colorOverrides != null)
+                                            {
+                                                foreach (var col in MOGVar.colorOverrides)
+                                                {
+                                                    //Color color = HexToUnityColor(col.colorValue);
+
+                                                    Color color = new Color { r = col.colorR, g = col.colorG, b = col.colorB, a = col.colorA };
+
+                                                    VOG.colorOverrides.Add(new VFXSwapper.ColorOverride
+                                                    {
+                                                        ColorID = col.colorID,
+                                                        ColorValue = color
+                                                    });
+                                                }
+                                            }
+
+                                            customSkinData.customVFXData.VfxOverrides.Add(VOG);
+                                        }
+
                                     }
 
 
@@ -1063,8 +1143,32 @@ namespace CheapSkinss
 
             File.WriteAllLines(path, array);
             Debug.Log("HideManagerGameObject is set to true.");
+
+            onlineSkinSets.Add(new OnlineSkinSet());
+            onlineSkinSets.Add(new OnlineSkinSet());
+            onlineSkinSets.Add(new OnlineSkinSet());
+            onlineSkinSets.Add(new OnlineSkinSet());
+
+            var go = new GameObject("CoroutineRunner");
+            GameObject.DontDestroyOnLoad(go);
+            Runner = go.AddComponent<CoroutineRunner>();
+
             LoadAllCheapskins();
 
+        }
+
+        public void Update()
+        {
+            /*if (Keyboard.current.eKey.wasPressedThisFrame)
+            {
+                foreach(var player in onlineManager.GetPlayersList())
+                {
+                    //int baseSkin = Plugin.onlineManager.Properties.GetPlayerCharacterSkin(player);
+                    string customSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
+
+                    Plugin.Log.LogWarning(player.NickName + " - " + customSkin);
+                }
+            }*/
         }
 
         private void UnpatchConflictingMethods(Harmony harmony)
@@ -1107,6 +1211,8 @@ namespace CheapSkinss
             private string customSkinName;
 
             private int customSkinIndex;
+
+            public int currentSkin;
 
             private int skinListIndex;
 
@@ -1297,10 +1403,13 @@ namespace CheapSkinss
                     skinImage.sprite = skin.CSSimage;
                 }
 
+
                 // Handle CustominfoSection
                 if (CustominfoSection != null)
                 {
-                    bool shouldActivate = !string.IsNullOrEmpty(skin.skinFilename) && !skin.skinFilename.Contains("base");
+                    currentSkin = skinIndex;
+
+                    bool shouldActivate = !string.IsNullOrEmpty(skin.skinFilename) && !skin.skinFilename.Contains("base") && Plugin.menuToggle;
                     CustominfoSection.SetActive(shouldActivate);
                 }
             }
@@ -1374,17 +1483,27 @@ namespace CheapSkinss
                     Plugin.previewSkinsDict.Add(character.CharacterCodename, prevChar);
                 }
 
+                GameObject ds = new GameObject("CHECKS TUFF");
+                SkinsHolder new1 = ds.AddComponent<SkinsHolder>();
+
+
+                new1.dictCustomSkinDatas = dictCustomSkinDatas;
+                new1.onlineSkinSets = onlineSkinSets;
+                UnityEngine.Object.DontDestroyOnLoad(ds);
 
             }
-
-
-            
 
             [HarmonyPrefix]
             //[HarmonyPriority(Priority.First)]
             [HarmonyPatch(typeof(CharacterPanel), "LoadCharacterGameObject")]
             public static bool LoadCharacterGameObject(CharacterPanel __instance, CharacterCodename codename, int skinID)
             {
+                //Debug.LogWarning("===============================================");
+                //Debug.LogWarning("                                                 ");
+
+                //Debug.LogWarning(__instance.selectorNumber + " Skin Recieved: " +  skinID);
+                //Debug.LogWarning(__instance.selectorNumber + " Current SKin: " + __instance.currentSkin);
+                
                 __instance.loadingMesh = true;
                 __instance.ToggleLoadingIcon(true);
                 string str = "QuantumDB/Characters/" + codename.ToString() + "/";
@@ -1402,8 +1521,507 @@ namespace CheapSkinss
                     {
                         return;
                     }
+
+                    //Plugin.Log.LogWarning("online handler");
+
+                    __instance.UnloadMesh(codename);
+
                     __instance.currentCharacterMesh = UnityEngine.Object.Instantiate<GameObject>(mesh, __instance.characterPosition);
+                    
+
+                    Plugin.MetaData metadata = __instance.gameObject.GetComponent<Plugin.MetaData>();
+
+                    if (dataManager.Online)
+                    {
+
+                        string customSkin = string.Empty;
+                        foreach (var player in onlineManager.GetPlayersList())
+                        {
+                            if (player.NickName == __instance.SubTitleText.text)
+                            {
+                                customSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
+
+                                //onlineSkinSets[__instance.playerIndex].currentSkinName = onlineSkinSets[__instance.playerIndex].skinName;
+
+                                //Plugin.Log.LogWarning(player.NickName + " - Found CustomSkinID: " + Plugin.onlineSkinSets[i].skinName);
+                                break;
+                            }
+                        }
+                        //Plugin.Log.LogError($"Getting data: ONLINE SKIN SET - {customSkin}");
+
+
+                        if (Plugin.dictCustomSkinDatas.TryGetValue(customSkin, out var data))
+                        {
+                            Debug.LogWarning(__instance.selectorNumber + " SkinID found: " + data.skinID);
+                            CustomSkinData skinData = data;
+                            CharacterObjects characterObjects = __instance.currentCharacterMesh.GetComponent<CharacterObjects>();
+                            CharacterMaterialOverridesHandler characterMaterialOverride = __instance.currentCharacterMesh.transform.Find("GeneralMaterialOverrides")?.GetComponent<CharacterMaterialOverridesHandler>();
+
+
+                            foreach (var originalMOGroup in skinData.CustomMOGList)
+                            {
+                                if (originalMOGroup == null)
+                                {
+                                    //Debug.LogWarning("[MaterialOverride] Skipping null MOGroup in skinData.CustomMOGList.");
+                                    continue;
+                                }
+
+                                var MOGroup = Plugin.Patches.CloneMOGroup(originalMOGroup);
+                                if (MOGroup == null)
+                                {
+                                    //Debug.LogWarning($"[MaterialOverride] Failed to clone MOGroup '{originalMOGroup.Identifier}'.");
+                                    continue;
+                                }
+
+                                string normalizedIdentifier = MOGroup.Identifier;
+                                if (string.IsNullOrEmpty(normalizedIdentifier))
+                                {
+                                    //Debug.LogWarning("[MaterialOverride] MOGroup has empty identifier, skipping.");
+                                    continue;
+                                }
+
+                                // Strip prefix before colon (e.g. "Part:Head" -> "Head")
+                                int colonIndex = normalizedIdentifier.IndexOf(':');
+                                if (colonIndex != -1)
+                                {
+                                    normalizedIdentifier = normalizedIdentifier.Substring(colonIndex + 1);
+                                }
+
+                                //Debug.Log($"[MaterialOverride] Processing MOGroup Identifier: {MOGroup.Identifier} (normalized: {normalizedIdentifier})");
+
+                                // 🔹 Local helper to handle matching for any renderer
+                                void TryMatchRenderer(string sourceType, string objectName, Renderer renderer)
+                                {
+                                    if (renderer == null) return;
+
+                                    if (characterCodenames != null &&
+                                        characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
+                                        altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
+                                        parts?.TryGetValue(normalizedIdentifier, out var partList) == true)
+                                    {
+                                        if (partList?.Any(part => objectName == part) == true)
+                                        {
+                                            //Debug.Log($"[MaterialOverride] ✅ Match found for Identifier '{normalizedIdentifier}' on {sourceType} object '{objectName}'.");
+
+                                            if (renderer.materials != null)
+                                            {
+                                                for (int matIndex = 0; matIndex < renderer.materials.Length; matIndex++)
+                                                {
+                                                    var mat = renderer.materials[matIndex];
+                                                    if (mat == null) continue;
+
+                                                    if (mat.name.Contains(normalizedIdentifier))
+                                                    {
+                                                        //Debug.Log($"[MaterialOverride]   ↳ Matched Material: '{mat.name}' (Renderer: {renderer.name})");
+
+                                                        // If identifier starts with a digit, use it as material index
+                                                        if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
+                                                        {
+                                                            int firstDigit = int.Parse(MOGroup.Identifier[0].ToString());
+                                                            //Debug.Log($"[MaterialOverride]   ↳ Using Identifier digit '{firstDigit}' as MaterialIndex.");
+
+                                                            MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
+                                                            {
+                                                                Target = renderer,
+                                                                MaterialIndex = firstDigit
+                                                            });
+                                                        }
+                                                        else
+                                                        {
+                                                            //Debug.LogWarning($"[MaterialOverride]   ↳ Identifier '{MOGroup.Identifier}' does not start with a digit, cannot resolve MaterialIndex.");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+
+                                if (characterObjects.RigsModelObjects != null)
+                                {
+                                    foreach (var materialObject in characterObjects.RigsModelObjects)
+                                    {
+                                        foreach (var characterObject in materialObject.RigObjects)
+
+                                            TryMatchRenderer("CharacterRenderer", characterObject.ObjectID, characterObject.objectMeshRenderer);
+                                    }
+                                }
+                                if (characterObjects.MultipleConstraintObjectsList != null)
+                                {
+                                    foreach (var renderer in characterObjects.MultipleConstraintObjectsList)
+                                    {
+                                        var meshRenderer = renderer.VisibleObjects[0].GetComponent<MeshRenderer>();
+
+                                        TryMatchRenderer("CharacterRenderer", renderer.VisibleObjects[0].name, meshRenderer);
+                                    }
+                                }
+
+                                if (characterObjects.ObjectsToIgnore != null || characterObjects.ObjectsToIgnore.Count != 0)
+                                {
+                                    foreach (var objectEntry in characterObjects.ObjectsToIgnore)
+                                    {
+                                        Renderer found = FindMeshObject(__instance.currentCharacterMesh, objectEntry);
+                                        if (found != null)
+                                        {
+                                            TryMatchRenderer("ObjectToIgnore", found.name, found);
+                                        }
+
+                                    }
+                                }
+
+
+                                // 🔹 Finally register and apply
+                                characterMaterialOverride.TextureOverrides.Add(MOGroup);
+
+                                try
+                                {
+                                    characterMaterialOverride.ApplyMaterialOverride(MOGroup.Identifier);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Plugin.Log.LogWarning(ex);
+                                }
+                                if (characterMaterialOverride.TextureOverrides != null && skinData.materialBanksForMeshes != null)
+                                {
+                                    foreach (var textureOverride in characterMaterialOverride.TextureOverrides)
+                                    {
+                                        if (textureOverride?.Targets == null) continue;
+
+                                        string groupIdentifier = textureOverride.Identifier;
+                                        if (string.IsNullOrEmpty(groupIdentifier))
+                                        {
+                                            //Debug.LogWarning("[MeshReplacement] Skipping TextureOverride with empty Identifier.");
+                                            continue;
+                                        }
+
+                                        // Normalize identifier (remove prefix before colon)
+                                        string normalizedIdentifier1 = groupIdentifier;
+                                        int colonIndex1 = normalizedIdentifier1.IndexOf(':');
+                                        if (colonIndex1 != -1)
+                                        {
+                                            normalizedIdentifier1 = normalizedIdentifier1.Substring(colonIndex1 + 1);
+                                        }
+
+                                        //Debug.Log($"[MeshReplacement] Processing TextureOverride Group: '{groupIdentifier}' (normalized: '{normalizedIdentifier1}')");
+
+                                        // Try to get dictionary for this identifier
+                                        if (!skinData.materialBanksForMeshes.TryGetValue(normalizedIdentifier1, out var currentMeshDictionary) || currentMeshDictionary == null)
+                                        {
+                                            //Debug.LogWarning($"[MeshReplacement] ❌ No material bank found for Identifier '{normalizedIdentifier}'. Skipping group.");
+                                            continue;
+                                        }
+
+                                        int successCount = 0;
+                                        int failCount = 0;
+
+                                        foreach (var targetOverride in textureOverride.Targets)
+                                        {
+                                            if (targetOverride.Target == null)
+                                            {
+                                                //Debug.LogWarning($"[MeshReplacement] ❌ Null target in group '{normalizedIdentifier}'.");
+                                                failCount++;
+                                                continue;
+                                            }
+
+                                            if (targetOverride.MaterialIndex != 0)
+                                            {
+                                                //Debug.Log($"[MeshReplacement] Skipping target '{targetOverride.Target.name}' in group '{normalizedIdentifier}' (MaterialIndex {targetOverride.MaterialIndex} != 0).");
+                                                continue;
+                                            }
+
+                                            string targetName = targetOverride.Target.name;
+
+                                            // Handle SkinnedMeshRenderer
+                                            if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
+                                            {
+                                                if (currentMeshDictionary.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
+                                                {
+                                                    skinnedMeshRenderer.sharedMesh = replacementMesh;
+                                                    //Debug.Log($"[MeshReplacement] ✅ Replaced SkinnedMeshRenderer '{skinnedMeshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
+                                                    successCount++;
+                                                }
+                                            }
+                                            // Handle MeshRenderer
+                                            else if (targetOverride.Target is MeshRenderer meshRenderer)
+                                            {
+                                                if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
+                                                {
+                                                    MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
+
+                                                    if (meshFilter != null)
+                                                    {
+                                                        meshFilter.sharedMesh = replacementMesh;
+                                                        //Debug.Log($"[MeshReplacement] ✅ Replaced MeshRenderer '{meshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
+                                                        successCount++;
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //Debug.LogWarning("characterMaterialOverride.TextureOverrides is null and skinData.materialBanksForMeshes");
+                                }
+
+                                //Debug.Log($"[MaterialOverride] Finished applying MOGroup '{MOGroup.Identifier}' (Targets: {MOGroup.Targets.Count}).");
+                            }
+
+                        }
+                        else
+                        {
+                            //Debug.LogWarning(__instance.selectorNumber + " - Couldnt find SkinID in Online Method");
+                        }
+                    }
+                    else
+                    {
+                        if (Plugin.dictCustomSkinDatas.TryGetValue(metadata.previewSkinsList[__instance.currentSkin].skinFilename, out var data))
+                        {
+                            //Debug.LogWarning(__instance.selectorNumber + " SkinID found: " + data.skinID);
+                            CustomSkinData skinData = data;
+                            CharacterObjects characterObjects = __instance.currentCharacterMesh.GetComponent<CharacterObjects>();
+                            CharacterMaterialOverridesHandler characterMaterialOverride = __instance.currentCharacterMesh.transform.Find("GeneralMaterialOverrides")?.GetComponent<CharacterMaterialOverridesHandler>();
+
+
+                            foreach (var originalMOGroup in skinData.CustomMOGList)
+                            {
+                                if (originalMOGroup == null)
+                                {
+                                    //Debug.LogWarning("[MaterialOverride] Skipping null MOGroup in skinData.CustomMOGList.");
+                                    continue;
+                                }
+
+                                var MOGroup = Plugin.Patches.CloneMOGroup(originalMOGroup);
+                                if (MOGroup == null)
+                                {
+                                    //Debug.LogWarning($"[MaterialOverride] Failed to clone MOGroup '{originalMOGroup.Identifier}'.");
+                                    continue;
+                                }
+
+                                string normalizedIdentifier = MOGroup.Identifier;
+                                if (string.IsNullOrEmpty(normalizedIdentifier))
+                                {
+                                    //Debug.LogWarning("[MaterialOverride] MOGroup has empty identifier, skipping.");
+                                    continue;
+                                }
+
+                                // Strip prefix before colon (e.g. "Part:Head" -> "Head")
+                                int colonIndex = normalizedIdentifier.IndexOf(':');
+                                if (colonIndex != -1)
+                                {
+                                    normalizedIdentifier = normalizedIdentifier.Substring(colonIndex + 1);
+                                }
+
+                                //Debug.Log($"[MaterialOverride] Processing MOGroup Identifier: {MOGroup.Identifier} (normalized: {normalizedIdentifier})");
+
+                                // 🔹 Local helper to handle matching for any renderer
+                                void TryMatchRenderer(string sourceType, string objectName, Renderer renderer)
+                                {
+                                    if (renderer == null)
+                                    {
+                                        //Debug.Log($"[MaterialOverride] RENDERER IS NULL '{normalizedIdentifier}' on {sourceType} object '{objectName}'.");
+                                        return;
+                                    }
+                                    
+
+                                    if (characterCodenames != null && characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
+                                        altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
+                                        parts?.TryGetValue(normalizedIdentifier, out var partList) == true)
+                                    {
+
+
+
+                                        if (partList?.Any(part => objectName == part) == true)
+                                        {
+                                            //Debug.Log($"[MaterialOverride] ✅ Match found for Identifier '{normalizedIdentifier}' on {sourceType} object '{objectName}'.");
+
+                                            if (renderer.materials != null)
+                                            {
+                                                for (int matIndex = 0; matIndex < renderer.materials.Length; matIndex++)
+                                                {
+                                                    var mat = renderer.materials[matIndex];
+                                                    if (mat == null) continue;
+
+                                                    if (mat.name.Contains(normalizedIdentifier))
+                                                    {
+                                                        //Debug.Log($"[MaterialOverride]   ↳ Matched Material: '{mat.name}' (Renderer: {renderer.name})");
+
+                                                        // If identifier starts with a digit, use it as material index
+                                                        if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
+                                                        {
+                                                            int firstDigit = int.Parse(MOGroup.Identifier[0].ToString());
+                                                            //Debug.Log($"[MaterialOverride]   ↳ Using Identifier digit '{firstDigit}' as MaterialIndex.");
+
+                                                            MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
+                                                            {
+                                                                Target = renderer,
+                                                                MaterialIndex = firstDigit
+                                                            });
+                                                        }
+                                                        else
+                                                        {
+                                                            //Debug.LogWarning($"[MaterialOverride]   ↳ Identifier '{MOGroup.Identifier}' does not start with a digit, cannot resolve MaterialIndex.");
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+
+                                    }
+                                }
+
+                                if (characterObjects.RigsModelObjects != null)
+                                {
+                                    foreach (var materialObject in characterObjects.RigsModelObjects)
+                                    {
+                                        foreach(var characterObject in materialObject.RigObjects)
+
+                                        TryMatchRenderer("CharacterRenderer", characterObject.ObjectID, characterObject.objectMeshRenderer);
+                                    }
+                                }
+                                if (characterObjects.MultipleConstraintObjectsList != null)
+                                {
+                                    foreach (var renderer in characterObjects.MultipleConstraintObjectsList)
+                                    {
+                                        var meshRenderer = renderer.VisibleObjects[0].GetComponent<MeshRenderer>();
+
+                                        TryMatchRenderer("CharacterRenderer", renderer.VisibleObjects[0].name, meshRenderer);
+                                    }
+                                }
+
+                                if(characterObjects.ObjectsToIgnore != null || characterObjects.ObjectsToIgnore.Count != 0)
+                                {
+                                    foreach(var objectEntry in characterObjects.ObjectsToIgnore)
+                                    {
+                                        Renderer found = FindMeshObject(__instance.currentCharacterMesh, objectEntry);
+                                        if (found != null)
+                                        {
+                                            TryMatchRenderer("ObjectToIgnore", found.name, found);
+                                        }
+                                        
+                                    }
+                                }
+
+                                // 🔹 Finally register and apply
+                                characterMaterialOverride.TextureOverrides.Add(MOGroup);
+
+                                try
+                                {
+                                    characterMaterialOverride.ApplyMaterialOverride(MOGroup.Identifier);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Plugin.Log.LogWarning(ex);
+                                }
+                                if (characterMaterialOverride.TextureOverrides != null && skinData.materialBanksForMeshes != null)
+                                {
+                                    foreach (var textureOverride in characterMaterialOverride.TextureOverrides)
+                                    {
+                                        if (textureOverride?.Targets == null) continue;
+
+                                        string groupIdentifier = textureOverride.Identifier;
+                                        if (string.IsNullOrEmpty(groupIdentifier))
+                                        {
+                                            //Debug.LogWarning("[MeshReplacement] Skipping TextureOverride with empty Identifier.");
+                                            continue;
+                                        }
+
+                                        // Normalize identifier (remove prefix before colon)
+                                        string normalizedIdentifier1 = groupIdentifier;
+                                        int colonIndex1 = normalizedIdentifier1.IndexOf(':');
+                                        if (colonIndex1 != -1)
+                                        {
+                                            normalizedIdentifier1 = normalizedIdentifier1.Substring(colonIndex1 + 1);
+                                        }
+
+                                        //Debug.Log($"[MeshReplacement] Processing TextureOverride Group: '{groupIdentifier}' (normalized: '{normalizedIdentifier1}')");
+
+                                        // Try to get dictionary for this identifier
+                                        if (!skinData.materialBanksForMeshes.TryGetValue(normalizedIdentifier1, out var currentMeshDictionary) || currentMeshDictionary == null)
+                                        {
+                                            //Debug.LogWarning($"[MeshReplacement] ❌ No material bank found for Identifier '{normalizedIdentifier}'. Skipping group.");
+                                            continue;
+                                        }
+
+                                        int successCount = 0;
+                                        int failCount = 0;
+
+                                        foreach (var targetOverride in textureOverride.Targets)
+                                        {
+                                            if (targetOverride.Target == null)
+                                            {
+                                                //Debug.LogWarning($"[MeshReplacement] ❌ Null target in group '{normalizedIdentifier}'.");
+                                                failCount++;
+                                                continue;
+                                            }
+
+                                            if (targetOverride.MaterialIndex != 0)
+                                            {
+                                                //Debug.Log($"[MeshReplacement] Skipping target '{targetOverride.Target.name}' in group '{normalizedIdentifier}' (MaterialIndex {targetOverride.MaterialIndex} != 0).");
+                                                continue;
+                                            }
+
+                                            string targetName = targetOverride.Target.name;
+
+                                            // Handle SkinnedMeshRenderer
+                                            if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
+                                            {
+                                                string meshToLookFor = skinnedMeshRenderer.name;
+
+                                                //if (skinnedMeshRenderer.name == "costume04_beret_C_mesh") meshToLookFor = "default_beret";
+                                                //if (skinnedMeshRenderer.name == "hat01_C_mesh") meshToLookFor = "default_hat";
+
+                                                if (currentMeshDictionary.TryGetValue(meshToLookFor, out Mesh replacementMesh) && replacementMesh != null)
+                                                {
+                                                    skinnedMeshRenderer.sharedMesh = replacementMesh;
+                                                    //Debug.Log($"[MeshReplacement] ✅ Replaced SkinnedMeshRenderer '{skinnedMeshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
+                                                    successCount++;
+                                                }
+                                            }
+                                            // Handle MeshRenderer
+                                            else if (targetOverride.Target is MeshRenderer meshRenderer)
+                                            {
+                                                if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
+                                                {
+                                                    MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
+
+                                                    if (meshFilter != null)
+                                                    {
+                                                        meshFilter.sharedMesh = replacementMesh;
+                                                        //Debug.Log($"[MeshReplacement] ✅ Replaced MeshRenderer '{meshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
+                                                        successCount++;
+                                                    }
+
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    //Debug.LogWarning("characterMaterialOverride.TextureOverrides is null and skinData.materialBanksForMeshes");
+                                }
+
+                                //Debug.Log($"[MaterialOverride] Finished applying MOGroup '{MOGroup.Identifier}' (Targets: {MOGroup.Targets.Count}).");
+                            }
+
+                        }
+                        else
+                        {
+                            //Debug.LogWarning(__instance.selectorNumber + " - Couldnt find SkinID");
+                        }
+                    }
+
+
+                    
+
+
+
+
+
                     __instance.currentCharacterMesh.SetActive(true);
+
                     if (__instance.currentCharacter != codename || __instance.currentSkins[__instance.currentSkin] != skinID)
                     {
                         __instance.UnloadMesh(codename);
@@ -1429,6 +2047,7 @@ namespace CheapSkinss
                 return false;
             }
 
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CharacterPanel), "ChangeSkin")]
             public static bool ChangeSkin(CharacterPanel __instance)
@@ -1440,17 +2059,58 @@ namespace CheapSkinss
                 if (!__instance.loadingMesh)
                 {
                     __instance.UnloadMesh(__instance.currentCharacter);
-                    __instance.LoadCharacterGameObject(__instance.currentCharacter, __instance.currentSkins[__instance.currentSkin]);
+
+                    if (dataManager.Online)
+                    {
+                        __instance.StartCoroutine(WaitForSkinAndLoad(__instance, __instance.currentCharacter, __instance.currentSkins[__instance.currentSkin], __instance.selectorNumber));
+                    }
+                    else
+                    {
+                        __instance.LoadCharacterGameObject(__instance.currentCharacter, __instance.currentSkins[__instance.currentSkin]);
+                    }
+
+                    
+
+                    //
                 }
 
                 return false;
+            }
+
+            // Coroutine that waits until skinName == currentSkinName before loading
+            public static IEnumerator WaitForSkinAndLoad(CharacterPanel panel, CharacterCodename codename, int skinID, int playerIndex)
+            {
+                //Plugin.Log.LogWarning($"[WaitForSkinAndLoad] Waiting for skin sync for player {playerIndex}...");
+                yield return new WaitForSeconds(0.3f); // wait one frame
+                /*// wait until skins match
+                while (Plugin.onlineSkinSets[playerIndex].skinName != Plugin.onlineSkinSets[playerIndex].currentSkinName)
+                {
+                    string customSkin = string.Empty;
+                    foreach (var player in onlineManager.GetPlayersList())
+                    {
+                        if (player.NickName == panel.SubTitleText.text && onlineSkinSets[panel.playerIndex].skinName != "none")
+                        {
+                            //customSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
+
+                            onlineSkinSets[panel.playerIndex].currentSkinName = onlineSkinSets[panel.playerIndex].skinName;
+
+                            //Plugin.Log.LogWarning(player.NickName + " - Found CustomSkinID: " + Plugin.onlineSkinSets[i].skinName);
+                            break;
+                        }
+                    }
+                    
+                    yield return new WaitForSeconds(0.2f); // wait one frame
+                }*/
+
+                //Plugin.Log.LogWarning($"[WaitForSkinAndLoad] Skins matched! → Loading mesh for player {playerIndex}");
+                panel.LoadCharacterGameObject(codename, skinID);
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CharacterSelect), "SelectSkin")]
             public static bool SelectSkin(CharacterSelect __instance, int skin, int selectorIndex)
             {
-                //Debug.LogWarning($"MODDED SelectSkin:: CharacterPanel({selectorIndex}) : {skin}");
+                //Debug.LogWarning($"[MODDED SelectSkin]: CharacterPanel({selectorIndex}) : {skin}");
 
                 int checkSkin = __instance.GetCharacterPanel(selectorIndex).currentSkins[skin];
 
@@ -1461,8 +2121,10 @@ namespace CheapSkinss
                 }
 
                 characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex] = skin;
+
                 if (__instance.dataManager.Online && !characterSelectSelector.OnlineRemotePlayer)
                 {
+                    //Debug.LogWarning($"[MODDED SelectSkin]: CharacterPanel({selectorIndex}) : skin: {skin} - CheckSKin: {checkSkin}");
                     __instance.dataManager.PlayersData.LocalPlayers[0].CharacterMatchData.Skin = checkSkin;
                     if (!__instance.inCooldown)
                     {
@@ -1536,7 +2198,8 @@ namespace CheapSkinss
             {
                 static bool Prefix(CharacterSelect __instance, int selectorIndex, int brawlerIndex, ref IEnumerator __result)
                 {
-                    // Completely replace the original coroutine
+                    //Debug.LogWarning($"[SelectOnlineSkin]: selectorIndex: {selectorIndex} - brawlerIndex {brawlerIndex}");
+
                     __result = CustomSelectOnlineSkin(__instance, selectorIndex, brawlerIndex);
 
                     return false; // Skip original method
@@ -1544,18 +2207,14 @@ namespace CheapSkinss
 
                 static IEnumerator CustomSelectOnlineSkin(CharacterSelect __instance, int selectorIndex, int brawlerIndex)
                 {
-                    // Your custom implementation
                     //Debug.Log("CUSTOM ONLINE SKIN");
 
-                    yield return new WaitForSeconds(0.1f); // Modified wait time
+                    //yield return new WaitForSeconds(0); // Modified wait time
 
                     __instance.inCooldown = false;
                     CharacterSelectSelector characterSelectSelector = __instance.Selectors[selectorIndex];
                     int num = characterSelectSelector.Skins[characterSelectSelector.BrawlerIndex];
-
                     int checkSkin = __instance.GetCharacterPanel(selectorIndex).currentSkins[num];
-
-                    
 
                     __instance.onlineManager.Properties.SetPlayerSquadCharacterIndex(brawlerIndex);
 
@@ -1567,10 +2226,13 @@ namespace CheapSkinss
                 }
             }
 
+
+
+
             public static void CustomSetPlayerCharacterSkin(int skin, CharacterCodename character)
             {
 
-                //Debug.LogWarning("CUSTOM SET PLAYER CHARACTER SKIN HAPPENING");
+                //Plugin.Log.LogWarning("CUSTOM SET PLAYER CHARACTER SKIN HAPPENING " + skin + " " + character);
                 CharacterUIData characterUIData = Plugin.gameResourcesManager.GetCharacterUIData(character);
 
                 int checkSkin;
@@ -1610,7 +2272,53 @@ namespace CheapSkinss
 
                 Plugin.onlineManager.Properties.SetPlayerRoomProperty(Plugin.CUSTOM_SKIN_ID, skinName);
 
-                //Debug.Log($"Using skin index: {checkSkin}, additional data: '{skinName}'");
+                //Plugin.Log.LogWarning($"Using skin index: {checkSkin}, additional data: '{skinName}'");
+
+            }
+
+
+            public static void CustomSetPlayerCharacterSkin2(int skin, CharacterCodename character)
+            {
+
+                //Plugin.Log.LogWarning("CUSTOM SET PLAYER CHARACTER SKIN HAPPENING " + skin + " " + character);
+                CharacterUIData characterUIData = Plugin.gameResourcesManager.GetCharacterUIData(character);
+
+                int checkSkin;
+                string skinName = "none";
+
+                if (characterUIData.Skins[skin].DebugName.Contains(":"))
+                {
+                    // Get the DebugName
+                    string debugName = characterUIData.Skins[skin].DebugName;
+
+                    string[] parts = debugName.Split(':');
+
+                    // Split at the colon and take the first part
+                    string numberPart = debugName.Split(':')[0];
+
+                    // Try to parse the number before colon
+                    if (int.TryParse(numberPart, out int skinIndex))
+                    {
+                        checkSkin = skinIndex;
+                    }
+                    else
+                    {
+                        checkSkin = skin;
+                    }
+                    if (parts.Length > 1)
+                    {
+                        skinName = parts[1];
+                    }
+                }
+                else
+                {
+                    checkSkin = skin;
+                    skinName = "none";
+                }
+
+                Plugin.onlineManager.Properties.SetPlayerRoomProperty(Plugin.CUSTOM_SKIN_ID_UPDATE, skinName);
+
+                //Plugin.Log.LogWarning($"Using skin index: {checkSkin}, additional data: '{skinName}'");
 
             }
 
@@ -1619,12 +2327,14 @@ namespace CheapSkinss
             public static bool SetPlayerCharacterSkin(OnlineProperties __instance, int skin)
             {
                 //Debug.LogWarning($"MODDED SetPlayerCharacterSkin");
+                //Debug.LogWarning($"[SetPlayerCharacterSkin]: Skin: {skin}");
+
 
                 __instance.SetPlayerRoomProperty(__instance.PlayerCharacterSkinID, skin);
 
                 return false;
             }
-
+            
             [HarmonyPrefix]
             [HarmonyPatch(typeof(CharacterPanel), "Update")]
             public static bool Update(CharacterPanel __instance)
@@ -1707,13 +2417,38 @@ namespace CheapSkinss
 
             public static string GetPlayerCharacterCustomSkin(Player player)
             {
+                //Plugin.Log.LogWarning($"[GetPlayerCharacterCustomSkin] Checking {player.NickName} custom skin id");
                 try
                 {
                     object playerRoomProperty = Plugin.onlineManager.Properties.GetPlayerRoomProperty(player, Plugin.CUSTOM_SKIN_ID);
                     if (playerRoomProperty == null)
                     {
+                        //Plugin.Log.LogWarning($"{player.NickName} custom skin id is null");
                         return "none";
                     }
+
+                    //Plugin.Log.LogWarning($"[GetPlayerCharacterCustomSkin] Player {player.NickName} custom skin id found : {playerRoomProperty.ToString()}");
+                    return playerRoomProperty.ToString();
+                }
+                catch (Exception e)
+                {
+                    //Plugin.Log.LogError($"Error getting custom skin: {e}");
+                    return "none";
+                }
+            }
+            public static string GetPlayerCharacterCustomSkin2(Player player)
+            {
+                //Plugin.Log.LogWarning($"[GetPlayerCharacterCustomSkin2] Checking {player.NickName} custom skin id");
+                try
+                {
+                    object playerRoomProperty = Plugin.onlineManager.Properties.GetPlayerRoomProperty(player, Plugin.CUSTOM_SKIN_ID_UPDATE);
+                    if (playerRoomProperty == null)
+                    {
+                        Plugin.Log.LogWarning($"{player.NickName} custom skin id is null");
+                        return "none";
+                    }
+
+                    //Plugin.Log.LogWarning($"[GetPlayerCharacterCustomSkin2] Player {player.NickName} custom skin id found : {playerRoomProperty.ToString()}");
                     return playerRoomProperty.ToString();
                 }
                 catch (Exception e)
@@ -1723,644 +2458,7 @@ namespace CheapSkinss
                 }
             }
 
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(CharacterManager), "OnInstantiated")]
-            public static void OnInstantiated(CharacterManager __instance, QuantumGame game)
-            {
-                //Debug.Log("INSTANTIATING CHARACTER...");
-
-                if (!dataManager.Online)
-                {
-                    if(Plugin.metaDataDict.TryGetValue(__instance.Data.Character.index, out var metaData))
-                    {
-                        if (Plugin.dictCustomSkinDatas.TryGetValue(metaData.customSkinName, out var customSkinData))
-                        {
-                            CustomSkinData skinData = customSkinData;
-                            CharacterMaterialOverridesHandler characterMaterialOverridesHandler = GetCharacterMaterialOverridesHandler(__instance);
-                            if (characterMaterialOverridesHandler == null)
-                            {
-                                Debug.LogError("CharacterMaterialOverridesHandler is null!");
-                                return;
-                            }
-
-                            //__instance.CustomQuantumAnimator.DataAsset = null;
-                            /*CustomAnimatorGraphAsset customAnimatorGraphAsset = __instance.CustomQuantumAnimator.DataAsset;
-                            Debug.Log($"Starting animator behavior adjustments for {skinData.customAnimatorBehaviours.Count} entries.");
-
-                            foreach (var entry in skinData.customAnimatorBehaviours)
-                            {
-                                Debug.Log($"Processing behavior entry - Key: {entry.Key}, Value: {entry.Value?.name ?? "NULL"}");
-
-                                bool foundState = false;
-
-                                foreach (var layer in customAnimatorGraphAsset.Settings.layers)
-                                {
-                                    Debug.Log($"Checking layer: {layer.name} (States: {layer.states?.Length ?? 0})");
-
-                                    foreach (var state in layer.states)
-                                    {
-                                        if (state.name.Equals(entry.Key, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            Debug.Log($"Found matching state: {state.name} (Target: {entry.Key})");
-
-                                            CharacterAnimatorStateAsset stateAsset = UnityDB.FindAsset<CharacterAnimatorStateAsset>(state.StateAsset.Id.Value);
-                                            if (stateAsset != null)
-                                            {
-                                                Debug.Log($"Loaded CharacterAnimatorStateAsset: {stateAsset.name} (GUID: {state.StateAsset.Id.Value})");
-
-                                                if (entry.Value != null && entry.Value.Settings?.BakedData.BakedVisibilityData != null)
-                                                {
-                                                    stateAsset.Settings.BakedData.BakedVisibilityData = entry.Value.Settings.BakedData.BakedVisibilityData;
-                                                    Debug.Log($"Updated BakedVisibilityData for state: {state.name}");
-                                                    foundState = true;
-                                                }
-                                                else
-                                                {
-                                                    Debug.LogWarning($"Skipping null/invalid entry.Value data for state: {state.name}");
-                                                }
-                                            }
-                                            else
-                                            {
-                                                Debug.LogError($"Failed to find CharacterAnimatorStateAsset with GUID: {state.StateAsset.Id.Value}");
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (!foundState)
-                                {
-                                    Debug.LogWarning($"No matching state found for behavior key: {entry.Key}");
-                                }
-                            }
-
-                            Debug.Log("Finished processing all animator behavior adjustments.");
-                            */
-
-
-                            if (skinData.CustomMOGList == null) return;
-
-                            foreach (var originalMOGroup in skinData.CustomMOGList)
-                            {
-                                if (originalMOGroup == null)
-                                {
-                                    //Debug.LogWarning("[MaterialOverride] Skipping null MOGroup in skinData.CustomMOGList.");
-                                    continue;
-                                }
-
-                                var MOGroup = CloneMOGroup(originalMOGroup);
-                                if (MOGroup == null)
-                                {
-                                    //Debug.LogWarning($"[MaterialOverride] Failed to clone MOGroup '{originalMOGroup.Identifier}'.");
-                                    continue;
-                                }
-
-                                string normalizedIdentifier = MOGroup.Identifier;
-                                if (string.IsNullOrEmpty(normalizedIdentifier))
-                                {
-                                    //Debug.LogWarning("[MaterialOverride] MOGroup has empty identifier, skipping.");
-                                    continue;
-                                }
-
-                                // Strip prefix before colon (e.g. "Part:Head" -> "Head")
-                                int colonIndex = normalizedIdentifier.IndexOf(':');
-                                if (colonIndex != -1)
-                                {
-                                    normalizedIdentifier = normalizedIdentifier.Substring(colonIndex + 1);
-                                }
-
-                                //Debug.Log($"[MaterialOverride] Processing MOGroup Identifier: {MOGroup.Identifier} (normalized: {normalizedIdentifier})");
-
-                                // 🔹 Local helper to handle matching for any renderer
-                                void TryMatchRenderer(string sourceType, string objectName, Renderer renderer)
-                                {
-                                    if (renderer == null) return;
-
-                                    if (characterCodenames != null &&
-                                        characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
-                                        altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
-                                        parts?.TryGetValue(normalizedIdentifier, out var partList) == true)
-                                    {
-                                        if (partList?.Any(part => objectName == part) == true)
-                                        {
-                                            //Debug.Log($"[MaterialOverride] ✅ Match found for Identifier '{normalizedIdentifier}' on {sourceType} object '{objectName}'.");
-
-                                            if (renderer.materials != null)
-                                            {
-                                                for (int matIndex = 0; matIndex < renderer.materials.Length; matIndex++)
-                                                {
-                                                    var mat = renderer.materials[matIndex];
-                                                    if (mat == null) continue;
-
-                                                    if (mat.name.Contains(normalizedIdentifier))
-                                                    {
-                                                        //Debug.Log($"[MaterialOverride]   ↳ Matched Material: '{mat.name}' (Renderer: {renderer.name})");
-
-                                                        // If identifier starts with a digit, use it as material index
-                                                        if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
-                                                        {
-                                                            int firstDigit = int.Parse(MOGroup.Identifier[0].ToString());
-                                                            //Debug.Log($"[MaterialOverride]   ↳ Using Identifier digit '{firstDigit}' as MaterialIndex.");
-
-                                                            MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
-                                                            {
-                                                                Target = renderer,
-                                                                MaterialIndex = firstDigit
-                                                            });
-                                                        }
-                                                        else
-                                                        {
-                                                            //Debug.LogWarning($"[MaterialOverride]   ↳ Identifier '{MOGroup.Identifier}' does not start with a digit, cannot resolve MaterialIndex.");
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                // 🔹 Process CharacterRenderer.Objects
-                                if (__instance.CharacterRenderer?.Objects != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterRenderer.Objects)
-                                    {
-                                        TryMatchRenderer("CharacterRenderer", materialObject.ObjectRenderer?.name, materialObject.ObjectRenderer);
-                                    }
-                                }
-
-                                // 🔹 Process MultipleConstraintObjectsList
-                                if (__instance.CharacterObjects?.MultipleConstraintObjectsList != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterObjects.MultipleConstraintObjectsList)
-                                    {
-                                        if (materialObject.VisibleObjects == null || materialObject.VisibleObjects.Count == 0 || materialObject.VisibleObjects[0] == null)
-                                            continue;
-
-                                        var meshRenderer = materialObject.VisibleObjects[0].GetComponent<MeshRenderer>();
-                                        TryMatchRenderer("ConstraintObject", materialObject.VisibleObjects[0].name, meshRenderer);
-                                    }
-                                }
-
-                                // 🔹 Process ModelProps
-                                if (__instance.CharacterObjects?.ModelProps != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterObjects.ModelProps)
-                                    {
-                                        var meshRenderer = materialObject.ObjectRef?.GetComponent<MeshRenderer>();
-                                        TryMatchRenderer("ModelProp", materialObject.ObjectRef?.name, meshRenderer);
-                                    }
-                                }
-
-                                // 🔹 Finally register and apply
-                                characterMaterialOverridesHandler.TextureOverrides.Add(MOGroup);
-                                characterMaterialOverridesHandler.ApplyMaterialOverride(MOGroup.Identifier);
-
-                                //Debug.Log($"[MaterialOverride] Finished applying MOGroup '{MOGroup.Identifier}' (Targets: {MOGroup.Targets.Count}).");
-                            }
-
-                            if (skinData.customSFXData != null)
-                            {
-                                try
-                                {
-                                    SFXSpawner[] componentsInChildren = __instance.gameObject.GetComponentsInChildren<SFXSpawner>(true);
-                                    if (componentsInChildren != null)
-                                    {
-                                        foreach (SFXSpawner sfxspawner in componentsInChildren)
-                                        {
-                                            if (sfxspawner?.SFXAudioClipData == null) continue;
-
-                                            //add the custom SFXData from the Custom Skin Data
-                                            sfxspawner.SFXAudioClipData.Add(skinData.customSFXData);
-
-                                            //Initializes the SFXData
-                                            if (sfxspawner.SFXAudioClipData.Count > 2)
-                                            {
-                                                sfxspawner.SFXAudioClipData[2]?.Initialize();
-
-                                                //sfxspawner.SFXAudioClipData[2].containersReference
-                                                if (sfxspawner.SFXAudioClipData[2]?.Containers != null)
-                                                {
-                                                    foreach (var entry in sfxspawner.SFXAudioClipData[2].Containers)
-                                                    {
-                                                        entry?.UpdateClipsList();
-                                                    }
-                                                }
-
-                                                if (sfxspawner.SFXAudioClipData.Count > 1)
-                                                {
-                                                    sfxspawner.SFXAudioClipData.Remove(sfxspawner.SFXAudioClipData[1]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    //Plugin.Log.LogError($"Error processing SFXSpawners for character {__instance.Codename}: {ex}");
-                                }
-                            }
-
-                            if (characterMaterialOverridesHandler.TextureOverrides != null && skinData.materialBanksForMeshes != null)
-                            {
-                                foreach (var textureOverride in characterMaterialOverridesHandler.TextureOverrides)
-                                {
-                                    if (textureOverride?.Targets == null) continue;
-
-                                    string groupIdentifier = textureOverride.Identifier;
-                                    if (string.IsNullOrEmpty(groupIdentifier))
-                                    {
-                                        //Debug.LogWarning("[MeshReplacement] Skipping TextureOverride with empty Identifier.");
-                                        continue;
-                                    }
-
-                                    // Normalize identifier (remove prefix before colon)
-                                    string normalizedIdentifier = groupIdentifier;
-                                    int colonIndex = normalizedIdentifier.IndexOf(':');
-                                    if (colonIndex != -1)
-                                    {
-                                        normalizedIdentifier = normalizedIdentifier.Substring(colonIndex + 1);
-                                    }
-
-                                    //Debug.Log($"[MeshReplacement] Processing TextureOverride Group: '{groupIdentifier}' (normalized: '{normalizedIdentifier}')");
-
-                                    // Try to get dictionary for this identifier
-                                    if (!skinData.materialBanksForMeshes.TryGetValue(normalizedIdentifier, out var currentMeshDictionary) ||
-                                        currentMeshDictionary == null)
-                                    {
-                                        //Debug.LogWarning($"[MeshReplacement] ❌ No material bank found for Identifier '{normalizedIdentifier}'. Skipping group.");
-                                        continue;
-                                    }
-
-                                    //int successCount = 0;
-                                    //int failCount = 0;
-
-                                    foreach (var targetOverride in textureOverride.Targets)
-                                    {
-                                        if (targetOverride.Target == null)
-                                        {
-                                            //Debug.LogWarning($"[MeshReplacement] ❌ Null target in group '{normalizedIdentifier}'.");
-                                            //failCount++;
-                                            continue;
-                                        }
-
-                                        if (targetOverride.MaterialIndex != 0)
-                                        {
-                                            //Debug.Log($"[MeshReplacement] Skipping target '{targetOverride.Target.name}' in group '{normalizedIdentifier}' (MaterialIndex {targetOverride.MaterialIndex} != 0).");
-                                            continue;
-                                        }
-
-                                        string targetName = targetOverride.Target.name;
-
-                                        // Handle SkinnedMeshRenderer
-                                        if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
-                                        {
-                                            if (currentMeshDictionary.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
-                                            {
-                                                skinnedMeshRenderer.sharedMesh = replacementMesh;
-                                                //Debug.Log($"[MeshReplacement] ✅ Replaced SkinnedMeshRenderer '{skinnedMeshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
-                                                //successCount++;
-                                            }
-                                        }
-                                        // Handle MeshRenderer
-                                        else if (targetOverride.Target is MeshRenderer meshRenderer)
-                                        {
-                                            if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
-                                            {
-                                                MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
-
-                                                if (meshFilter != null)
-                                                {
-                                                    meshFilter.sharedMesh = replacementMesh;
-                                                    //Debug.Log($"[MeshReplacement] ✅ Replaced MeshRenderer '{meshRenderer.name}' with mesh '{replacementMesh.name}' (Group: {normalizedIdentifier}).");
-                                                    //successCount++;
-                                                }
-
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                            return;
-                        }
-                    }
-                }
-
-                foreach (var player in onlineManager.GetPlayersList())
-                {
-                    Plugin.Log.LogWarning(player.NickName);
-
-                    int baseSkin = Plugin.onlineManager.Properties.GetPlayerCharacterSkin(player);
-                    string customSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
-
-
-                    Plugin.Log.LogWarning("Character Skin: " + baseSkin + " - Custom Skin Name: " + customSkin);
-
-
-                    if(player.NickName == __instance.Data.Character.nickName)
-                    {
-                        if(Plugin.dictCustomSkinDatas.TryGetValue(customSkin, out var customSkinData))
-                        {
-                            Plugin.Log.LogWarning("Skin: " + customSkin + " found for Player: " + player.NickName);
-
-                            CustomSkinData skinData = customSkinData;
-                            CharacterMaterialOverridesHandler characterMaterialOverridesHandler = GetCharacterMaterialOverridesHandler(__instance);
-                            if (characterMaterialOverridesHandler == null)
-                            {
-                                Debug.LogError("CharacterMaterialOverridesHandler is null!");
-                                return;
-                            }
-
-                            if (skinData.CustomMOGList == null) return;
-
-                            foreach (CharacterMaterialOverridesHandler.MaterialOverrideGroup originalMOGroup in skinData.CustomMOGList)
-                            {
-                                if (originalMOGroup == null) continue;
-
-                                var MOGroup = CloneMOGroup(originalMOGroup);
-                                if (MOGroup == null) continue;
-
-                                if (__instance.CharacterRenderer?.Objects != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterRenderer.Objects)
-                                    {
-                                        if (materialObject.ObjectRenderer == null)
-                                        {
-                                            //Debug.LogWarning("MaterialObject's ObjectRenderer is null!");
-                                            continue;
-                                        }
-
-                                        string originalIdentifier = MOGroup.Identifier;
-                                        if (string.IsNullOrEmpty(originalIdentifier)) continue;
-
-                                        // Check if the identifier contains a colon and remove the prefix if it's there
-                                        int colonIndex = originalIdentifier.IndexOf(':');
-                                        if (colonIndex != -1)
-                                        {
-                                            // Remove everything before and including the colon
-                                            originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
-                                        }
-
-                                        if (characterCodenames != null &&
-                                            characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
-                                            altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
-                                            parts?.TryGetValue(originalIdentifier.ToString(), out var partList) == true)
-                                        {
-                                            if (partList?.Any(part => materialObject.ObjectRenderer.name == part) == true)
-                                            {
-                                                if (materialObject.ObjectRenderer.materials != null)
-                                                {
-                                                    foreach (var obj in materialObject.ObjectRenderer.materials)
-                                                    {
-                                                        if (obj?.name?.Contains(originalIdentifier) == true)
-                                                        {
-                                                            if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
-                                                            {
-                                                                char firstChar = MOGroup.Identifier[0];
-                                                                int firstDigit = int.Parse(firstChar.ToString());
-
-                                                                MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
-                                                                {
-                                                                    Target = materialObject.ObjectRenderer,
-                                                                    MaterialIndex = firstDigit
-                                                                });
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (__instance.CharacterObjects?.MultipleConstraintObjectsList != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterObjects.MultipleConstraintObjectsList)
-                                    {
-                                        if (materialObject.VisibleObjects == null || materialObject.VisibleObjects.Count == 0 || materialObject.VisibleObjects[0] == null)
-                                        {
-                                            //Debug.LogWarning("MaterialObject's ObjectRenderer is null!");
-                                            return;
-                                        }
-
-                                        string originalIdentifier = MOGroup.Identifier;
-                                        if (string.IsNullOrEmpty(originalIdentifier)) continue;
-
-                                        // Check if the identifier contains a colon and remove the prefix if it's there
-                                        int colonIndex = originalIdentifier.IndexOf(':');
-                                        if (colonIndex != -1)
-                                        {
-                                            // Remove everything before and including the colon
-                                            originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
-                                        }
-
-                                        if (characterCodenames != null &&
-                                            characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
-                                            altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
-                                            parts?.TryGetValue(originalIdentifier.ToString(), out var partList) == true)
-                                        {
-                                            if (partList?.Any(part => materialObject.VisibleObjects[0].name == part) == true)
-                                            {
-                                                var meshRenderer = materialObject.VisibleObjects[0].GetComponent<MeshRenderer>();
-                                                if (meshRenderer?.materials != null)
-                                                {
-                                                    foreach (var obj in meshRenderer.materials)
-                                                    {
-                                                        if (obj?.name?.Contains(originalIdentifier) == true)
-                                                        {
-                                                            if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
-                                                            {
-                                                                char firstChar = MOGroup.Identifier[0];
-                                                                int firstDigit = int.Parse(firstChar.ToString());
-
-                                                                MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
-                                                                {
-                                                                    Target = meshRenderer,
-                                                                    MaterialIndex = firstDigit
-                                                                });
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                if (__instance.CharacterObjects.ModelProps != null)
-                                {
-                                    foreach (var materialObject in __instance.CharacterObjects.ModelProps)
-                                    {
-
-
-                                        string originalIdentifier = MOGroup.Identifier;
-                                        if (string.IsNullOrEmpty(originalIdentifier)) continue;
-
-                                        // Check if the identifier contains a colon and remove the prefix if it's there
-                                        int colonIndex = originalIdentifier.IndexOf(':');
-                                        if (colonIndex != -1)
-                                        {
-                                            // Remove everything before and including the colon
-                                            originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
-                                        }
-
-                                        if (characterCodenames != null &&
-                                            characterCodenames.TryGetValue(skinData.characterCodename.ToString(), out var altParts) &&
-                                            altParts?.TryGetValue(skinData.skinIndex, out var parts) == true &&
-                                            parts?.TryGetValue(originalIdentifier.ToString(), out var partList) == true)
-                                        {
-                                            if (partList?.Any(part => materialObject.ObjectRef.name == part) == true)
-                                            {
-                                                var meshRenderer = materialObject.ObjectRef.GetComponent<MeshRenderer>();
-                                                if (meshRenderer?.materials != null)
-                                                {
-                                                    foreach (var obj in meshRenderer.materials)
-                                                    {
-                                                        if (obj?.name?.Contains(originalIdentifier) == true)
-                                                        {
-                                                            if (!string.IsNullOrEmpty(MOGroup.Identifier) && char.IsDigit(MOGroup.Identifier[0]))
-                                                            {
-                                                                char firstChar = MOGroup.Identifier[0];
-                                                                int firstDigit = int.Parse(firstChar.ToString());
-
-                                                                MOGroup.Targets.Add(new CharacterMaterialOverridesHandler.TextureOverrideTarget
-                                                                {
-                                                                    Target = meshRenderer,
-                                                                    MaterialIndex = firstDigit
-                                                                });
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-
-                                characterMaterialOverridesHandler.TextureOverrides.Add(MOGroup);
-                                characterMaterialOverridesHandler.ApplyMaterialOverride(MOGroup.Identifier);
-                            }
-
-                            if (skinData.customSFXData != null)
-                            {
-                                try
-                                {
-                                    SFXSpawner[] componentsInChildren = __instance.gameObject.GetComponentsInChildren<SFXSpawner>(true);
-                                    if (componentsInChildren != null)
-                                    {
-                                        foreach (SFXSpawner sfxspawner in componentsInChildren)
-                                        {
-                                            if (sfxspawner?.SFXAudioClipData == null) continue;
-
-                                            //add the custom SFXData from the Custom Skin Data
-                                            sfxspawner.SFXAudioClipData.Add(skinData.customSFXData);
-
-                                            //Initializes the SFXData
-                                            if (sfxspawner.SFXAudioClipData.Count > 2)
-                                            {
-                                                sfxspawner.SFXAudioClipData[2]?.Initialize();
-
-                                                //sfxspawner.SFXAudioClipData[2].containersReference
-                                                if (sfxspawner.SFXAudioClipData[2]?.Containers != null)
-                                                {
-                                                    foreach (var entry in sfxspawner.SFXAudioClipData[2].Containers)
-                                                    {
-                                                        entry?.UpdateClipsList();
-                                                    }
-                                                }
-
-                                                if (sfxspawner.SFXAudioClipData.Count > 1)
-                                                {
-                                                    sfxspawner.SFXAudioClipData.Remove(sfxspawner.SFXAudioClipData[1]);
-                                                }
-                                            }
-                                        }
-                                    }
-                                }
-                                catch (Exception ex)
-                                {
-                                    Plugin.Log.LogError($"Error processing SFXSpawners for character {__instance.Codename}: {ex}");
-                                }
-                            }
-
-                            //Debug.Log("Processing characterMaterialOverridesHandler.");
-                            if (characterMaterialOverridesHandler.TextureOverrides != null && skinData.materialBanksForMeshes != null)
-                            {
-                                foreach (var textureOverride in characterMaterialOverridesHandler.TextureOverrides)
-                                {
-                                    if (textureOverride?.Targets == null) continue;
-
-                                    foreach (var targetOverride in textureOverride.Targets)
-                                    {
-                                        if (targetOverride.Target == null || targetOverride.MaterialIndex != 0)
-                                        {
-                                            continue;
-                                        }
-
-                                        string originalIdentifier = textureOverride.Identifier;
-                                        if (string.IsNullOrEmpty(originalIdentifier)) continue;
-
-                                        // Check if the identifier contains a colon and remove the prefix if it's there
-                                        int colonIndex = originalIdentifier.IndexOf(':');
-                                        if (colonIndex != -1)
-                                        {
-                                            // Remove everything before and including the colon
-                                            originalIdentifier = originalIdentifier.Substring(colonIndex + 1);
-                                        }
-
-                                        // Try to get the inner dictionary from materialBanksForMeshes
-                                        if (!skinData.materialBanksForMeshes.TryGetValue(originalIdentifier, out Dictionary<string, Mesh> currentMeshDictionary) || currentMeshDictionary == null)
-                                        {
-                                            //Debug.LogWarning($"No material bank found for Identifier: {textureOverride.Identifier}");
-                                            continue;
-                                        }
-
-                                        // Handle SkinnedMeshRenderer
-                                        if (targetOverride.Target is SkinnedMeshRenderer skinnedMeshRenderer)
-                                        {
-                                            if (currentMeshDictionary.TryGetValue(skinnedMeshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
-                                            {
-                                                skinnedMeshRenderer.sharedMesh = replacementMesh;
-                                                //Debug.Log($"Replaced SkinnedMeshRenderer: {skinnedMeshRenderer.name} with mesh: {replacementMesh.name}");
-                                            }
-                                            else
-                                            {
-                                                //Debug.LogWarning($"No replacement mesh found for SkinnedMeshRenderer: {skinnedMeshRenderer.name} in material bank.");
-                                            }
-                                        }
-                                        // Handle MeshRenderer
-                                        else if (targetOverride.Target is MeshRenderer meshRenderer)
-                                        {
-                                            if (currentMeshDictionary.TryGetValue(meshRenderer.name, out Mesh replacementMesh) && replacementMesh != null)
-                                            {
-                                                MeshFilter meshFilter = meshRenderer.gameObject.GetComponent<MeshFilter>();
-
-                                                if (meshFilter != null)
-                                                {
-                                                    meshFilter.sharedMesh = replacementMesh;
-                                                    //Debug.Log($"Replaced MeshRenderer: {meshRenderer.name} with mesh: {replacementMesh.name}");
-                                                }
-                                                else
-                                                {
-                                                    //Debug.LogError($"MeshFilter missing on MeshRenderer: {meshRenderer.name}. Cannot apply replacement.");
-                                                }
-                                            }
-                                            else
-                                            {
-                                                //Debug.LogWarning($"No replacement mesh found for MeshRenderer: {meshRenderer.name} in material bank.");
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            Debug.LogWarning("Skin was applied for " + __instance.Codename);
-                        } 
-
-
-                    }
-                }
-                
-            }
-            private static CharacterMaterialOverridesHandler.MaterialOverrideGroup CloneMOGroup(CharacterMaterialOverridesHandler.MaterialOverrideGroup original)
+            public static CharacterMaterialOverridesHandler.MaterialOverrideGroup CloneMOGroup(CharacterMaterialOverridesHandler.MaterialOverrideGroup original)
             {
                 // Create a new instance of MaterialOverrideGroup
                 var clone = new CharacterMaterialOverridesHandler.MaterialOverrideGroup
@@ -2461,7 +2559,7 @@ namespace CheapSkinss
 
                 if (__instance.TextureOverrides == null)
                 {
-                    //Debug.LogError("TextureOverrides list is null!");
+                    Debug.LogError("TextureOverrides list is null!");
                     __result = false;
                     return false;
                 }
@@ -2470,7 +2568,7 @@ namespace CheapSkinss
                 var materialOverrideGroup = __instance.TextureOverrides.FirstOrDefault(group => group.Identifier == materialOverrideID);
                 if (materialOverrideGroup == null)
                 {
-                    //Debug.LogError("No material override found with the ID: " + materialOverrideID);
+                    Debug.LogError("No material override found with the ID: " + materialOverrideID);
                     __result = false;
                     return false;
                 }
@@ -2482,13 +2580,72 @@ namespace CheapSkinss
                     return false;
                 }
 
+                //Plugin.Log.LogWarning("Setting values");
 
-                CharacterManager characterManager;
+                int value = 0;
 
-                GameObject gameObject = __instance.gameObject.transform.parent.gameObject;
-                Transform gameObject1 = gameObject.transform.Find("Character");
-                characterManager = gameObject1.gameObject.GetComponent<CharacterManager>();
+                string nameOnline = string.Empty;
 
+                GameObject container = null; // default to null
+
+                Transform t = __instance?.gameObject?.transform;
+                if (t == null)
+                {
+                    //Debug.LogWarning("[ApplyMaterialOverride] Transform is null, container stays null.");
+                }
+                else
+                {
+                    // Try get parent chain safely
+                    if (t.parent != null && t.parent.parent != null)
+                    {
+                        container = t.parent.parent.gameObject;
+                    }
+
+                    if (container == null)
+                    {
+                        //Debug.LogWarning("[ApplyMaterialOverride] Container is null (parent chain missing).");
+                    }
+                    else
+                    {
+                        //Plugin.Log.LogWarning("Found container: " + container.name);
+                    }
+                }
+
+                // ✅ Safe lookup of CharacterManager
+                //Plugin.Log.LogWarning("Getting CharacterManager...");
+
+                CharacterManager characterManager = null;
+
+                Transform parentTransform = __instance.gameObject.transform.parent;
+                if (parentTransform != null)
+                {
+                    Transform characterTransform = parentTransform.Find("Character");
+                    if (characterTransform != null)
+                    {
+                        characterManager = characterTransform.GetComponent<CharacterManager>();
+                    }
+                }
+
+                //Plugin.Log.LogWarning("characterManager has been looked");
+
+                if (characterManager != null)
+                {
+                    //Plugin.Log.LogWarning("isnt null");
+                    value = characterManager.Data.Character.index;
+                    nameOnline = characterManager.Data.Character.nickName;
+                }
+                else if(container != null)
+                {
+                    switch (container.name)
+                    {
+                        case "Player1": value = 0; break;
+                        case "Player2": value = 1; break;
+                        case "Player3": value = 2; break;
+                        case "Player4": value = 3; break;
+                        default: value = 0; break;
+                    }
+                }
+                //Plugin.Log.LogWarning("past container switches");
 
                 foreach (var textureOverrideTarget in materialOverrideGroup.Targets)
                 {
@@ -2549,17 +2706,26 @@ namespace CheapSkinss
                         {
                             continue;
                         }
+                        
+
 
                         if (dataManager.Online)
                         {
+                            //Plugin.Log.LogWarning("game is online and current quantumgame isnt null");
                             foreach (var player in onlineManager.GetPlayersList())
                             {
-                                Plugin.Log.LogWarning(player.NickName);
+                                //Plugin.Log.LogWarning(player.NickName);
 
-                                int baseSkin = Plugin.onlineManager.Properties.GetPlayerCharacterSkin(player);
+                                //int baseSkin = Plugin.onlineManager.Properties.GetPlayerCharacterSkin(player);
                                 string customSkin = Plugin.Patches.GetPlayerCharacterCustomSkin(player);
 
-                                if (player.NickName == characterManager.Data.Character.nickName)
+                                if(characterManager == null)
+                                {
+                                    nameOnline = uiManager.MainMenu.CharacterSelect.GetCharacterPanel(value).SubTitleText.text;
+                                }
+                                
+
+                                if (player.NickName == nameOnline)
                                 {
                                     if (Plugin.dictCustomSkinDatas.TryGetValue(customSkin, out var customSkinData))
                                     {
@@ -2668,7 +2834,7 @@ namespace CheapSkinss
                         }
                         else
                         {
-                            if (Plugin.metaDataDict.TryGetValue(characterManager.Data.Character.index, out var metaData))
+                            if (Plugin.metaDataDict.TryGetValue(value, out var metaData))
                             {
                                 if (Plugin.dictCustomSkinDatas.TryGetValue(metaData.customSkinName, out var customSkinData))
                                 {
@@ -2777,7 +2943,7 @@ namespace CheapSkinss
                         }
 
                         
-
+                        
                         textureOverrideTarget.Target.GetPropertyBlock(__instance.mpb, textureOverrideTarget.MaterialIndex);
 
                         if (materialOverrideGroup.TextureOverrides != null)
@@ -2906,7 +3072,44 @@ namespace CheapSkinss
 
                 return false;
             }*/
+            public static Transform FindDeepChild(Transform parent, string name)
+            {
+                foreach (Transform child in parent)
+                {
+                    if (child.name == name)
+                        return child;
+                    var result = FindDeepChild(child, name);
+                    if (result != null)
+                        return result;
+                }
+                return null;
+            }
 
+            private static Renderer FindMeshObject(GameObject root, string nameToFind)
+            {
+                // Check skinned meshes
+                foreach (var smr in root.GetComponentsInChildren<SkinnedMeshRenderer>(true))
+                {
+                    if (smr.name == nameToFind)
+                        return smr;
+                }
+
+                // Check mesh filters
+                /*foreach (var mf in root.GetComponentsInChildren<MeshFilter>(true))
+                {
+                    if (mf.name == nameToFind)
+                        return mf;
+                }*/
+
+                // Check mesh renderers
+                foreach (var mr in root.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    if (mr.name == nameToFind)
+                        return mr;
+                }
+
+                return null;
+            }
             public static void ProcessRenderers(GameObject obj)
             {
                 // Find all SkinnedMeshRenderers and MeshRenderers in the target object and its children
@@ -2978,4 +3181,4 @@ namespace CheapSkinss
     }
 }
 
-
+public class CoroutineRunner : MonoBehaviour { }

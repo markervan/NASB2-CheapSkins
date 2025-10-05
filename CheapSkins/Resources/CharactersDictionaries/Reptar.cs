@@ -72,7 +72,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "costume02_hit_C_mesh",
             "costume02_teethbite_C_mesh",
             "costume02_tongue_C_mesh",
-            "costume02_wideopen_C_mesh"
+            "costume02_wideopen_C_mesh",
         };
 
         public static Dictionary<string, List<string>> Reptar0Parts = new Dictionary<string, List<string>>

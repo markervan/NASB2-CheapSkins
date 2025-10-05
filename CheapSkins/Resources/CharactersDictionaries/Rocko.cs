@@ -127,6 +127,8 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "attack_09_hat",
             "down_hat",
             "ultimate_hat",
+            "Hat_Default",
+            "Hat_Attack05",
         };
 
         public static Dictionary<string, List<string>> Rocko0Parts = new Dictionary<string, List<string>>

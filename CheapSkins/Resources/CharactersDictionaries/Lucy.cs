@@ -76,7 +76,12 @@ namespace CheapSkins.Resources.CharactersDictionaries
             "poetryBook_C_mesh",
             "poetryBook_open_C_mesh",
             "scythe_C_mesh",
-            "threeOfSwords_C_mesh"
+            "threeOfSwords_C_mesh",
+            "cape_mesh_name",
+            "hood_mesh_name",
+            "shoedetail_mesh_name",
+            "spadesymbol_mesh_name",
+
         };
 
         public static List<string> Lucy1Costume = new List<string>
