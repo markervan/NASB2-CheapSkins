@@ -38,7 +38,8 @@ namespace CheapSkins.Resources.CharactersDictionaries
                 "chain_C_mesh",
                 "chainclaw_C_mesh",
                 "missile_C_mesh",
-                "note_C_mesh"
+                "note_C_mesh",
+                "StaticCannonStand_mesh",
             };
 
         public static List<string> MechaPlanktonKaren = new List<string>
@@ -96,6 +97,7 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static Dictionary<string, List<string>> MechaPlankton3Parts = new Dictionary<string, List<string>>
             {
                 { "MechaPlankton_Costume_04_Mat", MechaPlanktonBody },
+                { "MechaPlankton_Costume_03_Mat", MechaPlanktonBody },
                 { "MechaPlankton_Props_Costume_04_Mat", MechaPlanktonProps },
                 { "MechaPlankton_Karen_Mat", MechaPlanktonKaren },
                 { "Plankton_Mat", MechaPlanktonPlankton }

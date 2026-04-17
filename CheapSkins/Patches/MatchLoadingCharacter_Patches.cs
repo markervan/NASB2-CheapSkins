@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using UnityEngine;
 using static CharacterUIData;
 using static CheapSkinss.Plugin;
@@ -1007,14 +1008,22 @@ public class MatchLoadingCharacter_Patches
     private static IEnumerator ApplyCustomVFXData(CharacterManager __instance, CustomSkinData skinData)
     {
         // Wait a bit to ensure all spawned effects and materials are initialized
-        yield return new WaitForSeconds(0.5f);
+
+        while (__instance.vfxSpawners.Count < 3)
+        {
+            yield return new WaitForSeconds(0.1f);
+            //elapsed += 0.1f;
+        }
+
+        //Plugin.Log.LogWarning("Procedding");
 
         Dictionary<string, List<Material>> materialGroups = new Dictionary<string, List<Material>>();
 
         // --- Collect renderers from VFX spawners only ---
         for (int i = 0; i < __instance.vfxSpawners.Count; i++)
         {
-            var spawner = __instance.vfxSpawners[i];
+            //Plugin.Log.LogWarning(__instance.vfxSpawners[i]);
+            VFXSpawner spawner = __instance.vfxSpawners[i];
             if (spawner == null)
             {
                 Plugin.Log.LogWarning("vfxspawner " + i + " IS NULL, skipping");

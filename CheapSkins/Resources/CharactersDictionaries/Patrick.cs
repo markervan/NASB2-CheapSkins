@@ -74,16 +74,22 @@ namespace CheapSkins.Resources.CharactersDictionaries
 };
 
         public static List<string> Patrick2BodyAlt = new List<string>
-{
-    "cone_C_mesh",
-    "cone_opensuperwide_C_mesh",
-    "glove_L_mesh",
-    "glove_R_mesh",
-    "p_C_mesh",
-    "p_inv_C_mesh",
-    "pantscostume02_C_mesh",
-    "steelbunscostum02_C_mesh"
-};
+        {
+            "cone_C_mesh",
+            "cone_opensuperwide_C_mesh",
+            "glove_L_mesh",
+            "glove_R_mesh",
+            "p_C_mesh",
+            "p_inv_C_mesh",
+            "pantscostume02_C_mesh",
+            "steelbunscostum02_C_mesh",
+            "Pants",
+            "Cone",
+            "Glove_L",
+            "Glove_R",
+            "P",
+            "P_inv",
+        };
 
         public static List<string> Patrick2Buff = new List<string>
 {

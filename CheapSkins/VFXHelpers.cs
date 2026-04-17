@@ -58,15 +58,37 @@ public static class VFXHelpers
         var materials = FindMatchingMaterials(selectedMaterial, materialGroups);
         if (materials == null)
         {
-            Plugin.Log.LogWarning($"[VFXHelpers] No matching material found for identifier '{selectedMaterial}'");
+            //Plugin.Log.LogWarning($"[VFXHelpers] No matching material found for identifier '{selectedMaterial}'");
             return;
         }
 
+        string texName = tex != null ? tex.name : "null";
+
+        //Plugin.Log.LogWarning($"[VFXHelpers] Applying texture '{texName}' to property '{propName}' for '{selectedMaterial}' ({materials.Count} materials)");
+
+        int appliedCount = 0;
+
         foreach (var mat in materials)
         {
-            if (mat == null) continue;
+            if (mat == null)
+            {
+                //Plugin.Log.LogWarning($"[VFXHelpers] Skipped null material in '{selectedMaterial}'");
+                continue;
+            }
+
+            if (!mat.HasProperty(propName))
+            {
+                //Plugin.Log.LogWarning($"[VFXHelpers] Material '{mat.name}' does not have property '{propName}' — skipped.");
+                continue;
+            }
+
             mat.SetTexture(propName, tex);
+            appliedCount++;
+
+            //Plugin.Log.LogWarning($"[VFXHelpers] → SetTexture on '{mat.name}' (shader: {mat.shader?.name ?? "null"})");
         }
+
+        //Plugin.Log.LogWarning($"[VFXHelpers] Done applying texture '{texName}' to '{selectedMaterial}' — affected {appliedCount}/{materials.Count} materials");
     }
 
     /// <summary>
@@ -75,30 +97,23 @@ public static class VFXHelpers
     /// </summary>
     private static List<Material> FindMatchingMaterials(string selectedMaterial, Dictionary<string, List<Material>> materialGroups)
     {
-        // ✅ Exact match first
+        // Try exact match first
         if (materialGroups.TryGetValue(selectedMaterial, out var exactList))
-            return exactList;
-
-        // ✅ Fallback: try ignoring "(Instance)" and do partial match
-        string normalized = selectedMaterial.Trim();
-        if (normalized.EndsWith(" (Instance)"))
-            normalized = normalized.Replace(" (Instance)", "");
-
-        // Check if any material name starts with or contains the same base name
-        var match = materialGroups
-            .FirstOrDefault(kv =>
-                kv.Key.Equals(normalized) ||
-                kv.Key.StartsWith(normalized) ||
-                kv.Key.Contains(normalized));
-
-        if (!string.IsNullOrEmpty(match.Key))
         {
-            Plugin.Log.LogWarning($"[VFXHelpers] Matched '{selectedMaterial}' -> '{match.Key}'");
-            return match.Value;
+            //Plugin.Log.LogWarning($"[VFXHelpers] Matched (exact) '{selectedMaterial}'");
+            return exactList;
         }
 
-        // ✅ No match found
-        Plugin.Log.LogWarning($"[VFXHelpers] Could not find any material matching '{selectedMaterial}' (available: {string.Join(", ", materialGroups.Keys)})");
+        // Try fallback without "(Instance)"
+        string normalized = selectedMaterial.Replace(" (Instance)", "").Trim();
+        if (materialGroups.TryGetValue(normalized, out var normalizedList))
+        {
+            //Plugin.Log.LogWarning($"[VFXHelpers] Matched (normalized) '{selectedMaterial}' -> '{normalized}'");
+            return normalizedList;
+        }
+
+        // No match found
+        //Plugin.Log.LogWarning($"[VFXHelpers] ❌ No material found for '{selectedMaterial}' (Available: {string.Join(", ", materialGroups.Keys)})");
         return null;
     }
 }

@@ -93,10 +93,10 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static Dictionary<string, List<string>> Reptar2Parts = new Dictionary<string, List<string>>
         {
             { "Reptar_Costume_03_Mat",  Reptar_Costume_03_Mat},
-            { "Reptar_Costume_02_Mat", Reptar_Costume_00_Mat },
-            { "Reptar_Costume_02_Expressions_Mat",  Reptar_Costume_00_Expressions_Mat},
+            { "Reptar_Costume_00_Mat", Reptar_Costume_00_Mat },
+            { "Reptar_Costume_00_Expressions_Mat",  Reptar_Costume_00_Expressions_Mat},
             { "Reptar_Props_Mat", Reptar_Props_Mat },
-            { "Reptar_Costume_02_Cheeks_Mat",  Reptar_Costume_00_Cheeks_Mat}
+            { "Reptar_Costume_00_Cheeks_Mat",  Reptar_Costume_00_Cheeks_Mat}
 
         };
         public static Dictionary<string, List<string>> Reptar3Parts = new Dictionary<string, List<string>>
@@ -109,9 +109,9 @@ namespace CheapSkins.Resources.CharactersDictionaries
         public static Dictionary<int, Dictionary<string, List<string>>> ReptarAltParts = new Dictionary<int, Dictionary<string, List<string>>>
         {
             { 0, Reptar0Parts},
-            { 1, Reptar1Parts},
-            { 2, Reptar2Parts},
-            { 3, Reptar3Parts}
+            { 1, Reptar1Parts}, //Purple Alt
+            { 2, Reptar2Parts}, //Hat Alt
+            { 3, Reptar3Parts}  //Mecha Alt
         };
     }
 }

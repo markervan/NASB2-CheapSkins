@@ -2192,7 +2192,7 @@ namespace CheapSkinss
 
                 return false;
             }
-
+            
             [HarmonyPatch(typeof(CharacterSelect), nameof(CharacterSelect.SelectOnlineSkin))]
             static class SelectOnlineSkinReplacer
             {
